@@ -96,6 +96,12 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+gradle.xml
+misc.xml
+vcx.xml
+Project.xml
+vcs.xml
+codeStyleConfig.xml
 
 # Editor-based Rest Client
 .idea/httpRequests
