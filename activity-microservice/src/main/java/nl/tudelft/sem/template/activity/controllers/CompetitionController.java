@@ -1,9 +1,16 @@
 package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
+import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.CompetitionFindModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -12,8 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
  * This controller shows how you can extract information from the JWT token.
  * </p>
  */
+@RequestMapping("/competition")
 @RestController
-public class DefaultController {
+public class CompetitionController {
 
     private final transient AuthManager authManager;
 
@@ -23,7 +31,7 @@ public class DefaultController {
      * @param authManager Spring Security component used to authenticate and authorize the user
      */
     @Autowired
-    public DefaultController(AuthManager authManager) {
+    public CompetitionController(AuthManager authManager) {
         this.authManager = authManager;
     }
 
@@ -38,4 +46,15 @@ public class DefaultController {
 
     }
 
+    @GetMapping("/create")
+    void createCompetitionn(@RequestBody CompetitionCreateModel request) {
+        // To be implemented
+        return;
+    }
+
+    @GetMapping("/find")
+    void findCompetitions(@RequestBody CompetitionFindModel request) {
+        // To be implemented
+        return;
+    }
 }
