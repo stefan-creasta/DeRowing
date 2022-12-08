@@ -1,16 +1,21 @@
 package nl.tudelft.sem.template.activity.domain;
 
-import nl.tudelft.sem.template.activity.models.Position;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
-import java.util.Map;
-
+@Entity
 public class Competition extends Activity {
-    private long id;
+    @Column
     private boolean allowAmateurs;
+    @Column
     private GenderConstraint genderConstraint;
+    @Column
     private boolean singleOrganization;
 
-    public Competition(NetId owner, Map<Position, NetId> attendees, long startTime) {
-        super(owner, attendees, startTime);
+    public Competition(NetId owner, long boatId, long startTime, boolean allowAmateurs, GenderConstraint genderConstraint, boolean singleOrganization) {
+        super(owner, boatId, startTime);
+        this.allowAmateurs = allowAmateurs;
+        this.genderConstraint = genderConstraint;
+        this.singleOrganization = singleOrganization;
     }
 }

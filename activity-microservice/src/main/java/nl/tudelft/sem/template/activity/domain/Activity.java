@@ -1,18 +1,25 @@
 package nl.tudelft.sem.template.activity.domain;
 
-import nl.tudelft.sem.template.activity.models.Position;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
-import java.util.List;
-import java.util.Map;
-
+@Entity
 public abstract class Activity {
+    @Id
+    @Convert(converter = NetIdConverter.class)
     private NetId owner;
-    private Map<Position, NetId> attendees;
+    @Column
+    private String activityName;
+    @Column
+    private long boatId;
+    @Column
     private long startTime;
 
-    public Activity(NetId owner, Map<Position, NetId> attendees, long startTime) {
+    public Activity(NetId owner, long boatId, long startTime) {
         this.owner = owner;
-        this.attendees = attendees;
+        this.boatId = boatId;
         this.startTime = startTime;
     }
 }
