@@ -2,9 +2,13 @@ package nl.tudelft.sem.template.activity.domain;
 
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+
 @NoArgsConstructor
-public class NetId {
-    long netId;
+@Embeddable
+public class NetId implements Serializable {
+    private long netId;
 
     public NetId(long netId) {
         this.netId = netId;

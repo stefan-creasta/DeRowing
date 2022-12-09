@@ -1,15 +1,15 @@
 package nl.tudelft.sem.template.activity.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import lombok.NoArgsConstructor;
 
-@Entity
+import javax.persistence.*;
+
+@MappedSuperclass
+@NoArgsConstructor
 public abstract class Activity {
     @Id
-    @Convert(converter = NetIdConverter.class)
-    private NetId owner;
+    @EmbeddedId
+    private NetId netId;
     @Column
     private String activityName;
     @Column
@@ -17,8 +17,9 @@ public abstract class Activity {
     @Column
     private long startTime;
 
-    public Activity(NetId owner, long boatId, long startTime) {
-        this.owner = owner;
+    public Activity(NetId netId, String activityName, long boatId, long startTime) {
+        this.netId = netId;
+        this.activityName = activityName;
         this.boatId = boatId;
         this.startTime = startTime;
     }
