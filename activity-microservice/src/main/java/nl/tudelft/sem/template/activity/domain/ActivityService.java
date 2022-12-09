@@ -3,17 +3,21 @@ package nl.tudelft.sem.template.activity.domain;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CompetitionService {
+public class ActivityService {
 
     private final transient CompetitionRepository competitionRepository;
+
+    private final transient TrainingRepository trainingRepository;
 
     /**
      * Instantiates a new CompetitionyService.
      *
-     * @param competitionRepository the repository for activities
+     * @param competitionRepository the repository for competitions
+     * @param trainingRepository the repository for trainings
      */
-    public CompetitionService(CompetitionRepository competitionRepository) {
+    public ActivityService(CompetitionRepository competitionRepository, TrainingRepository trainingRepository) {
         this.competitionRepository = competitionRepository;
+        this.trainingRepository = trainingRepository;
     }
 
     /**
@@ -34,8 +38,6 @@ public class CompetitionService {
                                       boolean singleOrganization) throws Exception {
 
         if (checkNetIdIsUnique(netId)) {
-
-            // Create new account
             Competition competition = new Competition(netId, competitionName, boatId, startTime,
                     allowAmateurs, genderConstraint, singleOrganization);
             competitionRepository.save(competition);
@@ -44,6 +46,39 @@ public class CompetitionService {
         }
 
         throw new NetIdAlreadyInUseException(netId);
+    }
+
+    /**
+     * Create a new training.
+     *
+     * @param netId the id of the owner
+     * @param trainingName the name of the training
+     * @param boatId the id of the boat
+     * @param startTime the start time
+     * @return a new training
+     * @throws Exception the already using this netId exception
+     */
+    public Training createTraining(NetId netId, String trainingName, long boatId, long startTime) throws Exception {
+        if (checkNetIdIsUnique(netId)) {
+            Training training = new Training(netId, trainingName, boatId, startTime);
+            trainingRepository.save(training);
+        }
+        throw new NetIdAlreadyInUseException(netId);
+    }
+
+    /**
+     * The method to find a training.
+     *
+     * @param netId the netId of the owner
+     * @return the training found
+     * @throws Exception an activityNotFoundException
+     */
+    public Training findTraining(NetId netId) throws Exception {
+        if (trainingRepository.existsByNetId(netId)) {
+            Training training = trainingRepository.findByNetId(netId);
+            return training;
+        }
+        throw new ActivityNotFoundException(netId);
     }
 
     /**
@@ -58,7 +93,7 @@ public class CompetitionService {
             Competition target = competitionRepository.findByNetId(netId);
             return target;
         }
-        throw new CompetitionNotFoundException(netId);
+        throw new ActivityNotFoundException(netId);
     }
 
     /**

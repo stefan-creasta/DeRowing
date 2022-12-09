@@ -1,8 +1,8 @@
 package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
+import nl.tudelft.sem.template.activity.domain.ActivityService;
 import nl.tudelft.sem.template.activity.domain.Competition;
-import nl.tudelft.sem.template.activity.domain.CompetitionService;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
@@ -29,18 +29,18 @@ public class CompetitionController {
 
     private final transient AuthManager authManager;
 
-    private final transient CompetitionService competitionService;
+    private final transient ActivityService activityService;
 
     /**
      * Instantiates a new controller.
      *
      * @param authManager     Spring Security component used to authenticate and authorize the user
-     * @param competitionService the service provider of all activities
+     * @param activityService the service provider of all activities
      */
     @Autowired
-    public CompetitionController(AuthManager authManager, CompetitionService competitionService) {
+    public CompetitionController(AuthManager authManager, ActivityService activityService) {
         this.authManager = authManager;
-        this.competitionService = competitionService;
+        this.activityService = activityService;
     }
 
     /**
@@ -70,7 +70,7 @@ public class CompetitionController {
             boolean allowAmateurs = request.isAllowAmateurs();
             boolean singleOrganization = request.isSingleOrganization();
             GenderConstraint genderConstraint = request.getGenderConstraint();
-            competitionService.createCompetition(netId, competitionName, boatId, startTime,
+            activityService.createCompetition(netId, competitionName, boatId, startTime,
                     allowAmateurs, genderConstraint, singleOrganization);
 
         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class CompetitionController {
     @GetMapping("/find")
      public ResponseEntity<String> findCompetitions(@RequestBody CompetitionFindModel request) throws Exception {
         NetId netId = new NetId(authManager.getNetId());
-        Competition target = competitionService.findCompetition(netId);
+        Competition target = activityService.findCompetition(netId);
         return ResponseEntity.ok("The competition created by " + authManager.getNetId()
                 + " is found. Here is the competition: " + target.toString());
     }

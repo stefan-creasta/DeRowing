@@ -3,10 +3,10 @@ package nl.tudelft.sem.template.activity.domain;
 /**
  * Exception to show the competition with the given netId is not found.
  */
-public class CompetitionNotFoundException extends Exception {
+public class ActivityNotFoundException extends Exception {
     static final long serialVersionUID = -3387516993124229948L;
 
-    public CompetitionNotFoundException(NetId netId) {
+    public ActivityNotFoundException(NetId netId) {
         super(netId.toString());
     }
 }
