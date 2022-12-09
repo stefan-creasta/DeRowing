@@ -1,9 +1,9 @@
 package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
-import nl.tudelft.sem.template.activity.domain.*;
-import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
-import nl.tudelft.sem.template.activity.models.CompetitionFindModel;
+import nl.tudelft.sem.template.activity.domain.ActivityService;
+import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Training;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingFindModel;
 import org.springframework.beans.factory.annotation.Autowired;
