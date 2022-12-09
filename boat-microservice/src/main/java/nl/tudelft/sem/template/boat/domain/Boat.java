@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.boat.domain;
 
+import java.util.HashMap;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,8 +39,13 @@ public class Boat {
      */
     public Boat(Type type) {
         this.type = type;
+        this.rowers = new HashMap<>();
+
     }
 
+    public Map<Position, User> getRowers() {
+        return this.rowers;
+    }
     /**
      * Add rower to boat.
      *
