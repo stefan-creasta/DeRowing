@@ -34,4 +34,15 @@ public class Competition extends Activity {
         this.genderConstraint = genderConstraint;
         this.singleOrganization = singleOrganization;
     }
+
+    /**
+     * A method providing string format information.
+     *
+     * @return a string which contains all information about the competition
+     */
+    public String toString() {
+        return super.toString() + "\n Allow Amateurs: " + allowAmateurs
+                + "\n Gender Constraint: " + genderConstraint
+                + "\n singleOrganization: " + singleOrganization;
+    }
 }

@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class NetId implements Serializable {
     public static final long serialVersionUID = 4328743L;
-    private long netIdValue;
+    private String netIdValue;
 
-    public NetId(long netId) {
+    public NetId(String netId) {
         this.netIdValue = netId;
     }
 
-    public long getNetId() {
+    public String getNetId() {
         return netIdValue;
     }
 
-    public void setNetId(long netId) {
+    public void setNetId(String netId) {
         this.netIdValue = netId;
     }
 
@@ -32,7 +32,7 @@ public class NetId implements Serializable {
             return false;
         }
         NetId netId1 = (NetId) o;
-        return netIdValue == netId1.netIdValue;
+        return netIdValue.equals(netId1.netIdValue);
     }
 
     @Override
