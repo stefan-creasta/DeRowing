@@ -8,18 +8,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Embeddable
 public class NetId implements Serializable {
-    private long netId;
+    public static final long serialVersionUID = 4328743L;
+    private long netIdValue;
 
     public NetId(long netId) {
-        this.netId = netId;
+        this.netIdValue = netId;
     }
 
     public long getNetId() {
-        return netId;
+        return netIdValue;
     }
 
     public void setNetId(long netId) {
-        this.netId = netId;
+        this.netIdValue = netId;
     }
 
     @Override
@@ -31,11 +32,11 @@ public class NetId implements Serializable {
             return false;
         }
         NetId netId1 = (NetId) o;
-        return netId == netId1.netId;
+        return netIdValue == netId1.netIdValue;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(netId);
+        return Objects.hash(netIdValue);
     }
 }
