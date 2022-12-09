@@ -1,10 +1,9 @@
 package nl.tudelft.sem.template.activity.domain;
 
-import lombok.NoArgsConstructor;
-
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Embeddable;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Embeddable
@@ -25,8 +24,12 @@ public class NetId implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof NetId)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof NetId)) {
+            return false;
+        }
         NetId netId1 = (NetId) o;
         return netId == netId1.netId;
     }

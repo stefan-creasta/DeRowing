@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import nl.tudelft.sem.template.activity.authentication.JwtAuthenticationEntryPoint;
 import nl.tudelft.sem.template.activity.authentication.JwtRequestFilter;
 import org.junit.jupiter.api.BeforeEach;
