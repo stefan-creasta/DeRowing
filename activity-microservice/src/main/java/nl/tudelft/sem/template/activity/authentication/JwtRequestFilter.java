@@ -83,9 +83,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     System.err.println("Unable to parse JWT token");
                 }
             }
-        else {
-            System.err.println("Invalid authorization header");
-        }
+            else {
+                System.err.println("Invalid authorization header");
+            }
             
         }
 
