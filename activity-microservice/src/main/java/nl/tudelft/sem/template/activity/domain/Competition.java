@@ -45,4 +45,28 @@ public class Competition extends Activity {
                 + "\n Gender Constraint: " + genderConstraint
                 + "\n singleOrganization: " + singleOrganization;
     }
+
+    public boolean isAllowAmateurs() {
+        return allowAmateurs;
+    }
+
+    public void setAllowAmateurs(boolean allowAmateurs) {
+        this.allowAmateurs = allowAmateurs;
+    }
+
+    public GenderConstraint getGenderConstraint() {
+        return genderConstraint;
+    }
+
+    public void setGenderConstraint(GenderConstraint genderConstraint) {
+        this.genderConstraint = genderConstraint;
+    }
+
+    public boolean isSingleOrganization() {
+        return singleOrganization;
+    }
+
+    public void setSingleOrganization(boolean singleOrganization) {
+        this.singleOrganization = singleOrganization;
+    }
 }

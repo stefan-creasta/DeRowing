@@ -1,9 +1,8 @@
 package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
-import nl.tudelft.sem.template.activity.domain.ActivityService;
 import nl.tudelft.sem.template.activity.domain.Competition;
-import nl.tudelft.sem.template.activity.domain.GenderConstraint;
+import nl.tudelft.sem.template.activity.domain.CompetitionService;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.CompetitionFindModel;
@@ -29,18 +28,18 @@ public class CompetitionController {
 
     private final transient AuthManager authManager;
 
-    private final transient ActivityService activityService;
+    private final transient CompetitionService competitionService;
 
     /**
      * Instantiates a new controller.
      *
      * @param authManager     Spring Security component used to authenticate and authorize the user
-     * @param activityService the service provider of all activities
+     * @param competitionService the service provider of all activities
      */
     @Autowired
-    public CompetitionController(AuthManager authManager, ActivityService activityService) {
+    public CompetitionController(AuthManager authManager, CompetitionService competitionService) {
         this.authManager = authManager;
-        this.activityService = activityService;
+        this.competitionService = competitionService;
     }
 
     /**
@@ -63,16 +62,7 @@ public class CompetitionController {
     @PostMapping("/create")
     public ResponseEntity<String> createCompetition(@RequestBody CompetitionCreateModel request) throws Exception {
         try {
-            NetId netId = new NetId(authManager.getNetId());
-            String competitionName = request.getCompetitionName();
-            long boatId = request.getBoatId();
-            long startTime = request.getStartTime();
-            boolean allowAmateurs = request.isAllowAmateurs();
-            boolean singleOrganization = request.isSingleOrganization();
-            GenderConstraint genderConstraint = request.getGenderConstraint();
-            activityService.createCompetition(netId, competitionName, boatId, startTime,
-                    allowAmateurs, genderConstraint, singleOrganization);
-
+            competitionService.createCompetition(request, new NetId(authManager.getNetId()));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -90,7 +80,7 @@ public class CompetitionController {
     @GetMapping("/find")
      public ResponseEntity<String> findCompetitions(@RequestBody CompetitionFindModel request) throws Exception {
         NetId netId = new NetId(authManager.getNetId());
-        Competition target = activityService.findCompetition(netId);
+        Competition target = competitionService.findCompetitions(netId);
         return ResponseEntity.ok("The competition created by " + authManager.getNetId()
                 + " is found. Here is the competition: " + target.toString());
     }

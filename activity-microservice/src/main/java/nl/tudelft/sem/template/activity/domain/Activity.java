@@ -38,13 +38,45 @@ public abstract class Activity {
         this.startTime = startTime;
     }
 
+    public NetId getNetId() {
+        return netId;
+    }
+
+    public void setNetId(NetId netId) {
+        this.netId = netId;
+    }
+
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
+
+    public long getBoatId() {
+        return boatId;
+    }
+
+    public void setBoatId(long boatId) {
+        this.boatId = boatId;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
     /**
      * A method provide string format information.
      *
      * @return a string contains information about the activity.
      */
     public String toString() {
-        return "\nThe competition is created by: " + netId.getNetId().toString() + "\n The name is: "
+        return "The competition is created by: " + netId.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
     }

@@ -1,9 +1,9 @@
 package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
-import nl.tudelft.sem.template.activity.domain.ActivityService;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.Training;
+import nl.tudelft.sem.template.activity.domain.TrainingService;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingFindModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +22,18 @@ public class TrainingController {
 
     private final transient AuthManager authManager;
 
-    private final transient ActivityService activityService;
+    private final transient TrainingService trainingService;
 
     /**
      * The controller of trainings.
      *
      * @param authManager      Spring Security component used to authenticate and authorize the user
-     * @param activityService  the service provider of all activities
+     * @param trainingService  the service provider of all activities
      */
     @Autowired
-    public TrainingController(AuthManager authManager, ActivityService activityService) {
+    public TrainingController(AuthManager authManager, TrainingService trainingService) {
         this.authManager = authManager;
-        this.activityService = activityService;
+        this.trainingService = trainingService;
     }
 
     /**
@@ -46,13 +46,7 @@ public class TrainingController {
     @PostMapping("/create")
     public ResponseEntity<String> createTraining(@RequestBody TrainingCreateModel request) throws Exception {
         try {
-            NetId netId = new NetId(authManager.getNetId());
-            String trainingName = request.getTrainingName();
-            long boatId = request.getBoatId();
-            long startTime = request.getStartTime();
-
-            activityService.createTraining(netId, trainingName, boatId, startTime);
-
+            trainingService.createTraining(request, new NetId(authManager.getNetId()));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -70,7 +64,7 @@ public class TrainingController {
     @GetMapping("/find")
     public ResponseEntity<String> findTraining(@RequestBody TrainingFindModel request) throws Exception {
         NetId netId = new NetId(authManager.getNetId());
-        Training target = activityService.findTraining(netId);
+        Training target = trainingService.findTraining(netId);
         return ResponseEntity.ok("The training created by " + authManager.getNetId()
                 + " is found. Here is the training: " + target.toString());
     }
