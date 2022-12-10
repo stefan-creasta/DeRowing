@@ -62,8 +62,9 @@ public class ActivityService {
         if (checkNetIdIsUnique(netId)) {
             Training training = new Training(netId, trainingName, boatId, startTime);
             trainingRepository.save(training);
+        } else {
+            throw new NetIdAlreadyInUseException(netId);
         }
-        throw new NetIdAlreadyInUseException(netId);
     }
 
     /**
