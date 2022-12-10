@@ -59,12 +59,14 @@ public class ActivityService {
      * @throws Exception the already using this netId exception
      */
     public Training createTraining(NetId netId, String trainingName, long boatId, long startTime) throws Exception {
+        Training training;
         if (checkNetIdIsUnique(netId)) {
-            Training training = new Training(netId, trainingName, boatId, startTime);
+            training = new Training(netId, trainingName, boatId, startTime);
             trainingRepository.save(training);
         } else {
             throw new NetIdAlreadyInUseException(netId);
         }
+        return training;
     }
 
     /**
