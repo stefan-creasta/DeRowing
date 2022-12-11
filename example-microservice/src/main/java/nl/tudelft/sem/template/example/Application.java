@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.user;
+package nl.tudelft.sem.template.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

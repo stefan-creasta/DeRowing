@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.user.authentication;
+package nl.tudelft.sem.template.example.authentication;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
