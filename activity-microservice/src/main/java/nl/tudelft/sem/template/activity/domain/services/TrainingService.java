@@ -1,5 +1,11 @@
-package nl.tudelft.sem.template.activity.domain;
+package nl.tudelft.sem.template.activity.domain.services;
 
+import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.entities.Training;
+import nl.tudelft.sem.template.activity.domain.exceptions.ActivityNotFoundException;
+import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
+import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
+import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

@@ -2,8 +2,8 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.Training;
-import nl.tudelft.sem.template.activity.domain.TrainingService;
+import nl.tudelft.sem.template.activity.domain.entities.Training;
+import nl.tudelft.sem.template.activity.domain.services.TrainingService;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingFindModel;
 import org.springframework.beans.factory.annotation.Autowired;

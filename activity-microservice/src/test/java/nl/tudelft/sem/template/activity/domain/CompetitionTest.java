@@ -1,28 +1,36 @@
 package nl.tudelft.sem.template.activity.domain;
 
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 
 class CompetitionTest {
 
     private Competition sut;
+
     @BeforeEach
     public void setup() {
         sut = new Competition(new NetId("123"), "testname", 123L, 123L, false, GenderConstraint.NO_CONSTRAINT, false);
     }
+
     @Test
     void testToString() {
         String toString = sut.toString();
         assertEquals(
-                "The competition is created by: 123\n" +
-                        " The name is: testname\n" +
-                        " The boatId is: 123\n" +
-                        " The start time is: 123\n" +
-                        " Allow Amateurs: false\n" +
-                        " Gender Constraint: NO_CONSTRAINT\n" +
-                        " singleOrganization: false",
+                "The competition is created by: 123\n"
+                        + " The name is: testname\n"
+                        + " The boatId is: 123\n"
+                        + " The start time is: 123\n"
+                        + " Allow Amateurs: false\n"
+                        + " Gender Constraint: NO_CONSTRAINT\n"
+                        + " singleOrganization: false",
                 toString
         );
     }

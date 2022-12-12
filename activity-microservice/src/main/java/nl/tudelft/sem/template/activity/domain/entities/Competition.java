@@ -1,10 +1,12 @@
-package nl.tudelft.sem.template.activity.domain;
+package nl.tudelft.sem.template.activity.domain.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.activity.domain.GenderConstraint;
+import nl.tudelft.sem.template.activity.domain.NetId;
 
-@Entity
+@Entity(name = "Activity")
 @NoArgsConstructor
 public class Competition extends Activity {
     @Column

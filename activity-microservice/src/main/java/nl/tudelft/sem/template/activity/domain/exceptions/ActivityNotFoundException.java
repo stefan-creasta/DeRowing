@@ -1,4 +1,6 @@
-package nl.tudelft.sem.template.activity.domain;
+package nl.tudelft.sem.template.activity.domain.exceptions;
+
+import nl.tudelft.sem.template.activity.domain.NetId;
 
 /**
  * Exception to show the competition with the given netId is not found.
