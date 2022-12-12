@@ -6,4 +6,5 @@ import lombok.Data;
 public class TrainingCreateModel {
     private String trainingName;
     private long startTime;
+    private long boatId;
 }
