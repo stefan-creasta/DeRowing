@@ -27,14 +27,15 @@ gradle-app.setting
 *.rar
 
 *.db
-
+*.mv.db
+*.trace
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-
+**/checkstyle-idea.xml
 # AWS User-specific
 .idea/**/aws.xml
 
