@@ -2,6 +2,8 @@ package nl.tudelft.sem.template.boat.domain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +16,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.tudelft.sem.template.user.domain.User;
 
 @Entity
 @Table(name = "boats")
@@ -33,7 +36,6 @@ public class Boat {
     @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
     private Map<Position, List<User>> rowers;
 
-    @OneToMany
     private HashMap<Position, Integer> requiredRowers;
     /**
      * Create new boat.
@@ -42,8 +44,15 @@ public class Boat {
      */
     public Boat(Type type, int cox, int coach, int port, int starboard, int sculling) {
         this.type = type;
-        this.rowers = new HashMap<String, List<User>>();
-        this.requiredRowers = new HashMap<Position, Integer>();
+
+        this.rowers = new HashMap<>();
+        this.rowers.put(Position.COX, new ArrayList<>());
+        this.rowers.put(Position.COACH, new ArrayList<>());
+        this.rowers.put(Position.PORT, new ArrayList<>());
+        this.rowers.put(Position.STARBOARD, new ArrayList<>());
+        this.rowers.put(Position.SCULLING, new ArrayList<>());
+
+        this.requiredRowers = new HashMap<>();
         this.requiredRowers.put(Position.COX, cox);
         this.requiredRowers.put(Position.COACH, coach);
         this.requiredRowers.put(Position.PORT, port);
@@ -65,12 +74,11 @@ public class Boat {
      * @param user the user to be added
      */
     public void addRowerToPosition(Position position, User user) {
-        List<User> newList = rowers.get(position);
-        rowers.remove(position);
-        newList.add(user);
-        rowers.put(position, newList);
-        int val = requiredRowers.get(position);
-        requiredRowers.replace(position, val - 1);
+        if (this.rowers.get(position).size() < this.requiredRowers.get(position)) {
+            this.rowers.get(position).add(user);
+            int val = requiredRowers.get(position);
+            requiredRowers.replace(position, val - 1);
+        }
     }
 
     /**
@@ -81,7 +89,7 @@ public class Boat {
     public void removePosition(Position position) {
         requiredRowers.remove(position);
         requiredRowers.put(position, 0);
-        rowers.replace(position, new ArrayList<User>());
+        rowers.replace(position, new ArrayList<>());
     }
 
     /**
@@ -93,11 +101,11 @@ public class Boat {
     public boolean removeRower(User user) {
         // find the key that the User is mapped to
         int pos = -1;
-        for(auto a : rowers) {
-            if(a.second.contains(user)) {
-                a.second.remove(user);
-                int val = requiredRowers.get(a.first);
-                requiredRowers.replace(key, val + 1);
+        for(Map.Entry<Position, List<User>> a : rowers.entrySet()) {
+            if(a.getValue().contains(user)) {
+                a.getValue().remove(user);
+                int val = requiredRowers.get(a.getKey());
+                requiredRowers.replace(a.getKey(), val + 1);
                 return true;
             }
         }
@@ -118,7 +126,7 @@ public class Boat {
      * Checks whether the user is eligible to be a rower on the boat
      * @param type the user's certificate
      * @param position the user's position
-     * @return true whether the user is eligile, false otherwise
+     * @return true whether the user is eligible, false otherwise
      */
     public boolean canRowerBeAdded(Type type, Position position) {
         if(type.value < this.type.value) {
