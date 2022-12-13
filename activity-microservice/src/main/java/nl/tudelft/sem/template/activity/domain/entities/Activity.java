@@ -1,8 +1,9 @@
 package nl.tudelft.sem.template.activity.domain.entities;
 
+import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
-import javax.persistence.EmbeddedId;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +24,9 @@ public abstract class Activity {
     @Embedded
     @Column(name = "netId")
     private NetId netId;
+    @Column(name = "attendees")
+    @ElementCollection(targetClass = NetId.class)
+    private List<NetId> attendees;
     @Column(name = "activityName")
     private String activityName;
     @Column(name = "boatId")
