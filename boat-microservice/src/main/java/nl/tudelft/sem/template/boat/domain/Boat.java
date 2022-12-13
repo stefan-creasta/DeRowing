@@ -29,12 +29,17 @@ public class Boat {
     @Column(name = "id", nullable = false, unique = true)
     private int id;
 
+    @Id
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
+
     @Column(name = "type", nullable = false)
     private Type type;
 
     // TODO: create connection to Users table
     @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
     private Map<Position, List<Rower>> rowers;
+
     private HashMap<Position, Integer> requiredRowers;
 
     /**
@@ -42,7 +47,8 @@ public class Boat {
      *
      * @param type the type of the boat
      */
-    public Boat(Type type, int cox, int coach, int port, int starboard, int sculling) {
+    public Boat(String name, Type type, int cox, int coach, int port, int starboard, int sculling) {
+        this.name = name;
         this.type = type;
 
         this.rowers = new HashMap<>();
@@ -141,7 +147,7 @@ public class Boat {
             return false;
         }
         Boat boat = (Boat) o;
-        if (!(id == boat.id && type == boat.type)) {
+        if (!(id == boat.id && name.equals(boat.name) && type == boat.type)) {
             return false;
         }
         return Objects.equals(rowers, boat.rowers) && Objects.equals(requiredRowers, boat.requiredRowers);
@@ -149,6 +155,6 @@ public class Boat {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, rowers, requiredRowers);
+        return Objects.hash(id, name, type, rowers, requiredRowers);
     }
 }
