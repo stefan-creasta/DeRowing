@@ -43,6 +43,46 @@ public class User {
         this.status = status;
     }
 
+    public NetId getNetId() {
+        return netId;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public Certificate getCertificate() {
+        return certificate;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setNetId(NetId netId) {
+        this.netId = netId;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void setCertificate(Certificate certificate) {
+        this.certificate = certificate;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     /**
      * A method providing string format information.
      *
