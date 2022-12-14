@@ -1,10 +1,14 @@
-package nl.tudelft.sem.template.user.domain;
+package nl.tudelft.sem.template.user.domain.entities;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.user.domain.Certificate;
+import nl.tudelft.sem.template.user.domain.Gender;
+import nl.tudelft.sem.template.user.domain.NetId;
+import nl.tudelft.sem.template.user.domain.Status;
 
 @MappedSuperclass
 @NoArgsConstructor
@@ -37,5 +41,17 @@ public class User {
         this.certificate = certificate;
         this.organization = organization;
         this.status = status;
+    }
+
+    /**
+     * A method providing string format information
+     *
+     * @return a string containing information about the user
+     */
+    public String toString() {
+        return "Your NetId: " + netId.getNetId() + "\n Gender: " + gender.toString() + "\n Certification: "
+                + certificate.toString() +  "\n Organization: "
+                + organization + "\n Status: "
+                + status.toString();
     }
 }
