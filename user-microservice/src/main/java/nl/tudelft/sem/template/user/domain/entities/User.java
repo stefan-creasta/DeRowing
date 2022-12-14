@@ -44,7 +44,7 @@ public class User {
     }
 
     /**
-     * A method providing string format information
+     * A method providing string format information.
      *
      * @return a string containing information about the user
      */

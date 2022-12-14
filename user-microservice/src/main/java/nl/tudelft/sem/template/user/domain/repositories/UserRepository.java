@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, NetId> {
     /**
-     * Find a user by using their NetId
+     * Find a user by using their NetId.
      *
      * @param netId the netId of the User
      * @return the user represented by the NetId
