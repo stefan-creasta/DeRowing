@@ -3,18 +3,23 @@ package nl.tudelft.sem.template.activity.domain.services;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CompetitionService {
+public class CompetitionService extends ActivityService {
+
+    private final transient EventPublisher eventPublisher;
 
     private final transient CompetitionRepository competitionRepository;
 
-    public CompetitionService(CompetitionRepository competitionRepository) {
+    public CompetitionService(EventPublisher eventPublisher, CompetitionRepository competitionRepository) {
+        this.eventPublisher = eventPublisher;
         this.competitionRepository = competitionRepository;
     }
 
@@ -59,17 +64,29 @@ public class CompetitionService {
         }
     }
 
+    /**
+     * Changes the persisted activity to add the new user (if accepted).
+     *
+     * @param model The request body
+     * @param owner The request sender / owner of the activity
+     * @return if success
+     */
+    public boolean informUser(AcceptRequestModel model, String owner) {
+        boolean success = persistNewCompetition(model, competitionRepository);
+        eventPublisher.publishAcceptance(model.isAccepted(), new NetId(owner), model.getRequestee());
+        return success;
+    }
 
     /**
      * A method to find a competition from the database.
 
-     * @param netId the netId of the requester
+     * @param id the netId of the requester
      * @return the Competition of the requester
      * @throws Exception the competition not found exception
      */
-    public Competition findCompetitions(NetId netId) throws Exception {
+    public Competition findCompetitions(long id) throws Exception {
         try {
-            return competitionRepository.findByNetId(netId);
+            return competitionRepository.findById(id);
         } catch (Exception e) {
             throw new Exception("Something went wrong in findCompetitions");
         }

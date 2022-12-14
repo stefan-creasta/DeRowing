@@ -2,14 +2,12 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.services.TrainingService;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
-import nl.tudelft.sem.template.activity.models.TrainingFindModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,17 +53,18 @@ public class TrainingController {
     }
 
     /**
-     * the method to find a specific training.
+     * A REST-mapping designed to accept / reject users from activities.
      *
-     * @param request   the request body of the training finding
-     * @return a training information
-     * @throws Exception a training not found exception
+     * @param model The request body
+     * @return A string informing success
      */
-    @GetMapping("/find")
-    public ResponseEntity<String> findTraining(@RequestBody TrainingFindModel request) throws Exception {
-        NetId netId = new NetId(authManager.getNetId());
-        Training target = trainingService.findTraining(netId);
-        return ResponseEntity.ok("The training created by " + authManager.getNetId()
-                + " is found. Here is the training: " + target.toString());
+    @PostMapping("/inform")
+    public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
+        boolean success = trainingService.informUser(model, authManager.getNetId());
+        if (success) {
+            return ResponseEntity.ok("User is informed");
+        } else {
+            return null;
+        }
     }
 }

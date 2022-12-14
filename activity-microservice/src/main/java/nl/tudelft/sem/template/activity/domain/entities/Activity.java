@@ -22,8 +22,8 @@ public abstract class Activity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     @Embedded
-    @Column(name = "netId")
-    private NetId netId;
+    @Column(name = "owner")
+    private NetId owner;
     @Column(name = "attendees")
     @ElementCollection(targetClass = NetId.class)
     private List<NetId> attendees;
@@ -44,18 +44,18 @@ public abstract class Activity {
      * @param startTime the start time of the activity
      */
     public Activity(NetId netId, String activityName, long boatId, long startTime) {
-        this.netId = netId;
+        this.owner = netId;
         this.activityName = activityName;
         this.boatId = boatId;
         this.startTime = startTime;
     }
 
     public NetId getNetId() {
-        return netId;
+        return owner;
     }
 
     public void setNetId(NetId netId) {
-        this.netId = netId;
+        this.owner = netId;
     }
 
     public String getActivityName() {
@@ -82,13 +82,29 @@ public abstract class Activity {
         this.startTime = startTime;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<NetId> getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(List<NetId> attendees) {
+        this.attendees = attendees;
+    }
+
     /**
      * A method provide string format information.
      *
      * @return a string contains information about the activity.
      */
     public String toString() {
-        return "The competition is created by: " + netId.getNetId() + "\n The name is: "
+        return "The competition is created by: " + owner.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
     }

@@ -2,10 +2,9 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
-import nl.tudelft.sem.template.activity.models.CompetitionFindModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,18 +69,20 @@ public class CompetitionController {
                 + " is created by " + authManager.getNetId());
     }
 
+
     /**
-     * the method to find a specific competition.
+     * A REST-mapping designed to accept / reject users from activities.
      *
-     * @param request   the request body of the competition finding
-     * @return a competition information
-     * @throws Exception a competition not found exception
+     * @param model The request body
+     * @return A string informing success
      */
-    @GetMapping("/find")
-     public ResponseEntity<String> findCompetitions(@RequestBody CompetitionFindModel request) throws Exception {
-        NetId netId = new NetId(authManager.getNetId());
-        Competition target = competitionService.findCompetitions(netId);
-        return ResponseEntity.ok("The competition created by " + authManager.getNetId()
-                + " is found. Here is the competition: " + target.toString());
+    @PostMapping("/inform")
+    public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
+        boolean success = competitionService.informUser(model, authManager.getNetId());
+        if (success) {
+            return ResponseEntity.ok("User is informed");
+        } else {
+            return null;
+        }
     }
 }

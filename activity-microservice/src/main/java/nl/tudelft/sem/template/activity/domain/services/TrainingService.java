@@ -2,18 +2,19 @@ package nl.tudelft.sem.template.activity.domain.services;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
-import nl.tudelft.sem.template.activity.domain.exceptions.ActivityNotFoundException;
+import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TrainingService {
+public class TrainingService extends ActivityService {
 
-    private final transient BoatRestService boatRestService;
+    private final transient EventPublisher eventPublisher;
 
     private final transient CompetitionRepository competitionRepository;
 
@@ -22,13 +23,13 @@ public class TrainingService {
     /**
      * Instantiates a new CompetitionService.
      *
-     * @param boatRestService the boat rest service
+     * @param eventPublisher the event publisher for user acceptance
      * @param competitionRepository the repository for competitions
      * @param trainingRepository the repository for trainings
      */
-    public TrainingService(BoatRestService boatRestService, CompetitionRepository competitionRepository,
+    public TrainingService(EventPublisher eventPublisher, CompetitionRepository competitionRepository,
                            TrainingRepository trainingRepository) {
-        this.boatRestService = boatRestService;
+        this.eventPublisher = eventPublisher;
         this.competitionRepository = competitionRepository;
         this.trainingRepository = trainingRepository;
     }
@@ -66,18 +67,16 @@ public class TrainingService {
     }
 
     /**
-     * The method to find a training.
+     * Changes the persisted activity to add the new user (if accepted).
      *
-     * @param netId the netId of the owner
-     * @return the training found
-     * @throws Exception an activityNotFoundException
+     * @param model The request body
+     * @param owner The request sender / owner of the activity
+     * @return if success
      */
-    public Training findTraining(NetId netId) throws Exception {
-        if (trainingRepository.existsByNetId(netId)) {
-            Training training = trainingRepository.findByNetId(netId);
-            return training;
-        }
-        throw new ActivityNotFoundException(netId);
+    public boolean informUser(AcceptRequestModel model, String owner) {
+        boolean success = persistNewCompetition(model, competitionRepository);
+        eventPublisher.publishAcceptance(model.isAccepted(), new NetId(owner), model.getRequestee());
+        return success;
     }
 
 }
