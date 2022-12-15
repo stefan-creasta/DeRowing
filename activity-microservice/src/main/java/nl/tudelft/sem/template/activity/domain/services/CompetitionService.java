@@ -73,8 +73,13 @@ public class CompetitionService extends ActivityService {
      */
     public boolean informUser(AcceptRequestModel model, String owner) {
         boolean success = persistNewCompetition(model, competitionRepository);
-        eventPublisher.publishAcceptance(model.isAccepted(), new NetId(owner), model.getRequestee());
-        return success;
+        if (!success) {
+            return false;
+        }
+        eventPublisher.publishAcceptance(model.isAccepted(), model.getPosition(), model.getRequestee());
+        long boatId = competitionRepository.findById(model.getActivityId()).getBoatId();
+        eventPublisher.publishBoatChange(boatId, model.getPosition());
+        return true;
     }
 
     /**

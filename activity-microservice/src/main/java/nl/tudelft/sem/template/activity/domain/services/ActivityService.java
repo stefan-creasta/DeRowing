@@ -2,14 +2,16 @@ package nl.tudelft.sem.template.activity.domain.services;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Activity;
-import nl.tudelft.sem.template.activity.domain.events.HasEvents;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
-public class ActivityService extends HasEvents {
-
+public class ActivityService {
 
     /** Persists all the changes concerning new accepted attendees in the database.
      *
@@ -33,4 +35,5 @@ public class ActivityService extends HasEvents {
         repository.save(activity);
         return true;
     }
+
 }
