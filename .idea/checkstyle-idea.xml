@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CheckStyle-IDEA" serialisationVersion="2">
     <checkstyleVersion>8.38</checkstyleVersion>
-    <scanScope>JavaOnly</scanScope>
+    <scanScope>AllSourcesWithTests</scanScope>
     <suppressErrors>true</suppressErrors>
     <copyLibs>true</copyLibs>
     <option name="thirdPartyClasspath" />
@@ -11,7 +11,7 @@
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
-        <ConfigurationLocation id="39584a53-978c-4a6b-8148-21878f8cbf08" type="LOCAL_FILE" scope="All" description="SEM">
+        <ConfigurationLocation id="8e0d28aa-9b8d-42f0-83e1-148d2a0b4168" type="LOCAL_FILE" scope="All" description="SEM">
           $PROJECT_DIR$/config/checkstyle/checkstyle.xml
           <option name="properties">
             <map>
