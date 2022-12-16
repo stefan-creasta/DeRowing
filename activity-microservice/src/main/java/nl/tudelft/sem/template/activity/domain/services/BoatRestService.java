@@ -33,7 +33,7 @@ public class BoatRestService extends RestService {
         String url = environment.getProperty("boat.url");
         int port = Integer.parseInt(environment.getProperty("boat.port"));
         try {
-            performRequest(model, url, port, "/boat/join", HttpMethod.POST);
+            performRequest(model, url, port, "/boat/insert", HttpMethod.POST);
             return true;
         } catch (UnsuccessfulRequestException e) {
             System.out.println("Boat microservice seems unavailable");
