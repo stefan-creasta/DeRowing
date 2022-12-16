@@ -1,11 +1,19 @@
 package nl.tudelft.sem.template.user.controllers;
 
 import nl.tudelft.sem.template.user.authentication.AuthManager;
+import nl.tudelft.sem.template.user.domain.NetId;
+import nl.tudelft.sem.template.user.domain.entities.User;
+import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
+import nl.tudelft.sem.template.user.domain.models.UserFindModel;
+import nl.tudelft.sem.template.user.domain.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Hello World example controller.
@@ -13,11 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
  * This controller shows how you can extract information from the JWT token.
  * </p>
  */
-@RequestMapping("/user")
 @RestController
 public class UserController {
 
     private final transient AuthManager authManager;
+
+    private final transient UserService userService;
 
     /**
      * Instantiates a new controller.
@@ -25,8 +34,9 @@ public class UserController {
      * @param authManager Spring Security component used to authenticate and authorize the user
      */
     @Autowired
-    public UserController(AuthManager authManager) {
+    public UserController(AuthManager authManager, UserService userService) {
         this.authManager = authManager;
+        this.userService = userService;
     }
 
     /**
@@ -37,7 +47,38 @@ public class UserController {
     @GetMapping("/hello")
     public ResponseEntity<String> helloWorld() {
         return ResponseEntity.ok("Hello " + authManager.getNetId());
+    }
 
+    /**
+     * the method to create a User.
+     *
+     * @param request   a user create model, which contains all information about the user
+     * @return a user
+     * @throws Exception an already used NetId exception
+     */
+    @PostMapping("/create")
+    public ResponseEntity<String> createUser(@RequestBody UserDetailModel request) throws Exception {
+        try {
+            userService.createUser(request, new NetId(authManager.getNetId()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return ResponseEntity.ok("Congratulations " + authManager.getNetId() + ", you have created your user");
+    }
+
+    /**
+     * the method to find a specific user.
+     *
+     * @param request   the request body of the user finding
+     * @return a user information
+     * @throws Exception a competition not found exception
+     */
+    @GetMapping("/find")
+    public ResponseEntity<String> findCompetitions(@RequestBody UserFindModel request) throws Exception {
+        NetId netId = new NetId(authManager.getNetId());
+        User target = userService.findUser(netId);
+        return ResponseEntity.ok("The user created by " + authManager.getNetId()
+                + " is found. Here is the user: " + target.toString());
     }
 
 }

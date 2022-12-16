@@ -14,7 +14,7 @@ public class UserTest {
 
     @BeforeEach
     public void setup() {
-        sut = new User(new NetId("123"), Gender.MALE, Certificate.PLUS4, "Proteus", Status.PROFESSIONAL);
+        sut = new User(new NetId("123"), Gender.MALE, Certificate.PLUS4, "Proteus", false);
     }
 
     @Test
@@ -25,6 +25,6 @@ public class UserTest {
                         + " Gender: MALE\n"
                         + " Certification: PLUS4\n"
                         + " Organization: Proteus\n"
-                        + " Status: PROFESSIONAL", toString);
+                        + " Status: Professional", toString);
     }
 }

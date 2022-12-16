@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
-import nl.tudelft.sem.template.user.domain.Status;
 
 @MappedSuperclass
 @NoArgsConstructor
@@ -24,7 +23,7 @@ public class User {
     @Column
     private String organization;
     @Column
-    private Status status;
+    private boolean amateur;
 
     /**
      * Constructor for User.
@@ -33,14 +32,14 @@ public class User {
      * @param gender        the gender of the user
      * @param certificate   the certificate of the user
      * @param organization  the organization the user is a part of
-     * @param status        the status of the user (amateur/professional)
+     * @param amateur       whether the user is amateur or not
      */
-    public User(NetId netId, Gender gender, Certificate certificate, String organization, Status status) {
+    public User(NetId netId, Gender gender, Certificate certificate, String organization, boolean amateur) {
         this.netId = netId;
         this.gender = gender;
         this.certificate = certificate;
         this.organization = organization;
-        this.status = status;
+        this.amateur = amateur;
     }
 
     public NetId getNetId() {
@@ -59,8 +58,8 @@ public class User {
         return organization;
     }
 
-    public Status getStatus() {
-        return status;
+    public boolean isAmateur() {
+        return amateur;
     }
 
     public void setNetId(NetId netId) {
@@ -79,8 +78,8 @@ public class User {
         this.organization = organization;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setAmateur(boolean amateur) {
+        this.amateur = amateur;
     }
 
     /**
@@ -92,6 +91,6 @@ public class User {
         return "Your NetId: " + netId.getNetId() + "\n Gender: " + gender.toString() + "\n Certification: "
                 + certificate.toString() +  "\n Organization: "
                 + organization + "\n Status: "
-                + status.toString();
+                + (amateur ? "Amateur" : "Professional");
     }
 }
