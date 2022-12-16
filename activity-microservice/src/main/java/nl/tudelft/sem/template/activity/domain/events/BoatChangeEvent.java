@@ -16,4 +16,20 @@ public class BoatChangeEvent {
         this.boatId = boatId;
         this.position = position;
     }
+
+    public long getBoatId() {
+        return boatId;
+    }
+
+    public void setBoatId(long boatId) {
+        this.boatId = boatId;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 }

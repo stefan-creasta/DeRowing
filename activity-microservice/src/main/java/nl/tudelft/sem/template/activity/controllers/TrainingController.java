@@ -4,6 +4,7 @@ import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.services.TrainingService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,12 +45,11 @@ public class TrainingController {
     @PostMapping("/create")
     public ResponseEntity<String> createTraining(@RequestBody TrainingCreateModel request) throws Exception {
         try {
-            trainingService.createTraining(request, new NetId(authManager.getNetId()));
+            String response = trainingService.createTraining(request, new NetId(authManager.getNetId()));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return ResponseEntity.ok("Done! The Training " + request.getTrainingName()
-                + " is created by " + authManager.getNetId());
     }
 
     /**
@@ -65,6 +65,22 @@ public class TrainingController {
             return ResponseEntity.ok("User is informed");
         } else {
             return null;
+        }
+    }
+
+    /**
+     * A REST-mapping designed to join users to activities.
+     *
+     * @param request the join request
+     * @return status of request
+     */
+    @PostMapping("/join")
+    public ResponseEntity<String> joinTraining(@RequestBody JoinRequestModel request) {
+        try {
+            String response = trainingService.joinTraining(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
+import nl.tudelft.sem.template.activity.domain.Gender;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
@@ -8,6 +9,9 @@ import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseExcep
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +19,25 @@ import org.springframework.stereotype.Service;
 public class CompetitionService extends ActivityService {
 
     private final transient EventPublisher eventPublisher;
-
     private final transient CompetitionRepository competitionRepository;
+    private final transient UserRestService userRestService;
+    private final transient BoatRestService boatRestService;
 
-    public CompetitionService(EventPublisher eventPublisher, CompetitionRepository competitionRepository) {
+
+    /**
+     * Constructor for CompetitionService bean.
+     *
+     * @param eventPublisher the event publisher
+     * @param competitionRepository the competition repository
+     * @param userRestService the user rest service
+     * @param boatRestService the boat rest service
+     */
+    public CompetitionService(EventPublisher eventPublisher, CompetitionRepository competitionRepository,
+                              UserRestService userRestService, BoatRestService boatRestService) {
         this.eventPublisher = eventPublisher;
         this.competitionRepository = competitionRepository;
+        this.userRestService = userRestService;
+        this.boatRestService = boatRestService;
     }
 
     /**
@@ -30,19 +47,18 @@ public class CompetitionService extends ActivityService {
      * @param netId the netId of the requester
      * @return a new Competition
      */
-    public Competition parseRequest(CompetitionCreateModel request, NetId netId) {
+    public Competition parseRequest(CompetitionCreateModel request, NetId netId, long boatId) {
         String competitionName = request.getCompetitionName();
-        long boatId = request.getBoatId();
         long startTime = request.getStartTime();
         boolean allowAmateurs = request.isAllowAmateurs();
         boolean singleOrganization = request.isSingleOrganization();
         GenderConstraint genderConstraint = request.getGenderConstraint();
-
-        Competition competition = new Competition(netId, competitionName, boatId, startTime,
-                allowAmateurs, genderConstraint, singleOrganization);
+        int numPeople = request.getNumPeople();
+        String organization = request.getOrganization();
+        Competition competition = new Competition(netId, competitionName, boatId, startTime, numPeople,
+                allowAmateurs, genderConstraint, singleOrganization, organization);
         return competition;
     }
-
 
     /**
      * Method to create and persist a new Competition.
@@ -52,11 +68,15 @@ public class CompetitionService extends ActivityService {
      * @return a new Competition
      * @throws Exception the already using this netId exception
      */
-    public Competition createCompetition(CompetitionCreateModel request, NetId netId) throws Exception {
+    public String createCompetition(CompetitionCreateModel request, NetId netId) throws Exception {
         try {
-            Competition competition = parseRequest(request, netId);
+            long boatId = boatRestService.getBoatId(request.getType(), request.getNumPeople());
+            if (boatId == -1) {
+                return "Could not contact boat service";
+            }
+            Competition competition = parseRequest(request, netId, boatId);
             competitionRepository.save(competition);
-            return competition;
+            return "Successfully created competition";
         } catch (DataIntegrityViolationException e) {
             throw new NetIdAlreadyInUseException(netId);
         } catch (Exception e) {
@@ -72,7 +92,7 @@ public class CompetitionService extends ActivityService {
      * @return if success
      */
     public boolean informUser(AcceptRequestModel model, String owner) {
-        boolean success = persistNewCompetition(model, competitionRepository);
+        boolean success = persistNewActivity(model, competitionRepository);
         if (!success) {
             return false;
         }
@@ -97,4 +117,38 @@ public class CompetitionService extends ActivityService {
         }
     }
 
+    /**
+     * A method to request to join an activity.
+     *
+     * @param request the join request
+     * @return status of request
+     */
+    public String joinCompetition(JoinRequestModel request) {
+        Competition competition = competitionRepository.findById(request.getActivityId());
+        if (competition == null) {
+            return "this competition ID does not exist";
+        }
+        UserDataRequestModel userData = userRestService.getUserData();
+        if (userData == null) {
+            return "We could not get your user information from the user service";
+        }
+        if (!competition.isAllowAmateurs() && userData.isAmateur()
+            || !checkGender(userData.getGender(), competition.getGenderConstraint())
+            || !userData.getOrganization().equals(competition.getOrganization())) {
+            return "you do not meet the constraints of this competition";
+        }
+        InformJoinRequestModel model = new InformJoinRequestModel();
+        eventPublisher.publishJoining(model.getOwner(), model.getPosition(), model.getActivityId());
+        return "Done! Your request has been processed";
+    }
+
+    private boolean checkGender(Gender gender, GenderConstraint constraint) {
+        if (constraint == GenderConstraint.NO_CONSTRAINT) {
+            return true;
+        }
+        if (constraint == GenderConstraint.ONLY_MALE && gender == Gender.MALE) {
+            return true;
+        }
+        return constraint == GenderConstraint.ONLY_FEMALE && gender == Gender.FEMALE;
+    }
 }

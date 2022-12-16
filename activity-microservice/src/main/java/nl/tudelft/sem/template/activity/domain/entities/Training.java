@@ -8,7 +8,7 @@ import nl.tudelft.sem.template.activity.domain.NetId;
 @NoArgsConstructor
 public class Training extends Activity {
 
-    public Training(NetId netId, String activityName, long boatId, long startTime) {
-        super(netId, activityName, boatId, startTime);
+    public Training(NetId netId, String activityName, long boatId, long startTime, int numPeople) {
+        super(netId, activityName, boatId, startTime, numPeople);
     }
 }

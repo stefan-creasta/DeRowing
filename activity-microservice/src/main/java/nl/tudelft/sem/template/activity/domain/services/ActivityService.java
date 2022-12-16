@@ -4,9 +4,7 @@ import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Activity;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
 public class ActivityService {
@@ -17,7 +15,7 @@ public class ActivityService {
      * @param repository the repository to persist in.
      * @return if succeeded
      */
-    public boolean persistNewCompetition(AcceptRequestModel model, JpaRepository repository) {
+    public boolean persistNewActivity(AcceptRequestModel model, JpaRepository repository) {
         if (!model.isAccepted()) {
             return true;
         }
