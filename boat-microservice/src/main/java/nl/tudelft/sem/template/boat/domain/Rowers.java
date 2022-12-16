@@ -1,12 +1,20 @@
 package nl.tudelft.sem.template.boat.domain;
 
-import java.util.List;
+import javax.persistence.Entity;import javax.persistence.GeneratedValue;import javax.persistence.GenerationType;import javax.persistence.Id;import java.util.HashMap;import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Entity
 public class Rowers {
-    protected Map<Position, List<Rower>> currentRowers;
-    public Rowers(Map<Position, List<Rower>> currentRowers) {
+
+	@Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    long id;
+
+	public Rowers() {}
+
+    protected HashMap<Position, List<Rower>> currentRowers;
+    public Rowers(HashMap<Position, List<Rower>> currentRowers) {
         this.currentRowers = currentRowers;
     }
 

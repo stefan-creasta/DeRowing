@@ -33,7 +33,7 @@ public class Boat {
 
     // TODO: create connection to Users table
     // @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
-    @Convert(converter = RowersAttributeConverter.class)
+    //@Convert(converter = RowersAttributeConverter.class)
     private Rowers rowers;
     @Convert(converter = RequiredRowersAttributeConverter.class)
     private RequiredRowers requiredRowers;
@@ -46,7 +46,7 @@ public class Boat {
     public Boat(String name, Type type, int cox, int coach, int port, int starboard, int sculling) {
         this.name = name;
         this.type = type;
-        Map<Position, List<Rower>> newMapForRowers = new HashMap<>();
+        HashMap<Position, List<Rower>> newMapForRowers = new HashMap<>();
         newMapForRowers.put(Position.COX, new ArrayList<>());
         newMapForRowers.put(Position.COACH, new ArrayList<>());
         newMapForRowers.put(Position.PORT, new ArrayList<>());
