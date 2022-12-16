@@ -5,13 +5,17 @@ import nl.tudelft.sem.template.boat.domain.Boat;
 import nl.tudelft.sem.template.boat.domain.Type;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.repositories.BoatRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @NoArgsConstructor
 public class BoatService extends RestService {
     private transient BoatRepository boatRepository;
 
+    @Autowired
     public BoatService(BoatRepository boatRepository) {
         this.boatRepository = boatRepository;
     }
@@ -48,6 +52,7 @@ public class BoatService extends RestService {
             boatRepository.save(boat);
             return boat;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new Exception("Something went wrong in createBoat");
         }
     }
@@ -60,7 +65,9 @@ public class BoatService extends RestService {
      */
     public Boat findBoatById(Integer id) throws Exception {
         try {
-            return boatRepository.findByBoatId(id);
+            Optional<Boat> boatOptional = boatRepository.findById(id);
+
+            return boatOptional.orElse(null);
         } catch (Exception e) {
             throw new Exception("Something went wrong in findCompetitions");
         }
@@ -76,7 +83,9 @@ public class BoatService extends RestService {
      */
     public Boat findBoatByName(String name) throws Exception {
         try {
-            return boatRepository.findByBoatName(name);
+            Optional<Boat> boatOptional = boatRepository.findByName(name);
+
+            return boatOptional.orElse(null);
         } catch (Exception e) {
             throw new Exception("Something went wrong in findCompetitions");
         }

@@ -4,6 +4,8 @@ import nl.tudelft.sem.template.boat.domain.Boat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface BoatRepository extends JpaRepository<Boat, Integer> {
     /**
@@ -12,7 +14,7 @@ public interface BoatRepository extends JpaRepository<Boat, Integer> {
      * @param id the ID of the Boat
      * @return the boat that has this ID
      */
-    Boat findByBoatId(Integer id);
+    Optional<Boat> findById(Integer id);
 
     /**
      * Find a Boat given a name.
@@ -20,5 +22,5 @@ public interface BoatRepository extends JpaRepository<Boat, Integer> {
      * @param name the name of the Boat
      * @return the boat that has this name
      */
-    Boat findByBoatName(String name);
+    Optional<Boat> findByName(String name);
 }
