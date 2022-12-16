@@ -13,9 +13,9 @@ import java.util.Optional;
 @Service
 @NoArgsConstructor
 public class BoatService extends RestService {
-    private transient BoatRepository boatRepository;
-
     @Autowired
+    private BoatRepository boatRepository;
+
     public BoatService(BoatRepository boatRepository) {
         this.boatRepository = boatRepository;
     }
