@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.boat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Boat microservice application.
