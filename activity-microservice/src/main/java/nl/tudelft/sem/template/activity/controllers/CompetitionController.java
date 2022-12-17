@@ -96,11 +96,11 @@ public class CompetitionController {
      */
     @PostMapping("/inform")
     public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
-        boolean success = competitionService.informUser(model, authManager.getNetId());
-        if (success) {
-            return ResponseEntity.ok("User is informed");
-        } else {
-            return null;
+        try {
+            String status = competitionService.informUser(model);
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error");
         }
     }
 }

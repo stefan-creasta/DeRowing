@@ -88,18 +88,10 @@ public class CompetitionService extends ActivityService {
      * Changes the persisted activity to add the new user (if accepted).
      *
      * @param model The request body
-     * @param owner The request sender / owner of the activity
      * @return if success
      */
-    public boolean informUser(AcceptRequestModel model, String owner) {
-        boolean success = persistNewActivity(model, competitionRepository);
-        if (!success) {
-            return false;
-        }
-        eventPublisher.publishAcceptance(model.isAccepted(), model.getPosition(), model.getRequestee());
-        long boatId = competitionRepository.findById(model.getActivityId()).getBoatId();
-        eventPublisher.publishBoatChange(boatId, model.getPosition());
-        return true;
+    public String informUser(AcceptRequestModel model) {
+        return informUser(model, competitionRepository, eventPublisher);
     }
 
     /**

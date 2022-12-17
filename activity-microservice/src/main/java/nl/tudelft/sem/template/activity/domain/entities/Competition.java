@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 
-@Entity(name = "Activity")
+@Entity(name = "Competition")
 @NoArgsConstructor
 public class Competition extends Activity {
     @Column

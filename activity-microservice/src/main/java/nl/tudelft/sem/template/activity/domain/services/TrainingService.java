@@ -78,15 +78,10 @@ public class TrainingService extends ActivityService {
      * Changes the persisted activity to add the new user (if accepted).
      *
      * @param model The request body
-     * @param owner The request sender / owner of the activity
      * @return if success
      */
-    public boolean informUser(AcceptRequestModel model, String owner) {
-        boolean success = persistNewActivity(model, trainingRepository);
-        eventPublisher.publishAcceptance(model.isAccepted(), model.getPosition(), model.getRequestee());
-        long boatId = trainingRepository.findById(model.getActivityId()).getBoatId();
-        eventPublisher.publishBoatChange(boatId, model.getPosition());
-        return success;
+    public String informUser(AcceptRequestModel model) {
+        return informUser(model, trainingRepository, eventPublisher);
     }
 
     /**
