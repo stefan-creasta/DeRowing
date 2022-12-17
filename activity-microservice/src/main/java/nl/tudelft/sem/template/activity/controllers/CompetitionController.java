@@ -4,19 +4,17 @@ import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Hello World example controller.
@@ -107,14 +105,14 @@ public class CompetitionController {
     /**
      * The method to cancel a specified competition.
      *
-     * @param id The id of the specified competition.
+     * @param activityCancelModel The id of the specified competition.
      * @return a message with the status
      * @throws Exception The exception to be thrown when facing internal error
      */
     @PostMapping("/cancel")
-    public ResponseEntity<String> cancelCompetition(@RequestBody long id) throws Exception {
+    public ResponseEntity<String> cancelCompetition(@RequestBody ActivityCancelModel activityCancelModel) throws Exception {
         try {
-            String status = competitionService.deleteCompetition(id);
+            String status = competitionService.deleteCompetition(activityCancelModel.getId());
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error");
