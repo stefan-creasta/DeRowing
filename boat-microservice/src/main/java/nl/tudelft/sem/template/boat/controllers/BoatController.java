@@ -52,14 +52,14 @@ public class BoatController {
     }
 
     /**
-     * the method to create a competition.
+     * the method to create a boat.
      *
-     * @param request   a competition create model, which contains all information about the competition
-     * @return a competition
-     * @throws Exception an already used NetId exception
+     * @param request a boat create model, which contains all information about the boat
+     * @return a boat
+     * @throws Exception the boat cannot be created
      */
     @PostMapping("/create")
-    public ResponseEntity<String> createCompetition(@RequestBody BoatCreateModel request) throws Exception {
+    public ResponseEntity<String> createBoat(@RequestBody BoatCreateModel request) throws Exception {
         try {
             boatService.createBoat(request);
         } catch (Exception e) {
@@ -70,17 +70,17 @@ public class BoatController {
     }
 
     /**
-     * the method to find a specific competition.
+     * the method to find a specific boat.
      *
-     * @param request   the request body of the competition finding
-     * @return a competition information
-     * @throws Exception a competition not found exception
+     * @param request   the request body of the boat finding
+     * @return a boat information
+     * @throws Exception a boat not found exception
      */
     @GetMapping("/find")
     public ResponseEntity<String> findBoatByName(@RequestBody BoatFindModel request) throws Exception {
         String name = request.getName();
         Boat target = boatService.findBoatByName(name);
-        return ResponseEntity.ok("The competition created by " + authManager.getNetId()
-                + " is found. Here is the competition: " + target.toString());
+        return ResponseEntity.ok("The boat created by " + authManager.getNetId()
+                + " is found. Here is the boat: " + target.toString());
     }
 }
