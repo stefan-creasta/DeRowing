@@ -22,6 +22,7 @@ public class Boat {
      */
     @Id
     @Column(name = "id", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     //@Id
@@ -33,7 +34,7 @@ public class Boat {
 
     // TODO: create connection to Users table
     // @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
-    //@Convert(converter = RowersAttributeConverter.class)
+    @Convert(converter = RowersAttributeConverter.class)
     private Rowers rowers;
     @Convert(converter = RequiredRowersAttributeConverter.class)
     private RequiredRowers requiredRowers;

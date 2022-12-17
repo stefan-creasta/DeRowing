@@ -14,9 +14,18 @@ public class Rowers {
 	public Rowers() {}
 
     protected HashMap<Position, List<Rower>> currentRowers;
+
     public Rowers(HashMap<Position, List<Rower>> currentRowers) {
         this.currentRowers = currentRowers;
     }
+
+	public HashMap<Position, List<Rower>> getCurrentRowers() {
+    		return currentRowers;
+	}
+
+	public void setCurrentRowers(HashMap<Position, List<Rower>> currentRowers) {
+		this.currentRowers = currentRowers;
+	}
 
     @Override
     public boolean equals(Object o) {
