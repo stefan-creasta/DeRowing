@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -97,6 +98,40 @@ public class CompetitionController {
     public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
         try {
             String status = competitionService.informUser(model);
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error");
+        }
+    }
+
+    /**
+     * The method to cancel a specified competition.
+     *
+     * @param id The id of the specified competition.
+     * @return a message with the status
+     * @throws Exception The exception to be thrown when facing internal error
+     */
+    @PostMapping("/cancel")
+    public ResponseEntity<String> cancelCompetition(@RequestBody long id) throws Exception {
+        try {
+            String status = competitionService.deleteCompetition(id);
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error");
+        }
+    }
+
+    /**
+     * The method to edit a specified competition.
+     *
+     * @param request The request which contains all information about the competition to be edited.
+     * @return A message showing the result of edition.
+     * @throws Exception An exception to show the internal error.
+     */
+    @PostMapping("/edit")
+    public ResponseEntity<String> editCompetition(@RequestBody CompetitionEditModel request) throws Exception {
+        try {
+            String status = competitionService.editCompetition(request);
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error");

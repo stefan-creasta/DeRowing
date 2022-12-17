@@ -83,4 +83,6 @@ public class TrainingController {
             return ResponseEntity.ok("Internal error");
         }
     }
+
+
 }

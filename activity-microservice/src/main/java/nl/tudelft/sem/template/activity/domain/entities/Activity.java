@@ -110,6 +110,10 @@ public abstract class Activity {
         this.owner = owner;
     }
 
+    public void setNumPeople(int numPeople) {
+        this.numPeople = numPeople;
+    }
+
     /**
      * A method provide string format information.
      *
