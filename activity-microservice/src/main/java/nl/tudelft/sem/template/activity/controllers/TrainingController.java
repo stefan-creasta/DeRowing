@@ -48,7 +48,7 @@ public class TrainingController {
             String response = trainingService.createTraining(request, new NetId(authManager.getNetId()));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.ok("Internal error");
         }
     }
 
@@ -60,11 +60,11 @@ public class TrainingController {
      */
     @PostMapping("/inform")
     public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
-        boolean success = trainingService.informUser(model, authManager.getNetId());
-        if (success) {
-            return ResponseEntity.ok("User is informed");
-        } else {
-            return null;
+        try {
+            String status = trainingService.informUser(model);
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error");
         }
     }
 
@@ -80,7 +80,7 @@ public class TrainingController {
             String response = trainingService.joinTraining(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.ok("Internal error");
         }
     }
 }

@@ -20,7 +20,7 @@ public class BoatChangeListener {
     }
 
     @EventListener
-    public void onUserAcceptance(BoatChangeEvent event) {
+    public void onBoatChange(BoatChangeEvent event) {
         boatRestService.informBoatOfJoining(event);
     }
 
