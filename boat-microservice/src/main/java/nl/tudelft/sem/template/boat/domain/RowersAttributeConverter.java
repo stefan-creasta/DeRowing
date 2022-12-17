@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.boat.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 

@@ -1,10 +1,9 @@
 package nl.tudelft.sem.template.boat.repositories;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.boat.domain.Boat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public interface BoatRepository extends JpaRepository<Boat, Integer> {

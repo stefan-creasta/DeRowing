@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.boat.services;
 
+import java.util.Optional;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.boat.domain.Boat;
 import nl.tudelft.sem.template.boat.domain.Type;
@@ -7,8 +8,6 @@ import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.repositories.BoatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @NoArgsConstructor

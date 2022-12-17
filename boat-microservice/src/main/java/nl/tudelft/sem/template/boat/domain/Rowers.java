@@ -1,21 +1,21 @@
 package nl.tudelft.sem.template.boat.domain;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class Rowers {
 
-	@Id
+    @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     long id;
 
-	public Rowers() {}
+    public Rowers() {}
 
     protected HashMap<Position, List<Rower>> currentRowers;
 
@@ -23,13 +23,13 @@ public class Rowers {
         this.currentRowers = currentRowers;
     }
 
-	public HashMap<Position, List<Rower>> getCurrentRowers() {
-    		return currentRowers;
-	}
+    public HashMap<Position, List<Rower>> getCurrentRowers() {
+        return currentRowers;
+    }
 
-	public void setCurrentRowers(HashMap<Position, List<Rower>> currentRowers) {
-		this.currentRowers = currentRowers;
-	}
+    public void setCurrentRowers(HashMap<Position, List<Rower>> currentRowers) {
+        this.currentRowers = currentRowers;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -42,6 +42,7 @@ public class Rowers {
         Rowers rr = (Rowers) o;
         return Objects.equals(currentRowers, rr.currentRowers);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(this.currentRowers);
