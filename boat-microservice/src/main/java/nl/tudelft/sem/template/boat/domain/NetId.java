@@ -1,11 +1,9 @@
-package nl.tudelft.sem.template.user.domain;
+package nl.tudelft.sem.template.boat.domain;
 
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Embeddable;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Embeddable
 public class NetId implements Serializable {
     public static final long serialVersionUID = 4328743L;
@@ -15,12 +13,12 @@ public class NetId implements Serializable {
         this.netIdValue = netId;
     }
 
-    public String getNetId() {
+    public String getNetIdValue() {
         return netIdValue;
     }
 
-    public void setNetId(String netId) {
-        this.netIdValue = netId;
+    public void setNetIdValue(String netIdValue) {
+        this.netIdValue = netIdValue;
     }
 
     @Override

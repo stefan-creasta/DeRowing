@@ -1,13 +1,13 @@
-package nl.tudelft.sem.template.user.domain;
+package nl.tudelft.sem.template.boat.domain;
 
-public enum Certificate {
+public enum Type {
     C4(1),
     PLUS4(2),
     PLUS8(3);
 
     public final int value;
 
-    Certificate(int value) {
+    Type(int value) {
         this.value = value;
     }
 }
