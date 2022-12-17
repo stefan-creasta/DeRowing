@@ -17,7 +17,7 @@ import javax.sql.DataSource;
  * The H2 config.
  */
 @Configuration
-@EnableJpaRepositories("nl.tudelft.sem.template.boat.domain")
+@EnableJpaRepositories("nl.tudelft.sem.template.boat.repositories")
 @PropertySource("classpath:application-dev.properties")
 @EnableTransactionManagement
 public class H2Config {
