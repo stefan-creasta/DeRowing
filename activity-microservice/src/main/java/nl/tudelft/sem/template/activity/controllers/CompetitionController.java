@@ -2,10 +2,10 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
-import nl.tudelft.sem.template.activity.models.CompetitionFindModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -62,26 +63,43 @@ public class CompetitionController {
     @PostMapping("/create")
     public ResponseEntity<String> createCompetition(@RequestBody CompetitionCreateModel request) throws Exception {
         try {
-            competitionService.createCompetition(request, new NetId(authManager.getNetId()));
+            String status = competitionService.createCompetition(request, new NetId(authManager.getNetId()));
+            return ResponseEntity.ok(status);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.ok("Internal error");
         }
-        return ResponseEntity.ok("Done! The competition " + request.getCompetitionName()
-                + " is created by " + authManager.getNetId());
+    }
+
+
+    /**
+     * Mapping to join a competition.
+     *
+     * @param request the join request model
+     * @return a string informing status
+     */
+    @PostMapping("/join")
+    public ResponseEntity<String> joinCompetition(@RequestBody JoinRequestModel request) {
+        try {
+            String response = competitionService.joinCompetition(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error");
+        }
     }
 
     /**
-     * the method to find a specific competition.
+     * A REST-mapping designed to accept / reject users from activities.
      *
-     * @param request   the request body of the competition finding
-     * @return a competition information
-     * @throws Exception a competition not found exception
+     * @param model The request body
+     * @return A string informing success
      */
-    @GetMapping("/find")
-     public ResponseEntity<String> findCompetitions(@RequestBody CompetitionFindModel request) throws Exception {
-        NetId netId = new NetId(authManager.getNetId());
-        Competition target = competitionService.findCompetitions(netId);
-        return ResponseEntity.ok("The competition created by " + authManager.getNetId()
-                + " is found. Here is the competition: " + target.toString());
+    @PostMapping("/inform")
+    public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
+        try {
+            String status = competitionService.informUser(model);
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error");
+        }
     }
 }
