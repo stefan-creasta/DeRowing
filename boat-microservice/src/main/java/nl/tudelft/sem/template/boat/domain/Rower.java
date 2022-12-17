@@ -12,5 +12,5 @@ public class Rower {
     private NetId netId;
 
     @Column
-    private Certificate certificate;
+    private Type certificate;
 }

@@ -5,11 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.Convert;
+import javax.persistence.GenerationType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 
 @Entity
 @Table(name = "boats")
@@ -33,7 +40,6 @@ public class Boat {
     private Type type;
 
     // TODO: create connection to Users table
-    // @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
     @Convert(converter = RowersAttributeConverter.class)
     private Rowers rowers;
     @Convert(converter = RequiredRowersAttributeConverter.class)
