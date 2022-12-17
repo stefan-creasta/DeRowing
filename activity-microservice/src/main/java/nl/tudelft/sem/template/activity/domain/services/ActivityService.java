@@ -2,14 +2,12 @@ package nl.tudelft.sem.template.activity.domain.services;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Activity;
-import nl.tudelft.sem.template.activity.domain.events.HasEvents;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
-public class ActivityService extends HasEvents {
-
+public class ActivityService {
 
     /** Persists all the changes concerning new accepted attendees in the database.
      *
@@ -17,7 +15,7 @@ public class ActivityService extends HasEvents {
      * @param repository the repository to persist in.
      * @return if succeeded
      */
-    public boolean persistNewCompetition(AcceptRequestModel model, JpaRepository repository) {
+    public boolean persistNewActivity(AcceptRequestModel model, JpaRepository repository) {
         if (!model.isAccepted()) {
             return true;
         }
@@ -33,4 +31,5 @@ public class ActivityService extends HasEvents {
         repository.save(activity);
         return true;
     }
+
 }

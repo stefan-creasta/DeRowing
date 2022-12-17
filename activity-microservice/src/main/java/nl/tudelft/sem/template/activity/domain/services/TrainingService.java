@@ -4,10 +4,12 @@ import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
-import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +17,24 @@ import org.springframework.stereotype.Service;
 public class TrainingService extends ActivityService {
 
     private final transient EventPublisher eventPublisher;
-
-    private final transient CompetitionRepository competitionRepository;
-
+    private final transient UserRestService userRestService;
     private final transient TrainingRepository trainingRepository;
+    private final transient BoatRestService boatRestService;
 
     /**
      * Instantiates a new CompetitionService.
      *
      * @param eventPublisher the event publisher for user acceptance
-     * @param competitionRepository the repository for competitions
+     * @param userRestService the user rest service
      * @param trainingRepository the repository for trainings
+     * @param boatRestService the boat rest service
      */
-    public TrainingService(EventPublisher eventPublisher, CompetitionRepository competitionRepository,
-                           TrainingRepository trainingRepository) {
+    public TrainingService(EventPublisher eventPublisher, UserRestService userRestService,
+                           TrainingRepository trainingRepository, BoatRestService boatRestService) {
         this.eventPublisher = eventPublisher;
-        this.competitionRepository = competitionRepository;
+        this.userRestService = userRestService;
         this.trainingRepository = trainingRepository;
+        this.boatRestService = boatRestService;
     }
 
     /**
@@ -41,8 +44,9 @@ public class TrainingService extends ActivityService {
      * @param netId the netId of the requester
      * @return a new Training
      */
-    public Training parseRequest(TrainingCreateModel request, NetId netId) {
-        return new Training(netId, request.getTrainingName(), request.getBoatId(), request.getStartTime());
+    public Training parseRequest(TrainingCreateModel request, NetId netId, long boatId) {
+        return new Training(netId, request.getTrainingName(), boatId,
+                request.getStartTime(), request.getNumPeople());
     }
 
 
@@ -54,11 +58,15 @@ public class TrainingService extends ActivityService {
      * @return a new training
      * @throws Exception the already using this netId exception
      */
-    public Training createTraining(TrainingCreateModel request, NetId netId) throws Exception {
+    public String createTraining(TrainingCreateModel request, NetId netId) throws Exception {
         try {
-            Training training = parseRequest(request, netId);
+            long boatId = boatRestService.getBoatId(request.getType(), request.getNumPeople());
+            if (boatId == -1) {
+                return "Could not contact boat service";
+            }
+            Training training = parseRequest(request, netId, boatId);
             trainingRepository.save(training);
-            return training;
+            return "Training successfully created";
         } catch (DataIntegrityViolationException e) {
             throw new NetIdAlreadyInUseException(netId);
         } catch (Exception e) {
@@ -74,9 +82,30 @@ public class TrainingService extends ActivityService {
      * @return if success
      */
     public boolean informUser(AcceptRequestModel model, String owner) {
-        boolean success = persistNewCompetition(model, competitionRepository);
-        eventPublisher.publishAcceptance(model.isAccepted(), new NetId(owner), model.getRequestee());
+        boolean success = persistNewActivity(model, trainingRepository);
+        eventPublisher.publishAcceptance(model.isAccepted(), model.getPosition(), model.getRequestee());
+        long boatId = trainingRepository.findById(model.getActivityId()).getBoatId();
+        eventPublisher.publishBoatChange(boatId, model.getPosition());
         return success;
     }
 
+    /**
+     * A method to request to join an activity.
+     *
+     * @param request the join request
+     * @return status of request
+     */
+    public String joinTraining(JoinRequestModel request) {
+        Training training = trainingRepository.findById(request.getActivityId());
+        if (training == null) {
+            return "this competition ID does not exist";
+        }
+        UserDataRequestModel userData = userRestService.getUserData();
+        if (userData == null) {
+            return "We could not get your user information from the user service";
+        }
+        InformJoinRequestModel model = new InformJoinRequestModel();
+        eventPublisher.publishJoining(model.getOwner(), model.getPosition(), model.getActivityId());
+        return "Done! Your request has been processed";
+    }
 }

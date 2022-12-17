@@ -33,6 +33,8 @@ public abstract class Activity {
     private long boatId;
     @Column(name = "startTime")
     private long startTime;
+    @Column(name = "numPeople")
+    private int numPeople;
 
 
     /**
@@ -42,12 +44,14 @@ public abstract class Activity {
      * @param activityName the name of the activity
      * @param boatId    the id of the boat
      * @param startTime the start time of the activity
+     * @param numPeople the number of people in the boat
      */
-    public Activity(NetId netId, String activityName, long boatId, long startTime) {
+    public Activity(NetId netId, String activityName, long boatId, long startTime, int numPeople) {
         this.owner = netId;
         this.activityName = activityName;
         this.boatId = boatId;
         this.startTime = startTime;
+        this.numPeople = numPeople;
     }
 
     public NetId getNetId() {
@@ -98,13 +102,21 @@ public abstract class Activity {
         this.attendees = attendees;
     }
 
+    public NetId getOwner() {
+        return owner;
+    }
+
+    public void setOwner(NetId owner) {
+        this.owner = owner;
+    }
+
     /**
      * A method provide string format information.
      *
      * @return a string contains information about the activity.
      */
     public String toString() {
-        return "The competition is created by: " + owner.getNetId() + "\n The name is: "
+        return "The Activity is created by: " + owner.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
     }

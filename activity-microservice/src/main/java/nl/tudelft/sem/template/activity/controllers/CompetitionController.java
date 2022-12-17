@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -69,6 +71,22 @@ public class CompetitionController {
                 + " is created by " + authManager.getNetId());
     }
 
+
+    /**
+     * Mapping to join a competition.
+     *
+     * @param request the join request model
+     * @return a string informing status
+     */
+    @PostMapping("/join")
+    public ResponseEntity<String> joinCompetition(@RequestBody JoinRequestModel request) {
+        try {
+            String response = competitionService.joinCompetition(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 
     /**
      * A REST-mapping designed to accept / reject users from activities.

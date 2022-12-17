@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
 import nl.tudelft.sem.template.activity.domain.events.UserAcceptanceEvent;
+import nl.tudelft.sem.template.activity.domain.events.UserJoinEvent;
 import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
+import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -29,6 +32,43 @@ public class UserRestService extends RestService {
         int port = Integer.parseInt(environment.getProperty("user.port"));
         try {
             performRequest(model, url, port, "/update", HttpMethod.POST);
+            return true;
+        } catch (UnsuccessfulRequestException e) {
+            System.out.println("User microservice seems unavailable");
+            return false;
+        }
+    }
+
+    /**
+     * Sends a HTTP request to the USER microservice to retrieve user data.
+     *
+     * @return the user data
+     */
+    public UserDataRequestModel getUserData() {
+        String url = environment.getProperty("user.url");
+        int port = Integer.parseInt(environment.getProperty("user.port"));
+        try {
+            UserDataRequestModel userData =
+                    (UserDataRequestModel)
+                            performRequest(null, url, port, "/getdetails", HttpMethod.POST);
+            return userData;
+        } catch (UnsuccessfulRequestException e) {
+            System.out.println("User microservice seems unavailable");
+            return null;
+        }
+    }
+
+    /**
+     * A REST call to the user microservice to inform them of a user joining a boat.
+     *
+     * @param model inform the user microservice that a user wants to join.
+     * @return is successful
+     */
+    public boolean userJoinRequest(UserJoinEvent model) {
+        String url = environment.getProperty("user.url");
+        int port = Integer.parseInt(environment.getProperty("user.port"));
+        try {
+            performRequest(model, url, port, "/join", HttpMethod.POST);
             return true;
         } catch (UnsuccessfulRequestException e) {
             System.out.println("User microservice seems unavailable");
