@@ -63,12 +63,11 @@ public class CompetitionController {
     @PostMapping("/create")
     public ResponseEntity<String> createCompetition(@RequestBody CompetitionCreateModel request) throws Exception {
         try {
-            competitionService.createCompetition(request, new NetId(authManager.getNetId()));
+            String status = competitionService.createCompetition(request, new NetId(authManager.getNetId()));
+            return ResponseEntity.ok(status);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.ok("Internal error");
         }
-        return ResponseEntity.ok("Done! The competition " + request.getCompetitionName()
-                + " is created by " + authManager.getNetId());
     }
 
 
@@ -84,7 +83,7 @@ public class CompetitionController {
             String response = competitionService.joinCompetition(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.ok("Internal error");
         }
     }
 
