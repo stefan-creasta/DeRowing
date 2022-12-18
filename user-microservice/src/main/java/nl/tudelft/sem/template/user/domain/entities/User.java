@@ -1,16 +1,13 @@
 package nl.tudelft.sem.template.user.domain.entities;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
 
-@MappedSuperclass
 @NoArgsConstructor
+@Entity
 public class User {
 
     @Id

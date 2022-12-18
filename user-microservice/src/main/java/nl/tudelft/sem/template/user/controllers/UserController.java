@@ -2,10 +2,11 @@ package nl.tudelft.sem.template.user.controllers;
 
 import nl.tudelft.sem.template.user.authentication.AuthManager;
 import nl.tudelft.sem.template.user.domain.NetId;
-import nl.tudelft.sem.template.user.domain.entities.User;
+import nl.tudelft.sem.template.user.domain.entities.Message;import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
 import nl.tudelft.sem.template.user.domain.models.UserFindModel;
 import nl.tudelft.sem.template.user.domain.services.UserService;
+import nl.tudelft.sem.template.user.models.UserAcceptanceUpdateModel;import nl.tudelft.sem.template.user.models.UserJoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ResponseStatusException;import java.util.List;
 
 /**
  * Hello World example controller.
@@ -81,4 +82,45 @@ public class UserController {
                 + " is found. Here is the user: " + target.toString());
     }
 
+	@PostMapping("/join")
+	public ResponseEntity<String> saveMessage(@RequestBody UserJoinRequestModel userJoinRequest) throws Exception {
+		String content = authManager.getNetId() + " wants to join this competition/training session";
+		userService.saveMessage(userJoinRequest.getOwner(),
+							new NetId(authManager.getNetId()),
+							userJoinRequest.getActivityId(),
+							content,
+							userJoinRequest.getPosition());
+		return ResponseEntity.ok("The message is successfully saved");
+	}
+
+	@GetMapping("/notifications")
+	public ResponseEntity<List<Message>> getNotifications() throws Exception{
+		List<Message> notifications = userService.getNotifications(new NetId(authManager.getNetId()));
+		return ResponseEntity.ok(notifications);
+	}
+
+	@GetMapping("/getdetails")
+	public ResponseEntity<User> getUserDetails() throws Exception {
+		User user = userService.getUserDetail(new NetId(authManager.getNetId()));
+		return ResponseEntity.ok(user);
+	}
+
+	@PostMapping("/update")
+	public ResponseEntity<String> sendDecisionOfOwnerToRequester(@RequestBody UserAcceptanceUpdateModel
+											userAcceptanceUpdateModel) throws Exception {
+		String content = "";
+		if(userAcceptanceUpdateModel.isAccepted()) {
+			content += authManager.getNetId() + " accepted your request";
+		}
+		else {
+			content += authManager.getNetId() + " did not accept your request";
+		}
+
+		userService.saveMessage(userAcceptanceUpdateModel.getEventRequester(),
+								new NetId(authManager.getNetId()),
+								0,
+								content,
+								userAcceptanceUpdateModel.getPosition());
+		return ResponseEntity.ok("The message is successfully saved");
+	}
 }
