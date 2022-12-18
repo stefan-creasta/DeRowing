@@ -3,12 +3,16 @@ package nl.tudelft.sem.template.user.domain.services;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
-import nl.tudelft.sem.template.user.domain.Position;import nl.tudelft.sem.template.user.domain.entities.Message;import nl.tudelft.sem.template.user.domain.entities.User;
+import nl.tudelft.sem.template.user.domain.Position;
+import nl.tudelft.sem.template.user.domain.entities.Message;
+import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
-import nl.tudelft.sem.template.user.domain.repositories.MessageRepository;import nl.tudelft.sem.template.user.domain.repositories.UserRepository;
+import nl.tudelft.sem.template.user.domain.repositories.MessageRepository;
+import nl.tudelft.sem.template.user.domain.repositories.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;import java.util.List;
+import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -94,6 +98,12 @@ public class UserService {
 		}
 	}
 
+	/**
+	*
+	* @param netId
+	* @return
+	* @throws Exception
+	*/
 	public List<Message> getNotifications(NetId netId) throws Exception {
 		return messageRepository.findMessagesByNetId(netId.getNetId());
 	}

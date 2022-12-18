@@ -1,10 +1,15 @@
 package nl.tudelft.sem.template.user.domain.entities;
 
-
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;import nl.tudelft.sem.template.user.domain.NetId;import nl.tudelft.sem.template.user.domain.Position;
-import javax.persistence.*;
+import nl.tudelft.sem.template.user.domain.Position;
+import javax.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.EnumType;
 
 @Table(name = "message")
 @Entity
@@ -14,19 +19,14 @@ public class Message {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-
 	@Column
 	private String receiver;
-
 	@Column
 	private String sender;
-
 	@Column
 	private long activityId;
-
 	@Column
 	String content;
-
 	@Column
 	@Enumerated(EnumType.STRING)
 	Position position;
@@ -55,6 +55,7 @@ public class Message {
 	public String getContent() {
 		return content;
 	}
+
 	public void setContent(String content) {
 		this.content = content;
 	}

@@ -2,11 +2,13 @@ package nl.tudelft.sem.template.user.controllers;
 
 import nl.tudelft.sem.template.user.authentication.AuthManager;
 import nl.tudelft.sem.template.user.domain.NetId;
-import nl.tudelft.sem.template.user.domain.entities.Message;import nl.tudelft.sem.template.user.domain.entities.User;
+import nl.tudelft.sem.template.user.domain.entities.Message;
+import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
 import nl.tudelft.sem.template.user.domain.models.UserFindModel;
 import nl.tudelft.sem.template.user.domain.services.UserService;
-import nl.tudelft.sem.template.user.models.UserAcceptanceUpdateModel;import nl.tudelft.sem.template.user.models.UserJoinRequestModel;
+import nl.tudelft.sem.template.user.models.UserAcceptanceUpdateModel;
+import nl.tudelft.sem.template.user.models.UserJoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 /**
  * Hello World example controller.
@@ -111,8 +114,7 @@ public class UserController {
 		String content = "";
 		if(userAcceptanceUpdateModel.isAccepted()) {
 			content += authManager.getNetId() + " accepted your request";
-		}
-		else {
+		} else {
 			content += authManager.getNetId() + " did not accept your request";
 		}
 
