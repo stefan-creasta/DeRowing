@@ -88,7 +88,7 @@ public class BoatController {
 
 
     /**
-     * the method to insert a certain user in a boat for a specific position
+     * the method to insert a certain user in a boat for a specific position.
      *
      * @param request the request body of the insertion
      * @return information regarding the insertion
@@ -97,7 +97,7 @@ public class BoatController {
     @PostMapping("/insert")
     public ResponseEntity<String> insertRower(@RequestBody BoatRowerEdit request) throws Exception {
         try {
-            int id = (int)request.getBoatId();
+            int id = (int) request.getBoatId();
             Boat target = boatService.findBoatById(id);
             NetId netId = request.getNetId();
             target.addRowerToPosition(request.getPosition(), netId);
@@ -109,7 +109,7 @@ public class BoatController {
     }
 
     /**
-     * the method to remove a certain user in a boat for a specific position
+     * the method to remove a certain user in a boat for a specific position.
      *
      * @param request the request body of the removal
      * @return information regarding the removal
@@ -118,7 +118,7 @@ public class BoatController {
     @PostMapping("/remove")
     public ResponseEntity<String> removeRower(@RequestBody BoatRowerEdit request) throws Exception {
         try {
-            int id = (int)request.getBoatId();
+            int id = (int) request.getBoatId();
             Boat target = boatService.findBoatById(id);
             NetId netId = request.getNetId();
             target.removeRower(netId);
