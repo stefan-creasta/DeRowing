@@ -64,13 +64,13 @@ class BoatTest {
     }
 
     @Test
-    void canRowerBeAddedFalseType() {
-        Boat boat = new Boat("boat", Type.PLUS4, 1, 1, 1, 1, 1);
-        assertFalse(boat.canRowerBeAdded(Position.SCULLING));
+    void canRowerBeAddedFalsePosition() {
+        Boat boat = new Boat("boat", Type.PLUS4, 0, 1, 1, 1, 1);
+        assertFalse(boat.canRowerBeAdded(Position.COX));
     }
 
     @Test
-    void canRowerBeAddedFalsePosition() {
+    void canRowerBeAddedFalsePosition2() {
         Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 0);
         assertFalse(boat.canRowerBeAdded(Position.SCULLING));
     }
