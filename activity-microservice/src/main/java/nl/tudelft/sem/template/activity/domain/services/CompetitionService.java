@@ -123,7 +123,8 @@ public class CompetitionService extends ActivityService {
     public String joinCompetition(JoinRequestModel request) {
         Competition competition = competitionRepository.findById(request.getActivityId());
         long startTime = competition.getStartTime();
-        if ((startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 86400000) {
+        boolean isInOneDay = (startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 86400000;
+        if (isInOneDay) {
             return "Sorry you can't join this competition since it will start in one day.";
         }
         if (competition == null) {

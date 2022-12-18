@@ -50,7 +50,7 @@ public class TrainingController {
             String response = trainingService.createTraining(request, new NetId(authManager.getNetId()));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when creating training.");
         }
     }
 
@@ -66,7 +66,7 @@ public class TrainingController {
             String status = trainingService.informUser(model);
             return ResponseEntity.ok(status);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when informing user.");
         }
     }
 
@@ -82,7 +82,7 @@ public class TrainingController {
             String response = trainingService.joinTraining(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when joining training.");
         }
     }
 
@@ -98,7 +98,7 @@ public class TrainingController {
             String response = trainingService.editTraining(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when editing training.");
         }
     }
 
@@ -114,7 +114,7 @@ public class TrainingController {
             String response = trainingService.deleteTraining(activityCancelModel.getId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when canceling training.");
         }
     }
 

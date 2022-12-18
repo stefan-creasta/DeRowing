@@ -65,7 +65,7 @@ public class CompetitionController {
             String status = competitionService.createCompetition(request, new NetId(authManager.getNetId()));
             return ResponseEntity.ok(status);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when creating the competition.");
         }
     }
 
@@ -82,7 +82,7 @@ public class CompetitionController {
             String response = competitionService.joinCompetition(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when joining the competition.");
         }
     }
 
@@ -98,7 +98,7 @@ public class CompetitionController {
             String status = competitionService.informUser(model);
             return ResponseEntity.ok(status);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when informing users.");
         }
     }
 
@@ -115,7 +115,7 @@ public class CompetitionController {
             String status = competitionService.deleteCompetition(activityCancelModel.getId());
             return ResponseEntity.ok(status);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when canceling the competition.");
         }
     }
 
@@ -132,7 +132,7 @@ public class CompetitionController {
             String status = competitionService.editCompetition(request);
             return ResponseEntity.ok(status);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when editing competition.");
         }
     }
 }

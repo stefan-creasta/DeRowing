@@ -99,7 +99,8 @@ public class TrainingService extends ActivityService {
     public String joinTraining(JoinRequestModel request) {
         Training training = trainingRepository.findById(request.getActivityId());
         long startTime = training.getStartTime();
-        if ((startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 86400000) {
+        boolean isInOneDay = (startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 86400000;
+        if (isInOneDay) {
             return "Sorry you can't join this training since it will start in one day.";
         }
         if (training == null) {
