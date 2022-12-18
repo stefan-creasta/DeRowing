@@ -13,6 +13,10 @@ public class NetId implements Serializable {
         this.netIdValue = netId;
     }
 
+    public NetId() {
+
+    }
+
     public String getNetIdValue() {
         return netIdValue;
     }
