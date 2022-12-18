@@ -140,7 +140,12 @@ public class TrainingService extends ActivityService {
         try {
             Training training = findTraining(trainingId);
             trainingRepository.delete(training);
-            return "Successfully deleted the training.";
+            long boatId = training.getBoatId();
+            if (boatRestService.deleteBoat(boatId)) {
+                return "Successfully deleted the training.";
+            } else {
+                return "Boat deletion fail.";
+            }
         } catch (Exception e) {
             throw new Exception("Something went wrong in delete the specified training.");
         }

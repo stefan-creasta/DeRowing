@@ -67,4 +67,22 @@ public class BoatRestService extends RestService {
             return -1;
         }
     }
+
+    /**
+     * The method to delete a boat when delete an activity.
+     *
+     * @param boatId the id of the boat to be deleted
+     * @return a boolean value representing the result
+     */
+    public boolean deleteBoat(long boatId) {
+        String url = environment.getProperty("boat.url");
+        int port = Integer.parseInt(environment.getProperty("boat.port"));
+        try {
+            performRequest(boatId, url, port, "/boat/delete", HttpMethod.POST);
+            return true;
+        } catch (UnsuccessfulRequestException e) {
+            System.out.println("Boat microservice seems unavailable");
+            return false;
+        }
+    }
 }

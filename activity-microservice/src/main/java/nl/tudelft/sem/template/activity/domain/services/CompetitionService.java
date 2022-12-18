@@ -170,8 +170,13 @@ public class CompetitionService extends ActivityService {
     public String deleteCompetition(long competitionId) throws Exception {
         try {
             Competition competition = findCompetitions(competitionId);
-            competitionRepository.delete(competition);
-            return "Successfully deleted the competition";
+            long boatId = competition.getBoatId();
+            if (boatRestService.deleteBoat(boatId)) {
+                competitionRepository.delete(competition);
+                return "Successfully deleted the competition.";
+            } else {
+                return "Boat deletion fail.";
+            }
         } catch (Exception e) {
             throw new Exception("Something went wrong in delete the specified competition.");
         }
