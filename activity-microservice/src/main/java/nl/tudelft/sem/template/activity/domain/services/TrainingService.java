@@ -1,12 +1,12 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Position;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
@@ -46,7 +46,7 @@ public class TrainingService extends ActivityService {
      */
     public Training parseRequest(TrainingCreateModel request, NetId netId, long boatId) {
         return new Training(netId, request.getTrainingName(), boatId,
-                request.getStartTime(), request.getNumPeople());
+                request.getStartTime(), request.getNumPeople(), request.getType());
     }
 
 
@@ -99,8 +99,11 @@ public class TrainingService extends ActivityService {
         if (userData == null) {
             return "We could not get your user information from the user service";
         }
-        InformJoinRequestModel model = new InformJoinRequestModel();
-        eventPublisher.publishJoining(model.getOwner(), model.getPosition(), model.getActivityId());
+        if (request.getPosition() == Position.COX
+                && training.getType().getValue() > userData.getCertificate().getValue()) {
+            return "you do not have the required certificate to be cox";
+        }
+        eventPublisher.publishJoining(training.getOwner(), request.getPosition(), request.getActivityId());
         return "Done! Your request has been processed";
     }
 }

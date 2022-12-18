@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.activity.domain.services;
 import nl.tudelft.sem.template.activity.domain.Gender;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Position;
+import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
@@ -54,9 +56,10 @@ public class CompetitionService extends ActivityService {
         boolean singleOrganization = request.isSingleOrganization();
         GenderConstraint genderConstraint = request.getGenderConstraint();
         int numPeople = request.getNumPeople();
+        Type boatType = request.getType();
         String organization = request.getOrganization();
         Competition competition = new Competition(netId, competitionName, boatId, startTime, numPeople,
-                allowAmateurs, genderConstraint, singleOrganization, organization);
+                allowAmateurs, genderConstraint, singleOrganization, organization, boatType);
         return competition;
     }
 
@@ -78,9 +81,7 @@ public class CompetitionService extends ActivityService {
             competitionRepository.save(competition);
             return "Successfully created competition";
         } catch (DataIntegrityViolationException e) {
-            throw new NetIdAlreadyInUseException(netId);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in createCompetition");
+            return "activity already exists";
         }
     }
 
@@ -126,11 +127,14 @@ public class CompetitionService extends ActivityService {
         }
         if (!competition.isAllowAmateurs() && userData.isAmateur()
             || !checkGender(userData.getGender(), competition.getGenderConstraint())
-            || !userData.getOrganization().equals(competition.getOrganization())) {
+            || (competition.isSingleOrganization() && !userData.getOrganization().equals(competition.getOrganization()))) {
             return "you do not meet the constraints of this competition";
         }
-        InformJoinRequestModel model = new InformJoinRequestModel();
-        eventPublisher.publishJoining(model.getOwner(), model.getPosition(), model.getActivityId());
+        if (request.getPosition() == Position.COX
+                && competition.getType().getValue() > userData.getCertificate().getValue()) {
+            return "you do not have the required certificate to be cox";
+        }
+        eventPublisher.publishJoining(competition.getOwner(), request.getPosition(), request.getActivityId());
         return "Done! Your request has been processed";
     }
 

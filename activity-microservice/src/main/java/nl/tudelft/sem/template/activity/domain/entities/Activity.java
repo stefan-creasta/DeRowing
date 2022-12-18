@@ -12,6 +12,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Type;
 
 @MappedSuperclass
 @NoArgsConstructor
@@ -35,6 +36,8 @@ public abstract class Activity {
     private long startTime;
     @Column(name = "numPeople")
     private int numPeople;
+    @Column(name = "type")
+    private Type type;
 
 
     /**
@@ -45,13 +48,15 @@ public abstract class Activity {
      * @param boatId    the id of the boat
      * @param startTime the start time of the activity
      * @param numPeople the number of people in the boat
+     * @param type the type of the boat
      */
-    public Activity(NetId netId, String activityName, long boatId, long startTime, int numPeople) {
+    public Activity(NetId netId, String activityName, long boatId, long startTime, int numPeople, Type type) {
         this.owner = netId;
         this.activityName = activityName;
         this.boatId = boatId;
         this.startTime = startTime;
         this.numPeople = numPeople;
+        this.type = type;
     }
 
     public NetId getNetId() {
@@ -119,5 +124,13 @@ public abstract class Activity {
         return "The Activity is created by: " + owner.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }
