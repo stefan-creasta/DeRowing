@@ -14,17 +14,17 @@ class BoatTest {
 
     @Test
     void addRowerToPosition() {
-        Map<Position, List<Rower>> rowers = new HashMap<>();
-        Rower rower = new Rower();
-        List<Rower> list = new ArrayList<>();
-        list.add(rower);
+        Map<Position, List<NetId>> rowers = new HashMap<>();
+        NetId netId = new NetId("a");
+        List<NetId> list = new ArrayList<>();
+        list.add(netId);
         rowers.put(Position.COX, list);
         rowers.put(Position.COACH, new ArrayList<>());
         rowers.put(Position.PORT, new ArrayList<>());
         rowers.put(Position.STARBOARD, new ArrayList<>());
         rowers.put(Position.SCULLING, new ArrayList<>());
         Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
-        boat.addRowerToPosition(Position.COX, rower);
+        boat.addRowerToPosition(Position.COX, netId);
         assertEquals(rowers, boat.getRowers());
     }
 
@@ -43,41 +43,41 @@ class BoatTest {
 
     @Test
     void canRemoveRower() {
-        HashMap<Position, List<Rower>> rowers = new HashMap<>();
+        HashMap<Position, List<NetId>> rowers = new HashMap<>();
         rowers.put(Position.COX, new ArrayList<>());
         rowers.put(Position.COACH, new ArrayList<>());
         rowers.put(Position.PORT, new ArrayList<>());
         rowers.put(Position.STARBOARD, new ArrayList<>());
         rowers.put(Position.SCULLING, new ArrayList<>());
-        Rower rower = new Rower();
+        NetId netId = new NetId();
         Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
-        boat.addRowerToPosition(Position.COX, rower);
-        assertTrue(boat.removeRower(rower));
+        boat.addRowerToPosition(Position.COX, netId);
+        assertTrue(boat.removeRower(netId));
         assertEquals(rowers, boat.getRowers());
     }
 
     @Test
     void cannotRemoveRower() {
         Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
-        Rower user = new Rower();
-        assertFalse(boat.removeRower(user));
+        NetId netId = new NetId();
+        assertFalse(boat.removeRower(netId));
     }
 
     @Test
     void canRowerBeAddedFalseType() {
         Boat boat = new Boat("boat", Type.PLUS4, 1, 1, 1, 1, 1);
-        assertFalse(boat.canRowerBeAdded(Type.C4, Position.SCULLING));
+        assertFalse(boat.canRowerBeAdded(Position.SCULLING));
     }
 
     @Test
     void canRowerBeAddedFalsePosition() {
         Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 0);
-        assertFalse(boat.canRowerBeAdded(Type.C4, Position.SCULLING));
+        assertFalse(boat.canRowerBeAdded(Position.SCULLING));
     }
 
     @Test
     void canRowerBeAddedFalsePositionTrue() {
         Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
-        assertTrue(boat.canRowerBeAdded(Type.PLUS4, Position.SCULLING));
+        assertTrue(boat.canRowerBeAdded(Position.SCULLING));
     }
 }

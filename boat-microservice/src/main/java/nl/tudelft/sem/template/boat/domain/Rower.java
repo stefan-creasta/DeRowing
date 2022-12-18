@@ -10,7 +10,4 @@ public class Rower {
     @Id
     @EmbeddedId
     private NetId netId;
-
-    @Column
-    private Type certificate;
 }
