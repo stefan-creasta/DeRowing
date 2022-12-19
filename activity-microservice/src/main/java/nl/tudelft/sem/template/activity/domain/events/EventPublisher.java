@@ -2,11 +2,11 @@ package nl.tudelft.sem.template.activity.domain.events;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.Position;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;import java.util.List;
+import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Component
 public class EventPublisher {
@@ -33,7 +33,7 @@ public class EventPublisher {
         applicationEventPublisher.publishEvent(userJoinEvent);
     }
 
-	public void publishFindingSuitableCompetitions(List<Competition> competitions, Position position) {
+    public void publishFindingSuitableCompetitions(List<Competition> competitions, Position position) {
 
-	}
+    }
 }

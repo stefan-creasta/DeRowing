@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class FindSuitableCompetitionResponseModel {
-	List<Competition> competitions;
+    List<Competition> competitions;
 }

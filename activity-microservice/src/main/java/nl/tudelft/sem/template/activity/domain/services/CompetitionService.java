@@ -3,13 +3,19 @@ package nl.tudelft.sem.template.activity.domain.services;
 import nl.tudelft.sem.template.activity.domain.Gender;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.Position;import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.domain.Position;
+import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
-import nl.tudelft.sem.template.activity.models.*;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;import java.util.List;
+import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class CompetitionService extends ActivityService {
@@ -23,10 +29,10 @@ public class CompetitionService extends ActivityService {
     /**
      * Constructor for CompetitionService bean.
      *
-     * @param eventPublisher the event publisher
+     * @param eventPublisher        the event publisher
      * @param competitionRepository the competition repository
-     * @param userRestService the user rest service
-     * @param boatRestService the boat rest service
+     * @param userRestService       the user rest service
+     * @param boatRestService       the boat rest service
      */
     public CompetitionService(EventPublisher eventPublisher, CompetitionRepository competitionRepository,
                               UserRestService userRestService, BoatRestService boatRestService) {
@@ -38,9 +44,9 @@ public class CompetitionService extends ActivityService {
 
     /**
      * Method parse a requestBody.
-
+     *
      * @param request the request body
-     * @param netId the netId of the requester
+     * @param netId   the netId of the requester
      * @return a new Competition
      */
     public Competition parseRequest(CompetitionCreateModel request, NetId netId, long boatId) {
@@ -58,9 +64,9 @@ public class CompetitionService extends ActivityService {
 
     /**
      * Method to create and persist a new Competition.
-
+     *
      * @param request the request body
-     * @param netId the netId of the requester
+     * @param netId   the netId of the requester
      * @return a new Competition
      * @throws Exception the already using this netId exception
      */
@@ -92,7 +98,7 @@ public class CompetitionService extends ActivityService {
 
     /**
      * A method to find a competition from the database.
-
+     *
      * @param id the netId of the requester
      * @return the Competition of the requester
      * @throws Exception the competition not found exception
@@ -121,8 +127,8 @@ public class CompetitionService extends ActivityService {
             return "We could not get your user information from the user service";
         }
         if (!competition.isAllowAmateurs() && userData.isAmateur()
-            || !checkGender(userData.getGender(), competition.getGenderConstraint())
-            || !userData.getOrganization().equals(competition.getOrganization())) {
+                || !checkGender(userData.getGender(), competition.getGenderConstraint())
+                || !userData.getOrganization().equals(competition.getOrganization())) {
             return "you do not meet the constraints of this competition";
         }
         InformJoinRequestModel model = new InformJoinRequestModel();
@@ -130,6 +136,13 @@ public class CompetitionService extends ActivityService {
         return "Done! Your request has been processed";
     }
 
+    /**
+     * Checks if the gender provided matches the constraints provided.
+     *
+     * @param gender The gender to check for
+     * @param constraint The gender constraints to check with
+     * @return true if match, false if not
+     */
     private boolean checkGender(Gender gender, GenderConstraint constraint) {
         if (constraint == GenderConstraint.NO_CONSTRAINT) {
             return true;
@@ -140,12 +153,18 @@ public class CompetitionService extends ActivityService {
         return constraint == GenderConstraint.ONLY_FEMALE && gender == Gender.FEMALE;
     }
 
-	public List<Competition> getSuitableCompetition(Position position) {
-		UserDataRequestModel userDataRequestModel = userRestService.getUserData();
-		List<Competition> competitionsAreMetConstraints = competitionRepository
-						.findSuitableCompetitions(userDataRequestModel.getGender(),
-						userDataRequestModel.getOrganization(),
-						userDataRequestModel.isAmateur());
-		return boatRestService.checkIfPositionAvailable(competitionsAreMetConstraints,position);
-	}
+    /**
+     * Gets suitable conpetitions for the specified position.
+     *
+     * @param position The position to filter from
+     * @return a list of competitions
+     */
+    public List<Competition> getSuitableCompetition(Position position) {
+        UserDataRequestModel userDataRequestModel = userRestService.getUserData();
+        List<Competition> competitionsAreMetConstraints = competitionRepository
+                .findSuitableCompetitions(userDataRequestModel.getGender(),
+                        userDataRequestModel.getOrganization(),
+                        userDataRequestModel.isAmateur());
+        return boatRestService.checkIfPositionAvailable(competitionsAreMetConstraints, position);
+    }
 }
