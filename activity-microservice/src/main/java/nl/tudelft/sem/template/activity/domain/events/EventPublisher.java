@@ -23,8 +23,8 @@ public class EventPublisher {
         applicationEventPublisher.publishEvent(acceptanceEvent);
     }
 
-    public void publishBoatChange(long boatId, Position position) {
-        BoatChangeEvent boatChangeEvent = new BoatChangeEvent(boatId, position);
+    public void publishBoatChange(long boatId, Position position, NetId acceptee) {
+        BoatChangeEvent boatChangeEvent = new BoatChangeEvent(boatId, position, acceptee);
         applicationEventPublisher.publishEvent(boatChangeEvent);
     }
 

@@ -3,15 +3,20 @@ package nl.tudelft.sem.template.activity.domain.services;
 import nl.tudelft.sem.template.activity.domain.Gender;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Position;
+import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
+import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
-import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
+import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -22,22 +27,25 @@ public class CompetitionService extends ActivityService {
     private final transient CompetitionRepository competitionRepository;
     private final transient UserRestService userRestService;
     private final transient BoatRestService boatRestService;
-
+    private final transient CurrentTimeProvider currentTimeProvider;
 
     /**
      * Constructor for CompetitionService bean.
      *
-     * @param eventPublisher the event publisher
+     * @param eventPublisher        the event publisher
      * @param competitionRepository the competition repository
-     * @param userRestService the user rest service
-     * @param boatRestService the boat rest service
+     * @param userRestService       the user rest service
+     * @param boatRestService       the boat rest service
+     * @param currentTimeProvider   the current time provider
      */
     public CompetitionService(EventPublisher eventPublisher, CompetitionRepository competitionRepository,
-                              UserRestService userRestService, BoatRestService boatRestService) {
+                              UserRestService userRestService, BoatRestService boatRestService,
+                              CurrentTimeProvider currentTimeProvider) {
         this.eventPublisher = eventPublisher;
         this.competitionRepository = competitionRepository;
         this.userRestService = userRestService;
         this.boatRestService = boatRestService;
+        this.currentTimeProvider = currentTimeProvider;
     }
 
     /**
@@ -54,9 +62,10 @@ public class CompetitionService extends ActivityService {
         boolean singleOrganization = request.isSingleOrganization();
         GenderConstraint genderConstraint = request.getGenderConstraint();
         int numPeople = request.getNumPeople();
+        Type boatType = request.getType();
         String organization = request.getOrganization();
         Competition competition = new Competition(netId, competitionName, boatId, startTime, numPeople,
-                allowAmateurs, genderConstraint, singleOrganization, organization);
+                allowAmateurs, genderConstraint, singleOrganization, organization, boatType);
         return competition;
     }
 
@@ -78,9 +87,7 @@ public class CompetitionService extends ActivityService {
             competitionRepository.save(competition);
             return "Successfully created competition";
         } catch (DataIntegrityViolationException e) {
-            throw new NetIdAlreadyInUseException(netId);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in createCompetition");
+            return "activity already exists";
         }
     }
 
@@ -120,20 +127,35 @@ public class CompetitionService extends ActivityService {
         if (competition == null) {
             return "this competition ID does not exist";
         }
+        long startTime = competition.getStartTime();
+        boolean isInOneDay = (startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 86400000;
+        if (isInOneDay) {
+            return "Sorry you can't join this competition since it will start in one day.";
+        }
         UserDataRequestModel userData = userRestService.getUserData();
         if (userData == null) {
             return "We could not get your user information from the user service";
         }
         if (!competition.isAllowAmateurs() && userData.isAmateur()
             || !checkGender(userData.getGender(), competition.getGenderConstraint())
-            || !userData.getOrganization().equals(competition.getOrganization())) {
+            || (competition.isSingleOrganization() && !userData.getOrganization().equals(competition.getOrganization()))) {
             return "you do not meet the constraints of this competition";
         }
-        InformJoinRequestModel model = new InformJoinRequestModel();
-        eventPublisher.publishJoining(model.getOwner(), model.getPosition(), model.getActivityId());
+        if (request.getPosition() == Position.COX
+                && competition.getType().getValue() > userData.getCertificate().getValue()) {
+            return "you do not have the required certificate to be cox";
+        }
+        eventPublisher.publishJoining(competition.getOwner(), request.getPosition(), request.getActivityId());
         return "Done! Your request has been processed";
     }
 
+    /**
+     * Check the gender to make it satisfy the requirements.
+     *
+     * @param gender the gender of the attendee
+     * @param constraint the constraint of the competition
+     * @return a boolean value which shows that whether the attendee could be admitted
+     */
     private boolean checkGender(Gender gender, GenderConstraint constraint) {
         if (constraint == GenderConstraint.NO_CONSTRAINT) {
             return true;
@@ -142,5 +164,65 @@ public class CompetitionService extends ActivityService {
             return true;
         }
         return constraint == GenderConstraint.ONLY_FEMALE && gender == Gender.FEMALE;
+    }
+
+    /**
+     * The method to delete a specified competition.
+     *
+     * @param competitionId The id of the specified competition
+     * @return A String which shows whether the competition is deleted successfully.
+     * @throws Exception An exception to show that there's something wrong during the deleting process.
+     */
+    public String deleteCompetition(long competitionId) throws Exception {
+        try {
+            Competition competition = findCompetitions(competitionId);
+            long boatId = competition.getBoatId();
+            BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
+            if (boatRestService.deleteBoat(boatDeleteModel)) {
+                competitionRepository.delete(competition);
+                return "Successfully deleted the competition.";
+            } else {
+                return "Boat deletion fail.";
+            }
+        } catch (Exception e) {
+            throw new Exception("Something went wrong in delete the specified competition.");
+        }
+    }
+
+
+    /**
+     * The method to edit a competition.
+     *
+     * @param request The competition editing model
+     * @return A string shows the status after the edition
+     * @throws Exception An exception to be shown when facing failures.
+     */
+    public String editCompetition(CompetitionEditModel request) throws Exception {
+        try {
+            Competition competition = competitionRepository.findById(request.getId());
+            competition = update(competition, request);
+            competitionRepository.save(competition);
+            return "Successfully edited competition";
+        } catch (Exception e) {
+            throw new Exception("Something went wrong in editing competition");
+        }
+    }
+
+    /**
+     * The method to update a competition.
+     *
+     * @param competition The competition to be updated.
+     * @param request The edit model which contains all information about the updating.
+     * @return A competition which is updated.
+     */
+    public Competition update(Competition competition, CompetitionEditModel request) {
+        competition.setActivityName(request.getCompetitionName());
+        competition.setGenderConstraint(request.getGenderConstraint());
+        competition.setAllowAmateurs(request.isAllowAmateurs());
+        competition.setSingleOrganization(request.isSingleOrganization());
+        competition.setOrganization(request.getOrganization());
+        competition.setStartTime(request.getStartTime());
+        competition.setNumPeople(request.getNumPeople());
+        return competition;
     }
 }

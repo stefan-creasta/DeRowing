@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.events.BoatChangeEvent;
 import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
+import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,24 @@ public class BoatRestService extends RestService {
         } catch (UnsuccessfulRequestException e) {
             System.out.println("Boat microservice seems unavailable");
             return -1;
+        }
+    }
+
+    /**
+     * The method to delete a boat when delete an activity.
+     *
+     * @param boatDeleteModel the id of the boat to be deleted
+     * @return a boolean value representing the result
+     */
+    public boolean deleteBoat(BoatDeleteModel boatDeleteModel) {
+        String url = environment.getProperty("boat.url");
+        int port = Integer.parseInt(environment.getProperty("boat.port"));
+        try {
+            performRequest(boatDeleteModel, url, port, "/boat/delete", HttpMethod.POST);
+            return true;
+        } catch (UnsuccessfulRequestException e) {
+            System.out.println("Boat microservice seems unavailable");
+            return false;
         }
     }
 }

@@ -4,8 +4,10 @@ import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.services.TrainingService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
+import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +50,7 @@ public class TrainingController {
             String response = trainingService.createTraining(request, new NetId(authManager.getNetId()));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when creating training.");
         }
     }
 
@@ -64,7 +66,7 @@ public class TrainingController {
             String status = trainingService.informUser(model);
             return ResponseEntity.ok(status);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when informing user.");
         }
     }
 
@@ -80,7 +82,40 @@ public class TrainingController {
             String response = trainingService.joinTraining(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error");
+            return ResponseEntity.ok("Internal error when joining training.");
         }
     }
+
+    /**
+     * A method to edit the existing training.
+     *
+     * @param request The information that the training should have
+     * @return a message containing the information about the editing
+     */
+    @PostMapping("/edit")
+    public ResponseEntity<String> editTraining(@RequestBody TrainingEditModel request) {
+        try {
+            String response = trainingService.editTraining(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error when editing training.");
+        }
+    }
+
+    /**
+     * The method to delete a specified training.
+     *
+     * @param activityCancelModel the id of the training to be deleted.
+     * @return a message containing the information about the canceling.
+     */
+    @PostMapping("/cancel")
+    public ResponseEntity<String> cancelTraining(@RequestBody ActivityCancelModel activityCancelModel) {
+        try {
+            String response = trainingService.deleteTraining(activityCancelModel.getId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error when canceling training.");
+        }
+    }
+
 }
