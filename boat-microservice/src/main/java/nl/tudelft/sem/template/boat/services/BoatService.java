@@ -125,13 +125,12 @@ public class BoatService extends RestService {
 
             // iterate through all boats in the DB
             List<Boat> boats = boatRepository.findAll();
-            boolean isGood = true;
+            boolean isGood;
             for (Boat boat : boats) {
                 // check the number available positions for each of them
-                Map<Position, Integer> availablePositions = new HashMap<>();
+                isGood = true;
                 for (Position p : Position.values()) {
-                    availablePositions.put(p, boat.getRequiredRowers().get(p) - boat.getRowers().get(p).size());
-                    if (availablePositions.get(p) < requiredPositions.get(p)) {
+                    if (requiredPositions.get(p) <= boat.getRequiredRowers().get(p)) {
                         isGood = false;
                         break;
                     }
