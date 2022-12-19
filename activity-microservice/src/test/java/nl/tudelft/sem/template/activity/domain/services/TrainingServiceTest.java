@@ -5,8 +5,11 @@ import java.util.Optional;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
+import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,55 +18,56 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-class CompetitionServiceTest {
+class TrainingServiceTest {
 
-    private CompetitionService competitionService;
+    private TrainingService trainingService;
 
-    private CompetitionCreateModel competitionCreateModel;
+    private TrainingCreateModel trainingCreateModel;
+
+    private TrainingRepository trainingRepository;
 
     private CompetitionRepository competitionRepository;
 
-    private Competition competition;
+    private BoatRestService boatRestService;
+
+    private Training training;
 
     private NetId id;
 
     @BeforeEach
     public void setup() {
-        competitionCreateModel = new CompetitionCreateModel("test", GenderConstraint.ONLY_MALE,
-                123L, false, false, 123L);
+        trainingCreateModel = new TrainingCreateModel("test", 123L, 123L);
         id = new NetId("123");
-        competition = new Competition(id, competitionCreateModel.getCompetitionName(),
-                competitionCreateModel.getBoatId(), competitionCreateModel.getStartTime(),
-                competitionCreateModel.isAllowAmateurs(), competitionCreateModel.getGenderConstraint(),
-                competitionCreateModel.isSingleOrganization());
-        competitionRepository = new CompetitionRepository() {
+        training = new Training(id, trainingCreateModel.getTrainingName(),
+                trainingCreateModel.getBoatId(), trainingCreateModel.getStartTime());
+        trainingRepository = new TrainingRepository() {
             @Override
-            public Competition findByNetId(NetId netId) {
-                return competition;
+            public Training findByNetId(NetId netId) {
+                return training;
             }
 
             @Override
             public boolean existsByNetId(NetId netId) {
-                return false;
+                return true;
             }
 
             @Override
-            public List<Competition> findAll() {
+            public List<Training> findAll() {
                 return null;
             }
 
             @Override
-            public List<Competition> findAll(Sort sort) {
+            public List<Training> findAll(Sort sort) {
                 return null;
             }
 
             @Override
-            public List<Competition> findAllById(Iterable<NetId> netIds) {
+            public List<Training> findAllById(Iterable<NetId> netIds) {
                 return null;
             }
 
             @Override
-            public <S extends Competition> List<S> saveAll(Iterable<S> entities) {
+            public <S extends Training> List<S> saveAll(Iterable<S> entities) {
                 return null;
             }
 
@@ -73,12 +77,12 @@ class CompetitionServiceTest {
             }
 
             @Override
-            public <S extends Competition> S saveAndFlush(S entity) {
+            public <S extends Training> S saveAndFlush(S entity) {
                 return null;
             }
 
             @Override
-            public void deleteInBatch(Iterable<Competition> entities) {
+            public void deleteInBatch(Iterable<Training> entities) {
 
             }
 
@@ -88,32 +92,32 @@ class CompetitionServiceTest {
             }
 
             @Override
-            public Competition getOne(NetId netId) {
+            public Training getOne(NetId netId) {
                 return null;
             }
 
             @Override
-            public <S extends Competition> List<S> findAll(Example<S> example) {
+            public <S extends Training> List<S> findAll(Example<S> example) {
                 return null;
             }
 
             @Override
-            public <S extends Competition> List<S> findAll(Example<S> example, Sort sort) {
+            public <S extends Training> List<S> findAll(Example<S> example, Sort sort) {
                 return null;
             }
 
             @Override
-            public Page<Competition> findAll(Pageable pageable) {
+            public Page<Training> findAll(Pageable pageable) {
                 return null;
             }
 
             @Override
-            public <S extends Competition> S save(S entity) {
+            public <S extends Training> S save(S entity) {
                 return null;
             }
 
             @Override
-            public Optional<Competition> findById(NetId netId) {
+            public Optional<Training> findById(NetId netId) {
                 return Optional.empty();
             }
 
@@ -133,12 +137,12 @@ class CompetitionServiceTest {
             }
 
             @Override
-            public void delete(Competition entity) {
+            public void delete(Training entity) {
 
             }
 
             @Override
-            public void deleteAll(Iterable<? extends Competition> entities) {
+            public void deleteAll(Iterable<? extends Training> entities) {
 
             }
 
@@ -148,40 +152,41 @@ class CompetitionServiceTest {
             }
 
             @Override
-            public <S extends Competition> Optional<S> findOne(Example<S> example) {
+            public <S extends Training> Optional<S> findOne(Example<S> example) {
                 return Optional.empty();
             }
 
             @Override
-            public <S extends Competition> Page<S> findAll(Example<S> example, Pageable pageable) {
+            public <S extends Training> Page<S> findAll(Example<S> example, Pageable pageable) {
                 return null;
             }
 
             @Override
-            public <S extends Competition> long count(Example<S> example) {
+            public <S extends Training> long count(Example<S> example) {
                 return 0;
             }
 
             @Override
-            public <S extends Competition> boolean exists(Example<S> example) {
+            public <S extends Training> boolean exists(Example<S> example) {
                 return false;
             }
         };
-        competitionService = new CompetitionService(competitionRepository);
+        BoatRestService boatRestService = new BoatRestService();
+        trainingService = new TrainingService(boatRestService, competitionRepository, trainingRepository);
     }
 
     @Test
     void parseRequest() {
-        Assertions.assertEquals(competition, competitionService.parseRequest(competitionCreateModel, id));
+        Assertions.assertEquals(training, trainingService.parseRequest(trainingCreateModel, id));
     }
 
     @Test
-    void createCompetition() throws Exception {
-        Assertions.assertEquals(competition, competitionService.createCompetition(competitionCreateModel, id));
+    void createTraining() throws Exception {
+        Assertions.assertEquals(training, trainingService.createTraining(trainingCreateModel, id));
     }
 
     @Test
-    void findCompetitions() throws Exception {
-        Assertions.assertEquals(competition, competitionService.findCompetitions(id));
+    void findTraining() throws Exception {
+        Assertions.assertEquals(training, trainingService.findTraining(id));
     }
 }
