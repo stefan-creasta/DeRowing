@@ -1,8 +1,13 @@
 package nl.tudelft.sem.template.boat.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.boat.domain.Boat;
+import nl.tudelft.sem.template.boat.domain.Position;
 import nl.tudelft.sem.template.boat.domain.Type;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.repositories.BoatRepository;
@@ -68,7 +73,7 @@ public class BoatService extends RestService {
 
             return boatOptional.orElse(null);
         } catch (Exception e) {
-            throw new Exception("Something went wrong in findCompetitions");
+            throw new Exception("Something went wrong in findBoatsById");
         }
     }
 
@@ -86,7 +91,7 @@ public class BoatService extends RestService {
 
             return boatOptional.orElse(null);
         } catch (Exception e) {
-            throw new Exception("Something went wrong in findCompetitions");
+            throw new Exception("Something went wrong in findBoatsByName");
         }
     }
 
@@ -106,5 +111,40 @@ public class BoatService extends RestService {
      */
     public void deleteBoat(Boat boat) {
         boatRepository.delete(boat);
+    }
+
+    /**
+     * A method which finds the boats that have certain positions available.
+     *
+     * @param requiredPositions the number of positions of each type that are available
+     * @return a list of boats that fulfill the requirements
+     */
+    public List<Boat> findBoatsByEmptyPositions(Map<Position, Integer> requiredPositions) throws Exception {
+        try {
+            List<Boat> result = new ArrayList<>();
+
+            // iterate through all boats in the DB
+            List<Boat> boats = boatRepository.findAll();
+            for (Boat boat : boats) {
+                boolean isGood = true;
+                // check the number available positions for each of them
+                Map<Position, Integer> availablePositions = new HashMap<>();
+                for (Position p : Position.values()) {
+                    availablePositions.put(p, boat.getRequiredRowers().get(p) - boat.getRowers().get(p).size());
+                    if (availablePositions.get(p) < requiredPositions.get(p)) {
+                        isGood = false;
+                        break;
+                    }
+                }
+
+                if (isGood) {
+                    result.add(boat);
+                }
+            }
+
+            return result;
+        } catch (Exception e) {
+            throw new Exception("Something went wrong in findBoatsByEmptyPositions");
+        }
     }
 }

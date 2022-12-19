@@ -7,27 +7,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
 public class Rowers {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     long id;
 
-    public Rowers() {}
-
     protected HashMap<Position, List<NetId>> currentRowers;
 
     public Rowers(HashMap<Position, List<NetId>> currentRowers) {
-        this.currentRowers = currentRowers;
-    }
-
-    public HashMap<Position, List<NetId>> getCurrentRowers() {
-        return currentRowers;
-    }
-
-    public void setCurrentRowers(HashMap<Position, List<NetId>> currentRowers) {
         this.currentRowers = currentRowers;
     }
 

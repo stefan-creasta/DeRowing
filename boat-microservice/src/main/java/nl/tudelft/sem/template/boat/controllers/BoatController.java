@@ -1,10 +1,15 @@
 package nl.tudelft.sem.template.boat.controllers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import nl.tudelft.sem.template.boat.authentication.AuthManager;
 import nl.tudelft.sem.template.boat.domain.Boat;
 import nl.tudelft.sem.template.boat.domain.NetId;
+import nl.tudelft.sem.template.boat.domain.Position;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.models.BoatDeleteModel;
+import nl.tudelft.sem.template.boat.models.BoatEmptyPositionsModel;
 import nl.tudelft.sem.template.boat.models.BoatFindModel;
 import nl.tudelft.sem.template.boat.models.BoatRowerEditModel;
 import nl.tudelft.sem.template.boat.services.BoatService;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
 
 /**
  * Hello World example controller.
@@ -164,5 +170,32 @@ public class BoatController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         return ResponseEntity.ok("Done! A boat has been removed by " + authManager.getNetId());
+    }
+
+    /**
+     * Method for finding the boats that have certain positions still available.
+     *
+     * @param request the request containing the boat's id
+     * @return a string which contains information regarding the deletion of the boat
+     * @throws Exception the boat could not be deleted
+     */
+    @PostMapping("/findEmptyPositions")
+    public ResponseEntity<String> findBoatsByEmptyPositions(@RequestBody BoatEmptyPositionsModel request) throws Exception {
+        // retrieve the list of required positions from the request
+        List<Position> positionList = request.getPositionList();
+
+        // transform the list into a frequency map so that it can be processed by boatService
+        Map<Position, Integer> requiredPositions = new HashMap<>();
+        for (Position position : positionList) {
+            if (requiredPositions.get(position) == null) {
+                requiredPositions.put(position, 0);
+            } else {
+                requiredPositions.put(position, requiredPositions.get(position) + 1);
+            }
+        }
+
+        List<Boat> boats = boatService.findBoatsByEmptyPositions(requiredPositions);
+        return ResponseEntity.ok("The list of boats requested by " + authManager.getNetId()
+                + " is found. Here is the list of boats: " + boats.toString());
     }
 }
