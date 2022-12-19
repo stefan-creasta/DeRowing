@@ -23,7 +23,7 @@ class BoatTest {
         rowers.put(Position.PORT, new ArrayList<>());
         rowers.put(Position.STARBOARD, new ArrayList<>());
         rowers.put(Position.SCULLING, new ArrayList<>());
-        Boat boat = new Boat(Type.C4, 1, 1, 1, 1, 1);
+        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
         boat.addRowerToPosition(Position.COX, rower);
         assertEquals(rowers, boat.getRowers());
     }
@@ -36,7 +36,7 @@ class BoatTest {
         requiredRowers.put(Position.PORT, 1);
         requiredRowers.put(Position.STARBOARD, 1);
         requiredRowers.put(Position.SCULLING, 0);
-        Boat boat = new Boat(Type.C4, 1, 1, 1, 1, 1);
+        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
         boat.removePosition(Position.SCULLING);
         assertEquals(requiredRowers, boat.getRequiredRowers());
     }
@@ -50,7 +50,7 @@ class BoatTest {
         rowers.put(Position.STARBOARD, new ArrayList<>());
         rowers.put(Position.SCULLING, new ArrayList<>());
         Rower rower = new Rower();
-        Boat boat = new Boat(Type.C4, 1, 1, 1, 1, 1);
+        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
         boat.addRowerToPosition(Position.COX, rower);
         assertTrue(boat.removeRower(rower));
         assertEquals(rowers, boat.getRowers());
@@ -58,26 +58,26 @@ class BoatTest {
 
     @Test
     void cannotRemoveRower() {
-        Boat boat = new Boat(Type.C4, 1, 1, 1, 1, 1);
+        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
         Rower user = new Rower();
         assertFalse(boat.removeRower(user));
     }
 
     @Test
     void canRowerBeAddedFalseType() {
-        Boat boat = new Boat(Type.PLUS4, 1, 1, 1, 1, 1);
+        Boat boat = new Boat("boat", Type.PLUS4, 1, 1, 1, 1, 1);
         assertFalse(boat.canRowerBeAdded(Type.C4, Position.SCULLING));
     }
 
     @Test
     void canRowerBeAddedFalsePosition() {
-        Boat boat = new Boat(Type.C4, 1, 1, 1, 1, 0);
+        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 0);
         assertFalse(boat.canRowerBeAdded(Type.C4, Position.SCULLING));
     }
 
     @Test
     void canRowerBeAddedFalsePositionTrue() {
-        Boat boat = new Boat(Type.C4, 1, 1, 1, 1, 1);
+        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
         assertTrue(boat.canRowerBeAdded(Type.PLUS4, Position.SCULLING));
     }
 }

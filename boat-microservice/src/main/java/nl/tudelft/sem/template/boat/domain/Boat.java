@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,46 +27,53 @@ public class Boat {
      */
     @Id
     @Column(name = "id", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    //@Id
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 
     @Column(name = "type", nullable = false)
     private Type type;
 
     // TODO: create connection to Users table
-    @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "users")
-    private Map<Position, List<Rower>> rowers;
-    private HashMap<Position, Integer> requiredRowers;
+    @Convert(converter = RowersAttributeConverter.class)
+    private Rowers rowers;
+    @Convert(converter = RequiredRowersAttributeConverter.class)
+    private RequiredRowers requiredRowers;
 
     /**
      * Create new boat.
      *
      * @param type the type of the boat
      */
-    public Boat(Type type, int cox, int coach, int port, int starboard, int sculling) {
+    public Boat(String name, Type type, int cox, int coach, int port, int starboard, int sculling) {
+        this.name = name;
         this.type = type;
+        HashMap<Position, List<Rower>> newMapForRowers = new HashMap<>();
+        newMapForRowers.put(Position.COX, new ArrayList<>());
+        newMapForRowers.put(Position.COACH, new ArrayList<>());
+        newMapForRowers.put(Position.PORT, new ArrayList<>());
+        newMapForRowers.put(Position.STARBOARD, new ArrayList<>());
+        newMapForRowers.put(Position.SCULLING, new ArrayList<>());
+        this.rowers = new Rowers(newMapForRowers);
 
-        this.rowers = new HashMap<>();
-        this.rowers.put(Position.COX, new ArrayList<>());
-        this.rowers.put(Position.COACH, new ArrayList<>());
-        this.rowers.put(Position.PORT, new ArrayList<>());
-        this.rowers.put(Position.STARBOARD, new ArrayList<>());
-        this.rowers.put(Position.SCULLING, new ArrayList<>());
-
-        this.requiredRowers = new HashMap<>();
-        this.requiredRowers.put(Position.COX, cox);
-        this.requiredRowers.put(Position.COACH, coach);
-        this.requiredRowers.put(Position.PORT, port);
-        this.requiredRowers.put(Position.STARBOARD, starboard);
-        this.requiredRowers.put(Position.SCULLING, sculling);
-
+        HashMap<Position, Integer> newMapForRequiredRowers = new HashMap<>();
+        newMapForRequiredRowers.put(Position.COX, cox);
+        newMapForRequiredRowers.put(Position.COACH, coach);
+        newMapForRequiredRowers.put(Position.PORT, port);
+        newMapForRequiredRowers.put(Position.STARBOARD, starboard);
+        newMapForRequiredRowers.put(Position.SCULLING, sculling);
+        this.requiredRowers = new RequiredRowers(newMapForRequiredRowers);
     }
 
     public Map<Position, List<Rower>> getRowers() {
-        return this.rowers;
+        return this.rowers.currentRowers;
     }
 
     public HashMap<Position, Integer> getRequiredRowers() {
-        return this.requiredRowers;
+        return this.requiredRowers.amountOfPositions;
     }
 
     /**
@@ -75,10 +82,10 @@ public class Boat {
      * @param rower the user to be added
      */
     public void addRowerToPosition(Position position, Rower rower) {
-        if (this.rowers.get(position).size() < this.requiredRowers.get(position)) {
-            this.rowers.get(position).add(rower);
-            int val = requiredRowers.get(position);
-            requiredRowers.replace(position, val - 1);
+        if (this.rowers.currentRowers.get(position).size() < this.requiredRowers.amountOfPositions.get(position)) {
+            this.rowers.currentRowers.get(position).add(rower);
+            int val = requiredRowers.amountOfPositions.get(position);
+            requiredRowers.amountOfPositions.replace(position, val - 1);
         }
     }
 
@@ -88,9 +95,9 @@ public class Boat {
      * @param position the position to be removed
      */
     public void removePosition(Position position) {
-        requiredRowers.remove(position);
-        requiredRowers.put(position, 0);
-        rowers.replace(position, new ArrayList<>());
+        requiredRowers.amountOfPositions.remove(position);
+        requiredRowers.amountOfPositions.put(position, 0);
+        rowers.currentRowers.replace(position, new ArrayList<>());
     }
 
     /**
@@ -101,11 +108,11 @@ public class Boat {
      */
     public boolean removeRower(Rower rower) {
         // find the key that the User is mapped to
-        for (Map.Entry<Position, List<Rower>> a : rowers.entrySet()) {
+        for (Map.Entry<Position, List<Rower>> a : rowers.currentRowers.entrySet()) {
             if (a.getValue().contains(rower)) {
                 a.getValue().remove(rower);
-                int val = requiredRowers.get(a.getKey());
-                requiredRowers.replace(a.getKey(), val + 1);
+                int val = requiredRowers.amountOfPositions.get(a.getKey());
+                requiredRowers.amountOfPositions.replace(a.getKey(), val + 1);
                 return true;
             }
         }
@@ -123,7 +130,7 @@ public class Boat {
         if (type.value < this.type.value) {
             return false;
         }
-        return (requiredRowers.get(position) > 0);
+        return (requiredRowers.amountOfPositions.get(position) > 0);
     }
 
     /**
@@ -141,7 +148,7 @@ public class Boat {
             return false;
         }
         Boat boat = (Boat) o;
-        if (!(id == boat.id && type == boat.type)) {
+        if (!(id == boat.id && name.equals(boat.name) && type == boat.type)) {
             return false;
         }
         return Objects.equals(rowers, boat.rowers) && Objects.equals(requiredRowers, boat.requiredRowers);
@@ -149,6 +156,6 @@ public class Boat {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, rowers, requiredRowers);
+        return Objects.hash(id, name, type, rowers, requiredRowers);
     }
 }
