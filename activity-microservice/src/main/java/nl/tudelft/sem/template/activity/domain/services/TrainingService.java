@@ -6,12 +6,13 @@ import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
-import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
-import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
-import nl.tudelft.sem.template.activity.models.TrainingEditModel;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
+import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
+import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -142,7 +143,8 @@ public class TrainingService extends ActivityService {
             Training training = findTraining(trainingId);
             trainingRepository.delete(training);
             long boatId = training.getBoatId();
-            if (boatRestService.deleteBoat(boatId)) {
+            BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
+            if (boatRestService.deleteBoat(boatDeleteModel)) {
                 return "Successfully deleted the training.";
             } else {
                 return "Boat deletion fail.";
