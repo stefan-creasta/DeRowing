@@ -98,4 +98,13 @@ public class BoatService extends RestService {
     public void updateBoat(Boat boat) {
         boatRepository.save(boat);
     }
+
+    /**
+     * A method which deletes a certain boat.
+
+     * @param boat the boat which needs to be deleted
+     */
+    public void deleteBoat(Boat boat) {
+        boatRepository.delete(boat);
+    }
 }

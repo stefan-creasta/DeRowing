@@ -4,8 +4,9 @@ import nl.tudelft.sem.template.boat.authentication.AuthManager;
 import nl.tudelft.sem.template.boat.domain.Boat;
 import nl.tudelft.sem.template.boat.domain.NetId;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
+import nl.tudelft.sem.template.boat.models.BoatDeleteModel;
 import nl.tudelft.sem.template.boat.models.BoatFindModel;
-import nl.tudelft.sem.template.boat.models.BoatRowerEdit;
+import nl.tudelft.sem.template.boat.models.BoatRowerEditModel;
 import nl.tudelft.sem.template.boat.services.BoatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -110,7 +111,7 @@ public class BoatController {
      * @throws Exception the user's netId cannot be inserted
      */
     @PostMapping("/insert")
-    public ResponseEntity<String> insertRower(@RequestBody BoatRowerEdit request) throws Exception {
+    public ResponseEntity<String> insertRower(@RequestBody BoatRowerEditModel request) throws Exception {
         try {
             int id = (int) request.getBoatId();
             Boat target = boatService.findBoatById(id);
@@ -132,7 +133,7 @@ public class BoatController {
      * @throws Exception the user's netId cannot be removed
      */
     @PostMapping("/remove")
-    public ResponseEntity<String> removeRower(@RequestBody BoatRowerEdit request) throws Exception {
+    public ResponseEntity<String> removeRower(@RequestBody BoatRowerEditModel request) throws Exception {
         try {
             int id = (int) request.getBoatId();
             Boat target = boatService.findBoatById(id);
@@ -144,5 +145,24 @@ public class BoatController {
         }
         return ResponseEntity.ok("Done! A rower has been removed in the boat with id " + request.getBoatId()
                 + " by " + authManager.getNetId());
+    }
+
+    /**
+     * the method to delete a certain boat.
+     *
+     * @param request the request containing the boat's id
+     * @return a string which contains information regarding the deletion of the boat
+     * @throws Exception the boat could not be deleted
+     */
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteBoat(@RequestBody BoatDeleteModel request) throws Exception {
+        try {
+            int id = (int) request.getBoatId();
+            Boat target = boatService.findBoatById(id);
+            boatService.deleteBoat(target);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return ResponseEntity.ok("Done! A boat has been removed by " + authManager.getNetId());
     }
 }
