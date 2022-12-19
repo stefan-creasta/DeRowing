@@ -10,10 +10,15 @@ import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class CompetitionServiceTest {
 
@@ -21,6 +26,7 @@ class CompetitionServiceTest {
 
     private CompetitionCreateModel competitionCreateModel;
 
+    @Mock
     private CompetitionRepository competitionRepository;
 
     private Competition competition;
@@ -36,137 +42,7 @@ class CompetitionServiceTest {
                 competitionCreateModel.getBoatId(), competitionCreateModel.getStartTime(),
                 competitionCreateModel.isAllowAmateurs(), competitionCreateModel.getGenderConstraint(),
                 competitionCreateModel.isSingleOrganization());
-        competitionRepository = new CompetitionRepository() {
-            @Override
-            public Competition findByNetId(NetId netId) {
-                return competition;
-            }
-
-            @Override
-            public boolean existsByNetId(NetId netId) {
-                return false;
-            }
-
-            @Override
-            public List<Competition> findAll() {
-                return null;
-            }
-
-            @Override
-            public List<Competition> findAll(Sort sort) {
-                return null;
-            }
-
-            @Override
-            public List<Competition> findAllById(Iterable<NetId> netIds) {
-                return null;
-            }
-
-            @Override
-            public <S extends Competition> List<S> saveAll(Iterable<S> entities) {
-                return null;
-            }
-
-            @Override
-            public void flush() {
-
-            }
-
-            @Override
-            public <S extends Competition> S saveAndFlush(S entity) {
-                return null;
-            }
-
-            @Override
-            public void deleteInBatch(Iterable<Competition> entities) {
-
-            }
-
-            @Override
-            public void deleteAllInBatch() {
-
-            }
-
-            @Override
-            public Competition getOne(NetId netId) {
-                return null;
-            }
-
-            @Override
-            public <S extends Competition> List<S> findAll(Example<S> example) {
-                return null;
-            }
-
-            @Override
-            public <S extends Competition> List<S> findAll(Example<S> example, Sort sort) {
-                return null;
-            }
-
-            @Override
-            public Page<Competition> findAll(Pageable pageable) {
-                return null;
-            }
-
-            @Override
-            public <S extends Competition> S save(S entity) {
-                return null;
-            }
-
-            @Override
-            public Optional<Competition> findById(NetId netId) {
-                return Optional.empty();
-            }
-
-            @Override
-            public boolean existsById(NetId netId) {
-                return false;
-            }
-
-            @Override
-            public long count() {
-                return 0;
-            }
-
-            @Override
-            public void deleteById(NetId netId) {
-
-            }
-
-            @Override
-            public void delete(Competition entity) {
-
-            }
-
-            @Override
-            public void deleteAll(Iterable<? extends Competition> entities) {
-
-            }
-
-            @Override
-            public void deleteAll() {
-
-            }
-
-            @Override
-            public <S extends Competition> Optional<S> findOne(Example<S> example) {
-                return Optional.empty();
-            }
-
-            @Override
-            public <S extends Competition> Page<S> findAll(Example<S> example, Pageable pageable) {
-                return null;
-            }
-
-            @Override
-            public <S extends Competition> long count(Example<S> example) {
-                return 0;
-            }
-
-            @Override
-            public <S extends Competition> boolean exists(Example<S> example) {
-                return false;
-            }
-        };
+        competitionRepository = mock(CompetitionRepository.class);
         competitionService = new CompetitionService(competitionRepository);
     }
 
@@ -182,6 +58,8 @@ class CompetitionServiceTest {
 
     @Test
     void findCompetitions() throws Exception {
+        when(competitionRepository.existsByNetId(any())).thenReturn(true);
+        when(competitionRepository.findByNetId(any())).thenReturn(competition);
         Assertions.assertEquals(competition, competitionService.findCompetitions(id));
     }
 }
