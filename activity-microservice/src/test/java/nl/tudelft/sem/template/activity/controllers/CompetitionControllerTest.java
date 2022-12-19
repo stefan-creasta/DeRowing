@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.activity.controllers;
 
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
@@ -14,9 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
