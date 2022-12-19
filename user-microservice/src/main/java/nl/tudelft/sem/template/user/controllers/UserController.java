@@ -7,8 +7,8 @@ import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
 import nl.tudelft.sem.template.user.domain.models.UserFindModel;
 import nl.tudelft.sem.template.user.domain.services.UserService;
-import nl.tudelft.sem.template.user.models.UserAcceptanceUpdateModel;
-import nl.tudelft.sem.template.user.models.UserJoinRequestModel;
+import nl.tudelft.sem.template.user.domain.models.UserAcceptanceUpdateModel;
+import nl.tudelft.sem.template.user.domain.models.UserJoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +56,7 @@ public class UserController {
     /**
      * the method to create a User.
      *
-     * @param request   a user create model, which contains all information about the user
+     * @param request a user create model, which contains all information about the user
      * @return a user
      * @throws Exception an already used NetId exception
      */
@@ -73,7 +73,7 @@ public class UserController {
     /**
      * the method to find a specific user.
      *
-     * @param request   the request body of the user finding
+     * @param request the request body of the user finding
      * @return a user information
      * @throws Exception a competition not found exception
      */
@@ -85,44 +85,58 @@ public class UserController {
                 + " is found. Here is the user: " + target.toString());
     }
 
-	@PostMapping("/join")
-	public ResponseEntity<String> saveMessage(@RequestBody UserJoinRequestModel userJoinRequest) throws Exception {
-		String content = authManager.getNetId() + " wants to join this competition/training session";
-		userService.saveMessage(userJoinRequest.getOwner(),
-							new NetId(authManager.getNetId()),
-							userJoinRequest.getActivityId(),
-							content,
-							userJoinRequest.getPosition());
-		return ResponseEntity.ok("The message is successfully saved");
-	}
+    /**
+     * Saves the request from a participant to the activity owner to join an activity.
+     *
+     * @param userJoinRequest the request body of the join request
+     * @return a String that informs that the message is successfully saved in the message database
+     * @throws Exception an already used NetId exception
+     */
+    @PostMapping("/join")
+    public ResponseEntity<String> saveMessage(@RequestBody UserJoinRequestModel userJoinRequest) throws Exception {
+        String content = authManager.getNetId() + " wants to join this competition/training session";
+        userService.saveMessage(userJoinRequest.getOwner(),
+                new NetId(authManager.getNetId()),
+                userJoinRequest.getActivityId(),
+                content,
+                userJoinRequest.getPosition());
+        return ResponseEntity.ok("The message is successfully saved");
+    }
 
-	@GetMapping("/notifications")
-	public ResponseEntity<List<Message>> getNotifications() throws Exception{
-		List<Message> notifications = userService.getNotifications(new NetId(authManager.getNetId()));
-		return ResponseEntity.ok(notifications);
-	}
+    /**
+     * Gets the list of messages (notifications) for the user.
+     *
+     * @return a list of messages that the user received
+     * @throws Exception an already used NetId exception
+     */
+    @GetMapping("/notifications")
+    public ResponseEntity<List<Message>> getNotifications() throws Exception {
+        List<Message> notifications = userService.getNotifications(new NetId(authManager.getNetId()));
+        return ResponseEntity.ok(notifications);
+    }
 
-	@GetMapping("/getdetails")
-	public ResponseEntity<User> getUserDetails() throws Exception {
-		User user = userService.getUserDetail(new NetId(authManager.getNetId()));
-		return ResponseEntity.ok(user);
-	}
+    /**
+     * Saves the decision made by the activity owner to the message database.
+     *
+     * @param userAcceptanceUpdateModel the request body of the decision made
+     * @return a String that informs that the message is successfully saved
+     * @throws Exception already used NetId exception
+     */
+    @PostMapping("/update")
+    public ResponseEntity<String> sendDecisionOfOwnerToRequester(@RequestBody UserAcceptanceUpdateModel
+                                                                         userAcceptanceUpdateModel) throws Exception {
+        String content = "";
+        if (userAcceptanceUpdateModel.isAccepted()) {
+            content += authManager.getNetId() + " accepted your request";
+        } else {
+            content += authManager.getNetId() + " did not accept your request";
+        }
 
-	@PostMapping("/update")
-	public ResponseEntity<String> sendDecisionOfOwnerToRequester(@RequestBody UserAcceptanceUpdateModel
-											userAcceptanceUpdateModel) throws Exception {
-		String content = "";
-		if(userAcceptanceUpdateModel.isAccepted()) {
-			content += authManager.getNetId() + " accepted your request";
-		} else {
-			content += authManager.getNetId() + " did not accept your request";
-		}
-
-		userService.saveMessage(userAcceptanceUpdateModel.getEventRequester(),
-								new NetId(authManager.getNetId()),
-								0,
-								content,
-								userAcceptanceUpdateModel.getPosition());
-		return ResponseEntity.ok("The message is successfully saved");
-	}
+        userService.saveMessage(userAcceptanceUpdateModel.getEventRequester(),
+                new NetId(authManager.getNetId()),
+                0,
+                content,
+                userAcceptanceUpdateModel.getPosition());
+        return ResponseEntity.ok("The message is successfully saved");
+    }
 }

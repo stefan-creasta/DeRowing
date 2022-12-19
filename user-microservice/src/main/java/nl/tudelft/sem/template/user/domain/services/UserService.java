@@ -18,10 +18,10 @@ import java.util.List;
 public class UserService {
 
     private final transient UserRepository userRepository;
-	private final transient MessageRepository messageRepository;
+    private final transient MessageRepository messageRepository;
 
     public UserService(UserRepository userRepository, MessageRepository messageRepository) {
-		this.messageRepository = messageRepository;
+        this.messageRepository = messageRepository;
         this.userRepository = userRepository;
     }
 
@@ -29,7 +29,7 @@ public class UserService {
      * Method parse a RequestBody.
      *
      * @param request the request body
-     * @param netId the netId of the requester
+     * @param netId   the netId of the requester
      * @return a new User
      */
     public User parseRequest(UserDetailModel request, NetId netId) {
@@ -46,7 +46,7 @@ public class UserService {
      * Method to create and persist a new User.
      *
      * @param request the request body
-     * @param netId the netId of the requester
+     * @param netId   the netId of the requester
      * @return a new User
      * @throws Exception the already using the NetId exception
      */
@@ -64,10 +64,10 @@ public class UserService {
 
     /**
      * A method to find a user from the database.
-
-     * @param netId the netId of the requester
-     * @return the Competition of the requester
-     * @throws Exception the competition not found exception
+     *
+     * @param netId the netId of the user
+     * @return the user to be found
+     * @throws Exception the NetId not found exception
      */
     public User findUser(NetId netId) throws Exception {
         try {
@@ -77,34 +77,35 @@ public class UserService {
         }
     }
 
-	public User getUserDetail(NetId netId) throws Exception {
-		try {
-			return userRepository.findByNetId(netId);
-		}
-		catch (Exception e) {
-			throw new Exception("There is no such user in database");
-		}
-	}
+    /**
+     * Saves a message in the message database.
+     *
+     * @param receiver   NetId of the recipient
+     * @param sender     NetId of the sender
+     * @param activityId activity Id of the activity
+     * @param content    the message in String format
+     * @param position   the position that the user applied for
+     * @return a String indicating whether the message is saved or not
+     * @throws Exception a NetId already in use exception
+     */
+    public String saveMessage(NetId receiver, NetId sender,
+                              long activityId, String content, Position position) throws Exception {
+        try {
+            messageRepository.save(new Message(receiver.getNetId(), sender.getNetId(), activityId, content, position));
+            return "The message is successfully saved";
+        } catch (Exception e) {
+            throw new Exception("Something went wrong when saving this message");
+        }
+    }
 
-
-	public String saveMessage(NetId receiver, NetId sender,
-				long activityId, String content, Position position) throws Exception {
-		try{
-			messageRepository.save(new Message(receiver.getNetId(), sender.getNetId(),activityId,content, position));
-			return "The message is successfully saved";
-		}
-		catch (Exception e) {
-			throw new Exception("Something went wrong when saving this message");
-		}
-	}
-
-	/**
-	*
-	* @param netId
-	* @return
-	* @throws Exception
-	*/
-	public List<Message> getNotifications(NetId netId) throws Exception {
-		return messageRepository.findMessagesByNetId(netId.getNetId());
-	}
+    /**
+     * Gets the messages addressed to a particular NetId (like an inbox).
+     *
+     * @param netId NetId to get messages for
+     * @return the list of messages (inbox)
+     * @throws Exception the NetId already in
+     */
+    public List<Message> getNotifications(NetId netId) throws Exception {
+        return messageRepository.findMessagesByNetId(netId.getNetId());
+    }
 }

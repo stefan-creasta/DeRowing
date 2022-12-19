@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.user.models;
+package nl.tudelft.sem.template.user.domain.models;
 
 import lombok.Data;
 import nl.tudelft.sem.template.user.domain.NetId;

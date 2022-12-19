@@ -16,47 +16,59 @@ import javax.persistence.EnumType;
 @NoArgsConstructor
 public class Message {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-	@Column
-	private String receiver;
-	@Column
-	private String sender;
-	@Column
-	private long activityId;
-	@Column
-	String content;
-	@Column
-	@Enumerated(EnumType.STRING)
-	Position position;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    @Column
+    private String receiver;
+    @Column
+    private String sender;
+    @Column
+    private long activityId;
+    @Column
+    String content;
+    @Column
+    @Enumerated(EnumType.STRING)
+    Position position;
 
-	public Message(String receiver, String sender, long activityId, String content, Position position) {
-	this.receiver = receiver;
-	this.sender = sender;
-	this.activityId = activityId;
-	this.content = content;
-	this.position = position;
-}
+    /**
+     * A basic constructor for a message.
+     *
+     * @param receiver   NetId of the message recipient
+     * @param sender     NetId of the message sender
+     * @param activityId activity Id of the activity the message is concerned with
+     * @param content    the message in String format
+     * @param position   the position that the user applied for
+     */
+    public Message(String receiver, String sender, long activityId, String content, Position position) {
+        this.receiver = receiver;
+        this.sender = sender;
+        this.activityId = activityId;
+        this.content = content;
+        this.position = position;
+    }
 
-	public String getReceiver() {
-	return receiver;
-	}
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
-	}
+    public String getReceiver() {
+        return receiver;
+    }
 
-	public long getActivityId() {
-		return activityId;
-	}
-	public void setActivityId(long activityId) {
-		this.activityId = activityId;
-	}
-	public String getContent() {
-		return content;
-	}
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(long activityId) {
+        this.activityId = activityId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }
