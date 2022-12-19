@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 
+import java.util.Objects;
+
 @Entity(name = "Activity")
 @NoArgsConstructor
 public class Competition extends Activity {
@@ -70,5 +72,26 @@ public class Competition extends Activity {
 
     public void setSingleOrganization(boolean singleOrganization) {
         this.singleOrganization = singleOrganization;
+    }
+
+    /**
+     * Method to judge whether two competitions are equal.
+     *
+     * @param o another competition to be compared with
+     * @return a boolean value which shows the result
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Competition that = (Competition) o;
+        return allowAmateurs == that.allowAmateurs && singleOrganization == that.singleOrganization
+                && genderConstraint == that.genderConstraint;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), allowAmateurs, genderConstraint, singleOrganization);
     }
 }

@@ -12,6 +12,8 @@ import javax.persistence.MappedSuperclass;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.NetId;
 
+import java.util.Objects;
+
 @MappedSuperclass
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -84,8 +86,27 @@ public abstract class Activity {
      * @return a string contains information about the activity.
      */
     public String toString() {
-        return "The competition is created by: " + netId.getNetId() + "\n The name is: "
+        return "The activity is created by: " + netId.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
+    }
+
+    /**
+     * The method to check whether two activities are equal.
+     *
+     * @param o Another activity to be compared with
+     * @return a boolean value representing the result
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Activity activity = (Activity) o;
+        return id == activity.id && boatId == activity.boatId && startTime == activity.startTime && Objects.equals(netId, activity.netId) && Objects.equals(activityName, activity.activityName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, netId, activityName, boatId, startTime);
     }
 }
