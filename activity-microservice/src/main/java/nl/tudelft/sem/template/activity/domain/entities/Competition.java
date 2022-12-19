@@ -5,8 +5,9 @@ import javax.persistence.Entity;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Type;
 
-@Entity(name = "Activity")
+@Entity(name = "Competition")
 @NoArgsConstructor
 public class Competition extends Activity {
     @Column
@@ -15,6 +16,8 @@ public class Competition extends Activity {
     private GenderConstraint genderConstraint;
     @Column
     private boolean singleOrganization;
+    @Column
+    private String organization;
 
 
     /**
@@ -28,13 +31,14 @@ public class Competition extends Activity {
      * @param genderConstraint what genders are allowed
      * @param singleOrganization whether only one organization is allowed
      */
-    public Competition(NetId netId, String activityName, long boatId, long startTime,
+    public Competition(NetId netId, String activityName, long boatId, long startTime, int numPeople,
                        boolean allowAmateurs, GenderConstraint genderConstraint,
-                       boolean singleOrganization) {
-        super(netId, activityName, boatId, startTime);
+                       boolean singleOrganization, String organization, Type type) {
+        super(netId, activityName, boatId, startTime, numPeople, type);
         this.allowAmateurs = allowAmateurs;
         this.genderConstraint = genderConstraint;
         this.singleOrganization = singleOrganization;
+        this.organization = organization;
     }
 
     /**
@@ -70,5 +74,13 @@ public class Competition extends Activity {
 
     public void setSingleOrganization(boolean singleOrganization) {
         this.singleOrganization = singleOrganization;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 }

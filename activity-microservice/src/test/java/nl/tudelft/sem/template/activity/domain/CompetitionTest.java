@@ -17,14 +17,15 @@ class CompetitionTest {
 
     @BeforeEach
     public void setup() {
-        sut = new Competition(new NetId("123"), "testname", 123L, 123L, false, GenderConstraint.NO_CONSTRAINT, false);
+        sut = new Competition(new NetId("123"), "testname", 123L, 123L, 5,
+                false, GenderConstraint.NO_CONSTRAINT, false, "TUDELFT", Type.C4);
     }
 
     @Test
     void testToString() {
         String toString = sut.toString();
         assertEquals(
-                "The competition is created by: 123\n"
+                "The Activity is created by: 123\n"
                         + " The name is: testname\n"
                         + " The boatId is: 123\n"
                         + " The start time is: 123\n"
