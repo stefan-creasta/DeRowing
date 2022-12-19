@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.user.domain.repositories;
 
-import nl.tudelft.sem.template.user.domain.NetId;
 import nl.tudelft.sem.template.user.domain.entities.Message;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
