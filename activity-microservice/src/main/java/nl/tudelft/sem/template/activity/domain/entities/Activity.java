@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.activity.domain.entities;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
@@ -11,8 +12,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.NetId;
-
-import java.util.Objects;
 
 @MappedSuperclass
 @NoArgsConstructor
@@ -99,10 +98,16 @@ public abstract class Activity {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Activity activity = (Activity) o;
-        return id == activity.id && boatId == activity.boatId && startTime == activity.startTime && Objects.equals(netId, activity.netId) && Objects.equals(activityName, activity.activityName);
+        return id == activity.id && boatId == activity.boatId && startTime == activity.startTime
+                && Objects.equals(netId, activity.netId)
+                && Objects.equals(activityName, activity.activityName);
     }
 
     @Override

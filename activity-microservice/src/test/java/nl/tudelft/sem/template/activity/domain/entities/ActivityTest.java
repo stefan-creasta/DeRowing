@@ -1,11 +1,11 @@
 package nl.tudelft.sem.template.activity.domain.entities;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActivityTest {
 
@@ -16,6 +16,7 @@ public class ActivityTest {
         test = new Competition(new NetId("123"), "TestActivity", 123L, 123L,
                 false, GenderConstraint.NO_CONSTRAINT, false);
     }
+
     @Test
     void getNetId() {
         assertEquals(new NetId("123"), test.getNetId());

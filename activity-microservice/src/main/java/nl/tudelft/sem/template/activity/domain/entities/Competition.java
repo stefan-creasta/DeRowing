@@ -1,12 +1,11 @@
 package nl.tudelft.sem.template.activity.domain.entities;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
-
-import java.util.Objects;
 
 @Entity(name = "Activity")
 @NoArgsConstructor
@@ -82,9 +81,15 @@ public class Competition extends Activity {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         Competition that = (Competition) o;
         return allowAmateurs == that.allowAmateurs && singleOrganization == that.singleOrganization
                 && genderConstraint == that.genderConstraint;

@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
@@ -12,11 +14,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CompetitionServiceTest {
 

@@ -24,7 +24,9 @@ public class CompetitionCreateModel {
      * @param singleOrganization whether this competition only support one organization
      * @param startTime the startTime
      */
-    public CompetitionCreateModel(String competitionName, GenderConstraint genderConstraint, long boatId, boolean allowAmateurs, boolean singleOrganization, long startTime) {
+    public CompetitionCreateModel(String competitionName, GenderConstraint genderConstraint,
+                                  long boatId, boolean allowAmateurs, boolean singleOrganization,
+                                  long startTime) {
         this.competitionName = competitionName;
         this.genderConstraint = genderConstraint;
         this.boatId = boatId;

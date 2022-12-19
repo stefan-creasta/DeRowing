@@ -1,8 +1,8 @@
 package nl.tudelft.sem.template.activity.domain.repositories;
 
-import nl.tudelft.sem.template.activity.domain.GenderConstraint;
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,9 +11,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import java.util.List;
-import java.util.Optional;
 
 class TrainingRepositoryTest {
 
