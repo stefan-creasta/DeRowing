@@ -89,4 +89,13 @@ public class BoatService extends RestService {
             throw new Exception("Something went wrong in findCompetitions");
         }
     }
+
+    /**
+     * A method which updates a certain boat, when a rower has been inserted or removed.
+
+     * @param boat the updated boat
+     */
+    public void updateBoat(Boat boat) {
+        boatRepository.save(boat);
+    }
 }

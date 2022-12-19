@@ -101,6 +101,7 @@ public class BoatController {
             Boat target = boatService.findBoatById(id);
             NetId netId = request.getNetId();
             target.addRowerToPosition(request.getPosition(), netId);
+            boatService.updateBoat(target);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -122,6 +123,7 @@ public class BoatController {
             Boat target = boatService.findBoatById(id);
             NetId netId = request.getNetId();
             target.removeRower(netId);
+            boatService.updateBoat(target);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
