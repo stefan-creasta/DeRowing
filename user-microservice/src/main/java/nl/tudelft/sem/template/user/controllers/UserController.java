@@ -78,7 +78,7 @@ public class UserController {
      * @throws Exception a competition not found exception
      */
     @GetMapping("/find")
-    public ResponseEntity<String> findCompetitions(@RequestBody UserFindModel request) throws Exception {
+    public ResponseEntity<String> findUser(@RequestBody UserFindModel request) throws Exception {
         NetId netId = new NetId(authManager.getNetId());
         User target = userService.findUser(netId);
         return ResponseEntity.ok("The user created by " + authManager.getNetId()
