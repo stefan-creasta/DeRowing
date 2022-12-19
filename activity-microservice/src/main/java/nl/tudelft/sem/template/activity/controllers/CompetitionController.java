@@ -2,7 +2,7 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
+import nl.tudelft.sem.template.activity.domain.Position;import nl.tudelft.sem.template.activity.domain.entities.Competition;import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ResponseStatusException;import java.util.List;
 
 /**
  * Hello World example controller.
@@ -61,7 +60,7 @@ public class CompetitionController {
      * @throws Exception an already used NetId exception
      */
     @PostMapping("/create")
-    public ResponseEntity<String> createCompetition(@RequestBody CompetitionCreateModel request) throws Exception {
+    public ResponseEntity<String> createCompetition(@RequestBody CompetitionCreateModel request) {
         try {
             String status = competitionService.createCompetition(request, new NetId(authManager.getNetId()));
             return ResponseEntity.ok(status);
@@ -102,4 +101,16 @@ public class CompetitionController {
             return ResponseEntity.ok("Internal error");
         }
     }
+
+	@GetMapping("/find")
+	public ResponseEntity<List<Competition>> getCompetitions(@RequestBody Position position) throws Exception{
+		try {
+			List<Competition> result = competitionService.getSuitableCompetition(position);
+			return ResponseEntity.ok(result);
+		}
+		catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+			"There is no competition that you are suitable for", e);
+		}
+	}
 }

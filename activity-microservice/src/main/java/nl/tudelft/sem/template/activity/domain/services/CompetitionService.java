@@ -3,17 +3,13 @@ package nl.tudelft.sem.template.activity.domain.services;
 import nl.tudelft.sem.template.activity.domain.Gender;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.domain.Position;import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
-import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
-import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
-import nl.tudelft.sem.template.activity.models.JoinRequestModel;
-import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
+import nl.tudelft.sem.template.activity.models.*;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;import java.util.List;
 
 @Service
 public class CompetitionService extends ActivityService {
@@ -143,4 +139,13 @@ public class CompetitionService extends ActivityService {
         }
         return constraint == GenderConstraint.ONLY_FEMALE && gender == Gender.FEMALE;
     }
+
+	public List<Competition> getSuitableCompetition(Position position) {
+		UserDataRequestModel userDataRequestModel = userRestService.getUserData();
+		List<Competition> competitionsAreMetConstraints = competitionRepository
+						.findSuitableCompetitions(userDataRequestModel.getGender(),
+						userDataRequestModel.getOrganization(),
+						userDataRequestModel.isAmateur());
+		return boatRestService.checkIfPositionAvailable(competitionsAreMetConstraints,position);
+	}
 }

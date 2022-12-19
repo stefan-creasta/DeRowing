@@ -1,6 +1,6 @@
 package nl.tudelft.sem.template.activity.domain.repositories;
 
-import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Certificate;import nl.tudelft.sem.template.activity.domain.Gender;import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +29,8 @@ public interface CompetitionRepository extends JpaRepository<Competition, NetId>
     boolean existsById(long id);
 
     Competition findCompetitionByAttendeesContains(NetId netId);
+
+	@Query(value = "SELECT * FROM COMPETITION c WHERE c.allowAmateurs = ?3 " +
+	 "AND c.genderConstraint = ?1 AND c.organization = ?2", nativeQuery = true)
+	List<Competition> findSuitableCompetitions(Gender gender, String organization, boolean isAmateur);
 }
