@@ -48,7 +48,7 @@ public class ActivityService {
         eventPublisher.publishAcceptance(model.isAccepted(), model.getPosition(), model.getRequestee());
         Activity activity = (Activity) repository.findById(model.getActivityId()).get();
         long boatId = activity.getBoatId();
-        eventPublisher.publishBoatChange(boatId, model.getPosition());
+        eventPublisher.publishBoatChange(boatId, model.getPosition(), model.getRequestee());
         return "The user is now part of the activity";
     }
 }

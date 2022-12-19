@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Type;
 
 @Entity(name = "Competition")
 @NoArgsConstructor
@@ -32,8 +33,8 @@ public class Competition extends Activity {
      */
     public Competition(NetId netId, String activityName, long boatId, long startTime, int numPeople,
                        boolean allowAmateurs, GenderConstraint genderConstraint,
-                       boolean singleOrganization, String organization) {
-        super(netId, activityName, boatId, startTime, numPeople);
+                       boolean singleOrganization, String organization, Type type) {
+        super(netId, activityName, boatId, startTime, numPeople, type);
         this.allowAmateurs = allowAmateurs;
         this.genderConstraint = genderConstraint;
         this.singleOrganization = singleOrganization;
