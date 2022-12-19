@@ -11,6 +11,7 @@ import nl.tudelft.sem.template.activity.domain.Position;
 import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
+import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
+import java.time.Instant;
 
 class CompetitionServiceTest {
 
@@ -27,6 +29,7 @@ class CompetitionServiceTest {
     private transient UserRestService userRestService;
     private transient BoatRestService boatRestService;
     private transient CompetitionService sut;
+    private transient CurrentTimeProvider currentTimeProvider;
 
     @BeforeEach
     public void setUp() {
@@ -35,7 +38,9 @@ class CompetitionServiceTest {
         this.competitionRepository = Mockito.mock(CompetitionRepository.class);
         this.userRestService = Mockito.mock(UserRestService.class);
         this.boatRestService = Mockito.mock(BoatRestService.class);
-        this.sut = new CompetitionService(eventPublisher, competitionRepository, userRestService, boatRestService);
+        this.currentTimeProvider = Mockito.mock(CurrentTimeProvider.class);
+        this.sut = new CompetitionService(eventPublisher, competitionRepository,
+                userRestService, boatRestService, currentTimeProvider);
     }
 
     public Competition fabricateCompetition(long id, long boatId, Type type) {
@@ -78,6 +83,7 @@ class CompetitionServiceTest {
 
     @Test
     public void joinCompetitionTest() {
+        when(currentTimeProvider.getCurrentTime()).thenReturn(Instant.ofEpochMilli(-1000000000L));
         //Input
         JoinRequestModel request = new JoinRequestModel();
         request.setActivityId(1L);
