@@ -1,20 +1,21 @@
 package nl.tudelft.sem.template.activity.domain.exceptions;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
-import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class NetIdAlreadyInUseExceptionTest {
 
     @Mock
     private CompetitionService competitionService;
+
     @Test
     void testNetIdAlreadyInUseException() throws Exception {
         competitionService = mock(CompetitionService.class);

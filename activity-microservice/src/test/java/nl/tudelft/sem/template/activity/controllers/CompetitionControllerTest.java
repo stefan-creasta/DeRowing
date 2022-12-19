@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.activity.controllers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
@@ -12,10 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-@SpringBootTest
 @ExtendWith(SpringExtension.class)
 class CompetitionControllerTest {
 
@@ -40,7 +39,7 @@ class CompetitionControllerTest {
     @Test
     void helloWorld() {
         when(authManager.getNetId()).thenReturn("123");
-        when(competitionController.helloWorld()).thenReturn(ResponseEntity.ok("Hello " + authManager.getNetId()));
+        when(competitionController.helloWorld()).thenReturn(ResponseEntity.ok("Hello 123"));
         Assertions.assertEquals(ResponseEntity.ok("Hello 123"), competitionController.helloWorld());
     }
 
