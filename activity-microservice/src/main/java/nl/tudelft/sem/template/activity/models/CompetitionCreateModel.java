@@ -16,4 +16,30 @@ public class CompetitionCreateModel {
     private long startTime;
     private Type type;
     private int numPeople;
+
+
+    /**
+     *  Constructor for CompetitionCreateModel.
+     *
+     * @param competitionName the name of the competition
+     * @param genderConstraint wether there is a gender constraint
+     * @param allowAmateurs whether amateurs are allowed
+     * @param singleOrganization whether only one organization is allowed
+     * @param organization the organization
+     * @param startTime the start time of the competition
+     * @param type the type of the competition
+     * @param numPeople the number of people in the competition
+     */
+    public CompetitionCreateModel(String competitionName, GenderConstraint genderConstraint, boolean allowAmateurs,
+                                  boolean singleOrganization, String organization, long startTime,
+                                  Type type, int numPeople) {
+        this.competitionName = competitionName;
+        this.genderConstraint = genderConstraint;
+        this.allowAmateurs = allowAmateurs;
+        this.singleOrganization = singleOrganization;
+        this.organization = organization;
+        this.startTime = startTime;
+        this.type = type;
+        this.numPeople = numPeople;
+    }
 }
