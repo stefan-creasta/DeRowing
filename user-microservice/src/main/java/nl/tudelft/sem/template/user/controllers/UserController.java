@@ -36,6 +36,7 @@ public class UserController {
      * Instantiates a new controller.
      *
      * @param authManager Spring Security component used to authenticate and authorize the user
+     * @param userService The user service containing method implementations
      */
     @Autowired
     public UserController(AuthManager authManager, UserService userService) {
@@ -95,7 +96,8 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<String> sendApplicationOfRequesterToOwner(@RequestBody UserJoinRequestModel
                                                                             userJoinRequest) throws Exception {
-        String content = authManager.getNetId() + " wants to join this competition/training session";
+        String content = authManager.getNetId() + " wants to join this competition/training session. They want to join"
+                + " for position " + userJoinRequest.getPosition().toString();
         userService.saveMessage(userJoinRequest.getOwner(),
                 new NetId(authManager.getNetId()),
                 userJoinRequest.getActivityId(),
@@ -128,10 +130,10 @@ public class UserController {
                                                                          userAcceptanceUpdateModel) throws Exception {
         String content = "";
         if (userAcceptanceUpdateModel.isAccepted()) {
-            content += authManager.getNetId() + " accepted your request. You have been selected for position"
+            content += authManager.getNetId() + " accepted your request. You have been selected for position "
                     + userAcceptanceUpdateModel.getPosition().toString();
         } else {
-            content += authManager.getNetId() + " did not accept your request";
+            content += authManager.getNetId() + " did not accept your request. Consider joining another activity!";
         }
 
         userService.saveMessage(userAcceptanceUpdateModel.getEventRequester(),
