@@ -54,7 +54,7 @@ public class UserController {
     }
 
     /**
-     * the method to create a User.
+     * The method to create a User.
      *
      * @param request a user create model, which contains all information about the user
      * @return a user
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     /**
-     * the method to find a specific user.
+     * The method to find a specific user.
      *
      * @param request the request body of the user finding
      * @return a user information
@@ -86,14 +86,15 @@ public class UserController {
     }
 
     /**
-     * Saves the request from a participant to the activity owner to join an activity.
+     * Saves the request from a participant to the activity owner to join an activity, to the message database.
      *
      * @param userJoinRequest the request body of the join request
      * @return a String that informs that the message is successfully saved in the message database
      * @throws Exception an already used NetId exception
      */
     @PostMapping("/join")
-    public ResponseEntity<String> saveMessage(@RequestBody UserJoinRequestModel userJoinRequest) throws Exception {
+    public ResponseEntity<String> sendApplicationOfRequesterToOwner(@RequestBody UserJoinRequestModel
+                                                                            userJoinRequest) throws Exception {
         String content = authManager.getNetId() + " wants to join this competition/training session";
         userService.saveMessage(userJoinRequest.getOwner(),
                 new NetId(authManager.getNetId()),
@@ -127,7 +128,8 @@ public class UserController {
                                                                          userAcceptanceUpdateModel) throws Exception {
         String content = "";
         if (userAcceptanceUpdateModel.isAccepted()) {
-            content += authManager.getNetId() + " accepted your request";
+            content += authManager.getNetId() + " accepted your request. You have been selected for position"
+                    + userAcceptanceUpdateModel.getPosition().toString();
         } else {
             content += authManager.getNetId() + " did not accept your request";
         }
