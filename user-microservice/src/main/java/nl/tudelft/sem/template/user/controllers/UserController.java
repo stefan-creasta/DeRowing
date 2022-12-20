@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.user.controllers;
 
 import nl.tudelft.sem.template.user.authentication.AuthManager;
+import nl.tudelft.sem.template.user.domain.Certificate;
+import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
 import nl.tudelft.sem.template.user.domain.entities.Message;
 import nl.tudelft.sem.template.user.domain.entities.User;
@@ -72,18 +74,28 @@ public class UserController {
     }
 
     /**
-     * The method to find a specific user.
+     * The method to extract details about a specific user.
      *
      * @param request the request body of the user finding
      * @return a user information
      * @throws Exception a competition not found exception
      */
-    @GetMapping("/find")
-    public ResponseEntity<String> findUser(@RequestBody UserFindModel request) throws Exception {
-        NetId netId = new NetId(authManager.getNetId());
-        User target = userService.findUser(netId);
-        return ResponseEntity.ok("The user created by " + authManager.getNetId()
-                + " is found. Here is the user: " + target.toString());
+    @GetMapping("/getdetails")
+    public ResponseEntity<UserDetailModel> getDetailsOfUser(@RequestBody UserFindModel request) throws Exception {
+        try {
+            NetId netId = request.getNetId();
+            User target = userService.findUser(netId);
+            Gender gender = target.getGender();
+            String organization = target.getOrganization();
+            boolean amateur = target.isAmateur();
+            Certificate certificate = target.getCertificate();
+            UserDetailModel user = new UserDetailModel(gender, organization, amateur, certificate);
+            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+            bb.body(user);
+            return bb.build();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     /**
