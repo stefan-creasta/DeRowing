@@ -34,12 +34,11 @@ public abstract class RestService {
 
         headers.add("Authorization", "Bearer " + jwtToken);
         HttpEntity<Object> entity = new HttpEntity<>(requestModel, headers);
-        ResponseEntity<Object> response = request.exchange(target, method, entity, Object.class);
-        HttpStatus responseCode = response.getStatusCode();
-
-        if (!responseCode.is2xxSuccessful()) {
+        try {
+            ResponseEntity<Object> response = request.exchange(target, method, entity, Object.class);
+            return response.getBody();
+        } catch (Exception e) {
             throw new UnsuccessfulRequestException();
         }
-        return response.getBody();
     }
 }

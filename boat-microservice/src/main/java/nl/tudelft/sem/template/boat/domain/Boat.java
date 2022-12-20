@@ -51,7 +51,7 @@ public class Boat {
     public Boat(String name, Type type, int cox, int coach, int port, int starboard, int sculling) {
         this.name = name;
         this.type = type;
-        HashMap<Position, List<Rower>> newMapForRowers = new HashMap<>();
+        HashMap<Position, List<NetId>> newMapForRowers = new HashMap<>();
         newMapForRowers.put(Position.COX, new ArrayList<>());
         newMapForRowers.put(Position.COACH, new ArrayList<>());
         newMapForRowers.put(Position.PORT, new ArrayList<>());
@@ -68,7 +68,7 @@ public class Boat {
         this.requiredRowers = new RequiredRowers(newMapForRequiredRowers);
     }
 
-    public Map<Position, List<Rower>> getRowers() {
+    public Map<Position, List<NetId>> getRowers() {
         return this.rowers.currentRowers;
     }
 
@@ -79,11 +79,11 @@ public class Boat {
     /**
      * Adds rower to boat.
      *
-     * @param rower the user to be added
+     * @param currentNetId the user's netId to be added
      */
-    public void addRowerToPosition(Position position, Rower rower) {
+    public void addRowerToPosition(Position position, NetId currentNetId) {
         if (this.rowers.currentRowers.get(position).size() < this.requiredRowers.amountOfPositions.get(position)) {
-            this.rowers.currentRowers.get(position).add(rower);
+            this.rowers.currentRowers.get(position).add(currentNetId);
             int val = requiredRowers.amountOfPositions.get(position);
             requiredRowers.amountOfPositions.replace(position, val - 1);
         }
@@ -103,14 +103,14 @@ public class Boat {
     /**
      * Removes rower from the boat.
      *
-     * @param rower the user to be removed
+     * @param currentNetId the user's netId to be removed
      * @return true, if the user was successfully removed, false otherwise
      */
-    public boolean removeRower(Rower rower) {
+    public boolean removeRower(NetId currentNetId) {
         // find the key that the User is mapped to
-        for (Map.Entry<Position, List<Rower>> a : rowers.currentRowers.entrySet()) {
-            if (a.getValue().contains(rower)) {
-                a.getValue().remove(rower);
+        for (Map.Entry<Position, List<NetId>> a : rowers.currentRowers.entrySet()) {
+            if (a.getValue().contains(currentNetId)) {
+                a.getValue().remove(currentNetId);
                 int val = requiredRowers.amountOfPositions.get(a.getKey());
                 requiredRowers.amountOfPositions.replace(a.getKey(), val + 1);
                 return true;
@@ -120,16 +120,12 @@ public class Boat {
     }
 
     /**
-     * Checks whether the user is eligible to be a rower on the boat.
+     * Checks whether the user can be added as a rower on the boat.
 
-     * @param type the user's certificate
      * @param position the user's position
      * @return true whether the user is eligible, false otherwise
      */
-    public boolean canRowerBeAdded(Type type, Position position) {
-        if (type.value < this.type.value) {
-            return false;
-        }
+    public boolean canRowerBeAdded(Position position) {
         return (requiredRowers.amountOfPositions.get(position) > 0);
     }
 

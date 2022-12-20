@@ -1,8 +1,13 @@
 package nl.tudelft.sem.template.boat.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.boat.domain.Boat;
+import nl.tudelft.sem.template.boat.domain.Position;
 import nl.tudelft.sem.template.boat.domain.Type;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.repositories.BoatRepository;
@@ -68,7 +73,7 @@ public class BoatService extends RestService {
 
             return boatOptional.orElse(null);
         } catch (Exception e) {
-            throw new Exception("Something went wrong in findCompetitions");
+            throw new Exception("Something went wrong in findBoatsById");
         }
     }
 
@@ -86,7 +91,52 @@ public class BoatService extends RestService {
 
             return boatOptional.orElse(null);
         } catch (Exception e) {
-            throw new Exception("Something went wrong in findCompetitions");
+            throw new Exception("Something went wrong in findBoatsByName");
+        }
+    }
+
+    /**
+     * A method which updates a certain boat, when a rower has been inserted or removed.
+
+     * @param boat the updated boat
+     */
+    public void updateBoat(Boat boat) {
+        boatRepository.save(boat);
+    }
+
+    /**
+     * A method which deletes a certain boat.
+
+     * @param boat the boat which needs to be deleted
+     */
+    public void deleteBoat(Boat boat) {
+        boatRepository.delete(boat);
+    }
+
+    /**
+     * A method which finds the boats that have certain positions available.
+     *
+     * @param requiredPositions the number of positions of each type that are available
+     * @return a list of boats that fulfill the requirements
+     */
+    public List<Boat> findBoatsByEmptyPositions(Map<Position, Integer> requiredPositions) throws Exception {
+        try {
+            List<Boat> result = new ArrayList<>();
+
+            // iterate through all boats in the DB
+            List<Boat> boats = boatRepository.findAll();
+            for (Boat boat : boats) {
+                // check the number available positions for each of them
+                for (Position p : Position.values()) {
+                    if (requiredPositions.get(p) <= boat.getRequiredRowers().get(p)) {
+                        result.add(boat);
+                    }
+                }
+            }
+
+            return result;
+        } catch (Exception e) {
+            throw new Exception("Something went wrong in findBoatsByEmptyPositions");
         }
     }
 }
