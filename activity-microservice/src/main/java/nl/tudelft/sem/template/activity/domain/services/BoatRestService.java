@@ -22,6 +22,8 @@ public class BoatRestService extends RestService {
     // Here we can create methods, that use the parent class' performRequest()
     // to get information from other microservices
     private final transient Environment environment;
+    private transient String boatUrl = "boat.url";
+    private transient String boatPort = "boat.port";
 
     @Autowired
     public BoatRestService(Environment environment) {
@@ -36,8 +38,8 @@ public class BoatRestService extends RestService {
      * @return boolean whether the request was successful
      */
     public boolean informBoatOfJoining(BoatChangeEvent model) {
-        String url = environment.getProperty("boat.url");
-        int port = Integer.parseInt(environment.getProperty("boat.port"));
+        String url = environment.getProperty(boatUrl);
+        int port = Integer.parseInt(environment.getProperty(boatPort));
         try {
             performRequest(model, url, port, "/boat/insert", HttpMethod.POST);
             return true;
@@ -55,8 +57,8 @@ public class BoatRestService extends RestService {
      * @return the boat id of the newly creted boat.
      */
     public long getBoatId(Type type, int numPeople) {
-        String url = environment.getProperty("boat.url");
-        int port = Integer.parseInt(environment.getProperty("boat.port"));
+        String url = environment.getProperty(boatUrl);
+        int port = Integer.parseInt(environment.getProperty(boatPort));
         CreateBoatModel model = new CreateBoatModel();
         model.setType(type);
         model.setNumPeople(numPeople);
@@ -82,8 +84,8 @@ public class BoatRestService extends RestService {
      * @return a list of competitions, or an empty list if no competitions available
      */
     public List<Competition> checkIfPositionAvailable(List<Competition> competitions, Position position) {
-        String url = environment.getProperty("boat.url");
-        int port = Integer.parseInt(environment.getProperty("boat.port"));
+        String url = environment.getProperty(boatUrl);
+        int port = Integer.parseInt(environment.getProperty(boatPort));
         FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(competitions, position);
         try {
             FindSuitableCompetitionResponseModel response =
@@ -103,8 +105,8 @@ public class BoatRestService extends RestService {
      * @return a boolean value representing the result
      */
     public boolean deleteBoat(BoatDeleteModel boatDeleteModel) {
-        String url = environment.getProperty("boat.url");
-        int port = Integer.parseInt(environment.getProperty("boat.port"));
+        String url = environment.getProperty(boatUrl);
+        int port = Integer.parseInt(environment.getProperty(boatPort));
         try {
             performRequest(boatDeleteModel, url, port, "/boat/delete", HttpMethod.POST);
             return true;
