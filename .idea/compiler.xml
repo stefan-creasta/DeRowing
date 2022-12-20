@@ -10,8 +10,8 @@
         <module name="template.boat-microservice.main" />
         <module name="template.activity-microservice.main" />
         <module name="template.example-microservice.main" />
+        <module name="nl.tudelft.cse.sem.template.template.user-microservice.main" />
         <module name="template.authentication-microservice.main" />
-        <module name="template.user-microservice.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />
