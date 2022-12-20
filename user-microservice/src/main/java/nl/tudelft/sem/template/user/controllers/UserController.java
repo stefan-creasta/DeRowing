@@ -87,8 +87,7 @@ public class UserController {
             Certificate certificate = target.getCertificate();
             UserDetailModel user = new UserDetailModel(gender, organization, amateur, certificate);
             ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            bb.body(user);
-            return bb.build();
+            return bb.body(user);
         } catch (Exception e) {
             return null;
         }
