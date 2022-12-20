@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestExc
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -56,9 +57,10 @@ public class BoatRestService extends RestService {
         model.setType(type);
         model.setNumPeople(numPeople);
         try {
-            CreateBoatResponseModel response =
-                    (CreateBoatResponseModel)
-                            performRequest(model, url, port, "/boat/create", HttpMethod.POST);
+            Object genericResponse = performRequest(model, url, port, "/boat/create", HttpMethod.POST);
+            CreateBoatResponseModel response = (genericResponse != null)
+                    ? (CreateBoatResponseModel) deserialize(genericResponse, CreateBoatResponseModel.class)
+                    : null;
             if (response == null) {
                 return -1;
             }
