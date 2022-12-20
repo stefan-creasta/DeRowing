@@ -61,8 +61,8 @@ class CompetitionControllerTest {
     @Test
     void helloWorld() {
         when(authManager.getNetId()).thenReturn("123");
-        Assertions.assertEquals(new ResponseEntity<>("Hello 123", HttpStatus.valueOf(200))
-                , competitionController.helloWorld());
+        Assertions.assertEquals(new ResponseEntity<>("Hello 123", HttpStatus.valueOf(200)),
+                competitionController.helloWorld());
     }
 
     @Test
@@ -71,17 +71,18 @@ class CompetitionControllerTest {
         when(authManager.getNetId()).thenReturn("123");
         when(competitionService.createCompetition(competitionCreateModel, any())).thenReturn(competition);
 
-        Assertions.assertEquals(new ResponseEntity<>("Done! The competition test is created by 123"
-                        , HttpStatus.valueOf(200))
-                , competitionController.createCompetition(competitionCreateModel));
+        Assertions.assertEquals(new ResponseEntity<>("Done! The competition test is created by 123",
+                        HttpStatus.valueOf(200)),
+                competitionController.createCompetition(competitionCreateModel));
     }
 
     @Test
     void findCompetitions() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
         when(competitionService.findCompetitions(any())).thenReturn(competition);
-        Assertions.assertEquals(new ResponseEntity<>("The competition created by 123 is found. " +
-                "Here is the competition: " + competition.toString(), HttpStatus.valueOf(200))
-                , competitionController.findCompetitions(competitionFindModel));
+        Assertions.assertEquals(new ResponseEntity<>("The competition created by 123 is found. "
+                        + "Here is the competition: "
+                        + competition.toString(), HttpStatus.valueOf(200)),
+                competitionController.findCompetitions(competitionFindModel));
     }
 }
