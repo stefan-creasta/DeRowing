@@ -2,6 +2,8 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Position;
+import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
@@ -10,11 +12,14 @@ import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 /**
  * Hello World example controller.
@@ -33,7 +38,7 @@ public class CompetitionController {
     /**
      * Instantiates a new controller.
      *
-     * @param authManager     Spring Security component used to authenticate and authorize the user
+     * @param authManager        Spring Security component used to authenticate and authorize the user
      * @param competitionService the service provider of all activities
      */
     @Autowired
@@ -55,12 +60,12 @@ public class CompetitionController {
     /**
      * the method to create a competition.
      *
-     * @param request   a competition create model, which contains all information about the competition
+     * @param request a competition create model, which contains all information about the competition
      * @return a competition
      * @throws Exception an already used NetId exception
      */
     @PostMapping("/create")
-    public ResponseEntity<String> createCompetition(@RequestBody CompetitionCreateModel request) throws Exception {
+    public ResponseEntity<String> createCompetition(@RequestBody CompetitionCreateModel request) {
         try {
             String status = competitionService.createCompetition(request, new NetId(authManager.getNetId()));
             return ResponseEntity.ok(status);
@@ -133,6 +138,24 @@ public class CompetitionController {
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when editing competition.");
+        }
+    }
+
+    /**
+     * Gets a list of competitions available for a suitable position.
+     *
+     * @param position Position in the boat for which to check
+     * @return a List of competitions
+     * @throws Exception Activity not found exception
+     */
+    @GetMapping("/find")
+    public ResponseEntity<List<Competition>> getCompetitions(@RequestBody Position position) throws Exception {
+        try {
+            List<Competition> result = competitionService.getSuitableCompetition(position);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no competition that you are suitable for", e);
         }
     }
 }
