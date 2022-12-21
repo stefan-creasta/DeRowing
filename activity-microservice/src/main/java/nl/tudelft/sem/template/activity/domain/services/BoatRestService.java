@@ -53,7 +53,6 @@ public class BoatRestService extends RestService {
      * Tells the boat service to create a new boat.
      *
      * @param type      the type of boat to create
-     * @param numPeople the number of people the boat can hold
      * @return the boat id of the newly creted boat.
      */
     public long getBoatId(Type type) {
