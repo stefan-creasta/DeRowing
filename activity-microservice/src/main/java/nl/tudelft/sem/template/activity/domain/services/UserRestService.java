@@ -1,10 +1,12 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.tudelft.sem.template.activity.domain.events.UserAcceptanceEvent;
 import nl.tudelft.sem.template.activity.domain.events.UserJoinEvent;
 import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
 import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
+import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -48,10 +50,10 @@ public class UserRestService extends RestService {
         String url = environment.getProperty("user.url");
         int port = Integer.parseInt(environment.getProperty("user.port"));
         try {
-            UserDataRequestModel userData =
-                    (UserDataRequestModel)
-                            performRequest(null, url, port, "/getdetails", HttpMethod.POST);
-            return userData;
+            Object genericResponse = performRequest(null, url, port, "/getdetails", HttpMethod.GET);
+            return (genericResponse != null)
+                    ? (UserDataRequestModel) deserialize(genericResponse, UserDataRequestModel.class)
+                    : null;
         } catch (UnsuccessfulRequestException e) {
             System.out.println("User microservice seems unavailable");
             return null;
