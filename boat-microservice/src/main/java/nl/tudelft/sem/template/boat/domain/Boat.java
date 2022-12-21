@@ -15,6 +15,11 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.tudelft.sem.template.boat.builders.BoatBuilder;
+import nl.tudelft.sem.template.boat.builders.BuilderC4;
+import nl.tudelft.sem.template.boat.builders.BuilderPlus4;
+import nl.tudelft.sem.template.boat.builders.BuilderPlus8;
+
 
 @Entity
 @Table(name = "boats")
@@ -43,6 +48,8 @@ public class Boat {
     @Convert(converter = RequiredRowersAttributeConverter.class)
     private RequiredRowers requiredRowers;
 
+    private BoatBuilder boatBuilder;
+
     /**
      * Create new boat.
      *
@@ -51,56 +58,46 @@ public class Boat {
     public Boat(String name, Type type) {
         this.name = name;
         this.type = type;
-        HashMap<Position, List<NetId>> newMapForRowers = new HashMap<>();
-        newMapForRowers.put(Position.COX, new ArrayList<>());
-        newMapForRowers.put(Position.COACH, new ArrayList<>());
-        newMapForRowers.put(Position.PORT, new ArrayList<>());
-        newMapForRowers.put(Position.STARBOARD, new ArrayList<>());
-        newMapForRowers.put(Position.SCULLING, new ArrayList<>());
-        this.rowers = new Rowers(newMapForRowers);
 
-        assignPositionLimits();
+        assignBuilder();
+        this.rowers = this.boatBuilder.getRowersClass();
+        this.requiredRowers = this.boatBuilder.getRequiredRowersClass();
     }
 
     /**
-     * Method for assigning the required number of rowers for each position based on the boat type.
+     * Method for returning the Boat from the BoatBuilder.
+     *
+     * @return the Boat object
      */
-    private void assignPositionLimits() {
-        HashMap<Position, Integer> newMapForRequiredRowers = new HashMap<>();
-        newMapForRequiredRowers.put(Position.COACH, 1); // all boats have 1 coach
+    public Boat getBoat() {
+        return this.boatBuilder.getBoat();
+    }
 
-        // assign the required number of rowers for each position based on the boat type
-        switch (this.type) {
+    /**
+     * Method for assigning the right Builder type to the Boat class.
+     */
+    private void assignBuilder() {
+        switch (type) {
             case C4:
-                newMapForRequiredRowers.put(Position.PORT, 2);
-                newMapForRequiredRowers.put(Position.STARBOARD, 2);
-                newMapForRequiredRowers.put(Position.SCULLING, 0);
+                this.boatBuilder = new BuilderC4(this.name);
                 break;
             case PLUS4:
-                newMapForRequiredRowers.put(Position.COX, 1);
-                newMapForRequiredRowers.put(Position.PORT, 2);
-                newMapForRequiredRowers.put(Position.STARBOARD, 2);
-                newMapForRequiredRowers.put(Position.SCULLING, 0);
+                this.boatBuilder = new BuilderPlus4(this.name);
                 break;
             case PLUS8:
-                newMapForRequiredRowers.put(Position.COX, 1);
-                newMapForRequiredRowers.put(Position.PORT, 4);
-                newMapForRequiredRowers.put(Position.STARBOARD, 4);
-                newMapForRequiredRowers.put(Position.SCULLING, 0);
+                this.boatBuilder = new BuilderPlus8(this.name);
                 break;
             default:
                 break;
         }
-
-        this.requiredRowers = new RequiredRowers(newMapForRequiredRowers);
     }
 
     public Map<Position, List<NetId>> getRowers() {
-        return this.rowers.currentRowers;
+        return this.boatBuilder.getRowers();
     }
 
     public HashMap<Position, Integer> getRequiredRowers() {
-        return this.requiredRowers.amountOfPositions;
+        return this.boatBuilder.getRequiredRowers();
     }
 
     /**

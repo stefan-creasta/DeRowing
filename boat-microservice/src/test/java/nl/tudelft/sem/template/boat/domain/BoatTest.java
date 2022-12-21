@@ -34,10 +34,10 @@ class BoatTest {
         requiredRowers.put(Position.COX, 1);
         requiredRowers.put(Position.COACH, 1);
         requiredRowers.put(Position.PORT, 2);
-        requiredRowers.put(Position.STARBOARD, 2);
         requiredRowers.put(Position.SCULLING, 0);
+        requiredRowers.put(Position.STARBOARD, 0);
         Boat boat = new Boat("boat", Type.PLUS4);
-        boat.removePosition(Position.SCULLING);
+        boat.removePosition(Position.STARBOARD);
         assertEquals(requiredRowers, boat.getRequiredRowers());
     }
 
