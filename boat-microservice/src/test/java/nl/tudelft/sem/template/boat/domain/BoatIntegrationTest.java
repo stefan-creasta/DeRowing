@@ -6,7 +6,6 @@ import nl.tudelft.sem.template.boat.authentication.AuthManager;
 import nl.tudelft.sem.template.boat.authentication.JwtTokenVerifier;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.repositories.BoatRepository;
-import nl.tudelft.sem.template.boat.services.BoatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,27 +27,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"test", "authManager", "jwtTokenVerifier", "boatService"})
+@ActiveProfiles({"test", "mockTokenVerifier", "mockAuthenticationManager"})
 @AutoConfigureMockMvc
 public class BoatIntegrationTest {
     @Autowired
-    private AuthManager authManager;
+    private AuthManager mockAuthenticationManager;
     @Autowired
-    private JwtTokenVerifier jwtTokenVerifier;
+    private JwtTokenVerifier mockTokenVerifier;
     @Autowired
     private MockMvc mvc;
     @Autowired
     private BoatRepository boatRepository;
-    @Autowired
-    private BoatService boatService;
 
     @BeforeEach
     public void setup() {
-        when(authManager.getNetId()).thenReturn("ExampleUser");
-        when(jwtTokenVerifier.validateToken(anyString())).thenReturn(true);
-        when(jwtTokenVerifier.getNetIdFromToken(anyString())).thenReturn("ExampleUser");
-        reset(boatRepository);
-        reset(boatService);
+        when(mockAuthenticationManager.getNetId()).thenReturn("ExampleUser");
+        when(mockTokenVerifier.validateToken(anyString())).thenReturn(true);
+        when(mockTokenVerifier.getNetIdFromToken(anyString())).thenReturn("ExampleUser");
     }
 
     public String serialize(Object obj) {
@@ -71,6 +66,7 @@ public class BoatIntegrationTest {
                 .header("Authorization", "Bearer MockedToken"));
         String response = res.andReturn().getResponse().getContentAsString();
         res.andExpect(status().isOk());
-        assertEquals("Done! The boat of type C4 is created by ExampleUser", response);
+        Integer sol = new ObjectMapper().readValue(response, Integer.class);
+        assertEquals(1, sol);
     }
 }

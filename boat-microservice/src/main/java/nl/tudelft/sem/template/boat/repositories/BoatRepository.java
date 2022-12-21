@@ -23,12 +23,4 @@ public interface BoatRepository extends JpaRepository<Boat, Integer> {
      * @return the boat that has this ID
      */
     Optional<Boat> findById(Integer id);
-
-    /**
-     * Find a Boat given a name.
-     *
-     * @param name the name of the Boat
-     * @return the boat that has this name
-     */
-    Optional<Boat> findByName(String name);
 }

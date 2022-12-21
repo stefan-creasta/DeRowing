@@ -74,24 +74,6 @@ public class BoatService extends RestService {
         }
     }
 
-
-    /**
-     * A method to find a boat by name from the database.
-
-     * @param name the name of the boat
-     * @return the Boat with that name
-     * @throws Exception the boat not found exception
-     */
-    public Boat findBoatByName(String name) throws Exception {
-        try {
-            Optional<Boat> boatOptional = boatRepository.findByName(name);
-
-            return boatOptional.orElse(null);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in findBoatsByName");
-        }
-    }
-
     /**
      * A method which updates a certain boat, when a rower has been inserted or removed.
 

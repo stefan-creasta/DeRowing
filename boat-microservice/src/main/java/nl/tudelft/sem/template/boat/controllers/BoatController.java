@@ -67,14 +67,18 @@ public class BoatController {
      * @throws Exception the boat cannot be created
      */
     @PostMapping("/create")
-    public ResponseEntity<String> createBoat(@RequestBody BoatCreateModel request) throws Exception {
+    public ResponseEntity<Integer> createBoat(@RequestBody BoatCreateModel request) throws Exception {
+        int id = -1;
+        ResponseEntity.BodyBuilder bb;
         try {
-            boatService.createBoat(request);
-        } catch (Exception e) {
+            Boat returnedBoat = boatService.createBoat(request);
+            id = returnedBoat.getId();
+            bb = ResponseEntity.status(HttpStatus.OK);
+        }
+        catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return ResponseEntity.ok("Done! The boat of type " + request.getType()
-                + " is created by " + authManager.getNetId());
+        return bb.body(id);
     }
 
     /**

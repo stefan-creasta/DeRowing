@@ -8,6 +8,6 @@ public class BoatCreateModel {
     private Type type;
 
     public BoatCreateModel(Type type) {
-        this.type = type;
+
     }
 }
