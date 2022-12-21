@@ -67,7 +67,7 @@ public class BoatController {
      * @throws Exception the boat cannot be created
      */
     @PostMapping("/create")
-    public ResponseEntity<Integer> createBoat(@RequestBody BoatCreateModel request) throws Exception {
+    public ResponseEntity<BoatDeleteModel> createBoat(@RequestBody BoatCreateModel request) throws Exception {
         int id = -1;
         ResponseEntity.BodyBuilder bb;
         try {
@@ -78,7 +78,7 @@ public class BoatController {
         catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return bb.body(id);
+        return bb.body(new BoatDeleteModel(id));
     }
 
     /**

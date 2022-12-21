@@ -18,11 +18,11 @@ import org.springframework.stereotype.Service;
 @Service
 @NoArgsConstructor
 public class BoatService extends RestService {
-    @Autowired
     private BoatRepository boatRepository;
 
     private Director director;
 
+    @Autowired
     public BoatService(BoatRepository boatRepository) {
         this.boatRepository = boatRepository;
         this.director = new Director();

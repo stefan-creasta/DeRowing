@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.tudelft.sem.template.boat.authentication.AuthManager;
 import nl.tudelft.sem.template.boat.authentication.JwtTokenVerifier;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
+import nl.tudelft.sem.template.boat.models.BoatDeleteModel;
 import nl.tudelft.sem.template.boat.repositories.BoatRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,7 @@ public class BoatIntegrationTest {
         when(mockAuthenticationManager.getNetId()).thenReturn("ExampleUser");
         when(mockTokenVerifier.validateToken(anyString())).thenReturn(true);
         when(mockTokenVerifier.getNetIdFromToken(anyString())).thenReturn("ExampleUser");
+        boatRepository.deleteAll();
     }
 
     public String serialize(Object obj) {
@@ -66,7 +68,7 @@ public class BoatIntegrationTest {
                 .header("Authorization", "Bearer MockedToken"));
         String response = res.andReturn().getResponse().getContentAsString();
         res.andExpect(status().isOk());
-        Integer sol = new ObjectMapper().readValue(response, Integer.class);
-        assertEquals(1, sol);
+        BoatDeleteModel sol = new ObjectMapper().readValue(response, BoatDeleteModel.class);
+        assertEquals(1, sol.getBoatId());
     }
 }
