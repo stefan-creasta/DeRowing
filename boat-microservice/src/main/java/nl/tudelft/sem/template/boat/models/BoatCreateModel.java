@@ -5,6 +5,5 @@ import nl.tudelft.sem.template.boat.domain.Type;
 
 @Data
 public class BoatCreateModel {
-    private String name;
     private Type type;
 }

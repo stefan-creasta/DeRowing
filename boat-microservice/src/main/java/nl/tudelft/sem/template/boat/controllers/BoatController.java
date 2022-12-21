@@ -10,7 +10,6 @@ import nl.tudelft.sem.template.boat.domain.Position;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.models.BoatDeleteModel;
 import nl.tudelft.sem.template.boat.models.BoatEmptyPositionsModel;
-import nl.tudelft.sem.template.boat.models.BoatFindModel;
 import nl.tudelft.sem.template.boat.models.BoatRowerEditModel;
 import nl.tudelft.sem.template.boat.services.BoatService;
 import org.springframework.beans.factory.annotation.Autowired;
