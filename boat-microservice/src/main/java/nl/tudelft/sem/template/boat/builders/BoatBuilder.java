@@ -1,63 +1,62 @@
 package nl.tudelft.sem.template.boat.builders;
 
-import java.util.HashMap;
-import java.util.List;
 import nl.tudelft.sem.template.boat.domain.Boat;
-import nl.tudelft.sem.template.boat.domain.NetId;
-import nl.tudelft.sem.template.boat.domain.Position;
-import nl.tudelft.sem.template.boat.domain.RequiredRowers;
-import nl.tudelft.sem.template.boat.domain.Rowers;
 import nl.tudelft.sem.template.boat.domain.Type;
 
 public abstract class BoatBuilder {
-    private transient String name;
-    private transient Type type;
-    private transient Boat boat;
-    private transient Rowers rowers;
-    private transient RequiredRowers requiredRowers;
+    private Boat boat;
 
     /**
      * Basic constructor for the BoatBuilder class.
-     *
-     * @param name the name for the Boat to be constructed
      */
-    public BoatBuilder(String name) {
-        this.name = name;
-        this.type = Type.C4;
-        this.boat = new Boat();
+    public BoatBuilder() {
+        this.boat = null;
     }
 
-    abstract void buildCox(int value);
+    /**
+     * Reset method which instantiates a new boat for this constructor.
+     */
+    abstract void reset();
 
-    abstract void buildPort(int value);
+    /**
+     * Basic setter for the cox field.
+     *
+     * @param value the number of required people who must be a cox
+     */
+    abstract void setCox(int value);
 
-    abstract void buildStarboard(int value);
+    /**
+     * Basic setter for the coach field.
+     *
+     * @param value the number of required people who must be a coach
+     */
+    abstract void setCoach(int value);
 
-    abstract void buildSculling(int value);
+    /**
+     * Basic setter for the port field.
+     *
+     * @param value the number of required people who must be a port rower
+     */
+    abstract void setPort(int value);
 
+    /**
+     * Basic setter for the starboard field.
+     *
+     * @param value the number of required people who must be a starboard rower
+     */
+    abstract void setStarboard(int value);
+
+    /**
+     * Basic setter for the sculling field.
+     *
+     * @param value the number of required people who must be a sculling rower
+     */
+    abstract void setSculling(int value);
+
+    /**
+     * The method which returns the boat which was built.
+     *
+     * @return the actual boat
+     */
     public abstract Boat getBoat();
-
-    public HashMap<Position, List<NetId>> getRowers() {
-        return this.rowers.getCurrentRowers();
-    }
-
-    public HashMap<Position, Integer> getRequiredRowers() {
-        return this.requiredRowers.getAmountOfPositions();
-    }
-
-    public void setRowers(HashMap<Position, List<NetId>> value) {
-        this.rowers.setCurrentRowers(value);
-    }
-
-    public void setRequiredRowers(HashMap<Position, Integer> value) {
-        this.requiredRowers.setAmountOfPositions(value);
-    }
-
-    public Rowers getRowersClass() {
-        return this.rowers;
-    }
-
-    public RequiredRowers getRequiredRowersClass() {
-        return this.requiredRowers;
-    }
 }

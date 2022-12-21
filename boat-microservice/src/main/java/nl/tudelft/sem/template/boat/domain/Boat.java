@@ -35,10 +35,6 @@ public class Boat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    //@Id
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-
     @Column(name = "type", nullable = false)
     private Type type;
 
@@ -48,56 +44,31 @@ public class Boat {
     @Convert(converter = RequiredRowersAttributeConverter.class)
     private RequiredRowers requiredRowers;
 
-    private BoatBuilder boatBuilder;
-
     /**
      * Create new boat.
      *
      * @param type the type of the boat
      */
-    public Boat(String name, Type type) {
-        this.name = name;
+    public Boat(Type type) {
         this.type = type;
-
-        assignBuilder();
-        this.rowers = this.boatBuilder.getRowersClass();
-        this.requiredRowers = this.boatBuilder.getRequiredRowersClass();
+        this.rowers = new Rowers();
+        this.requiredRowers = new RequiredRowers();
     }
 
-    /**
-     * Method for returning the Boat from the BoatBuilder.
-     *
-     * @return the Boat object
-     */
-    public Boat getBoat() {
-        return this.boatBuilder.getBoat();
-    }
 
     /**
      * Method for assigning the right Builder type to the Boat class.
      */
     private void assignBuilder() {
-        switch (type) {
-            case C4:
-                this.boatBuilder = new BuilderC4(this.name);
-                break;
-            case PLUS4:
-                this.boatBuilder = new BuilderPlus4(this.name);
-                break;
-            case PLUS8:
-                this.boatBuilder = new BuilderPlus8(this.name);
-                break;
-            default:
-                break;
-        }
+
     }
 
     public Map<Position, List<NetId>> getRowers() {
-        return this.boatBuilder.getRowers();
+        return this.rowers.currentRowers;
     }
 
     public HashMap<Position, Integer> getRequiredRowers() {
-        return this.boatBuilder.getRequiredRowers();
+        return this.requiredRowers.amountOfPositions;
     }
 
     /**
@@ -106,11 +77,9 @@ public class Boat {
      * @param currentNetId the user's netId to be added
      */
     public void addRowerToPosition(Position position, NetId currentNetId) {
-        if (this.rowers.currentRowers.get(position).size() < this.requiredRowers.amountOfPositions.get(position)) {
-            this.rowers.currentRowers.get(position).add(currentNetId);
-            int val = requiredRowers.amountOfPositions.get(position);
-            requiredRowers.amountOfPositions.replace(position, val - 1);
-        }
+        this.rowers.currentRowers.get(position).add(currentNetId);
+        int val = requiredRowers.amountOfPositions.get(position);
+        requiredRowers.amountOfPositions.replace(position, val - 1);
     }
 
     /**
@@ -168,7 +137,7 @@ public class Boat {
             return false;
         }
         Boat boat = (Boat) o;
-        if (!(id == boat.id && name.equals(boat.name) && type == boat.type)) {
+        if (!(id == boat.id && type == boat.type)) {
             return false;
         }
         return Objects.equals(rowers, boat.rowers) && Objects.equals(requiredRowers, boat.requiredRowers);
@@ -176,6 +145,6 @@ public class Boat {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, type, rowers, requiredRowers);
+        return Objects.hash(id, type, rowers, requiredRowers);
     }
 }

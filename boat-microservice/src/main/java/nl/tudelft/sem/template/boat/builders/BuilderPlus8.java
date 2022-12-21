@@ -14,48 +14,37 @@ import nl.tudelft.sem.template.boat.domain.Type;
 @Getter
 @Setter
 public class BuilderPlus8 extends BoatBuilder {
-    private String name;
-    private Type type;
     private Boat boat;
-    private Rowers rowers;
-    private RequiredRowers requiredRowers;
 
-    public BuilderPlus8(String name) {
-        super(name);
-
-        rowers = new Rowers();
-        requiredRowers = new RequiredRowers();
-        requiredRowers.getAmountOfPositions().put(Position.COACH, 1);
-        buildCox(1);
-        buildPort(4);
-        buildStarboard(4);
-        buildSculling(0);
-
-        boat.setRowers(rowers);
-        boat.setRequiredRowers(requiredRowers);
+    public BuilderPlus8() {
+        super();
     }
 
-    public HashMap<Position, List<NetId>> getRowers() {
-        return this.rowers.getCurrentRowers();
+    public void reset() {
+        this.boat = new Boat(Type.PLUS8);
     }
 
-    public HashMap<Position, Integer> getRequiredRowers() {
-        return this.requiredRowers.getAmountOfPositions();
+    public void setCox(int value) {
+        this.boat.getRequiredRowers().put(Position.COX, value);
     }
 
-    public void buildCox(int value) {
-        requiredRowers.getAmountOfPositions().put(Position.COX, value);
+    public void setCoach(int value) {
+        this.boat.getRequiredRowers().put(Position.COACH, value);
     }
 
-    public void buildPort(int value) {
-        requiredRowers.getAmountOfPositions().put(Position.PORT, value);
+    public void setPort(int value) {
+        this.boat.getRequiredRowers().put(Position.PORT, value);
     }
 
-    public void buildStarboard(int value) {
-        requiredRowers.getAmountOfPositions().put(Position.STARBOARD, value);
+    public void setStarboard(int value) {
+        this.boat.getRequiredRowers().put(Position.STARBOARD, value);
     }
 
-    public void buildSculling(int value) {
-        requiredRowers.getAmountOfPositions().put(Position.SCULLING, value);
+    public void setSculling(int value) {
+        this.boat.getRequiredRowers().put(Position.SCULLING, value);
+    }
+
+    public Boat getBoat() {
+        return this.boat;
     }
 }
