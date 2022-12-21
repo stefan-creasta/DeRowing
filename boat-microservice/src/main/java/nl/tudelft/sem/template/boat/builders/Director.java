@@ -4,9 +4,9 @@ import nl.tudelft.sem.template.boat.domain.Boat;
 import nl.tudelft.sem.template.boat.domain.Type;
 
 public class Director {
-    private BoatBuilder builderC4;
-    private BoatBuilder builderPlus4;
-    private BoatBuilder builderPlus8;
+    private transient BoatBuilder builderC4;
+    private transient BoatBuilder builderPlus4;
+    private transient BoatBuilder builderPlus8;
 
     /**
      * Basic constructor for the Director, the class which can construct a boat using builders,

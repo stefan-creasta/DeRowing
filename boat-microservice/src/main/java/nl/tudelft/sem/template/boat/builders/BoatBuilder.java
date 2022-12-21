@@ -4,13 +4,12 @@ import nl.tudelft.sem.template.boat.domain.Boat;
 import nl.tudelft.sem.template.boat.domain.Type;
 
 public abstract class BoatBuilder {
-    private Boat boat;
+    private transient Boat boat;
 
     /**
      * Basic constructor for the BoatBuilder class.
      */
     public BoatBuilder() {
-        this.boat = null;
     }
 
     /**

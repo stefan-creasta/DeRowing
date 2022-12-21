@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import nl.tudelft.sem.template.boat.builders.Director;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class BoatTest {
 
-    private Director director;
+    private transient Director director;
+
     @BeforeEach
     public void setup() {
         director = new Director();
