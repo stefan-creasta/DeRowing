@@ -79,37 +79,6 @@ public class BoatController {
     }
 
     /**
-     * the method to find a specific boat.
-     *
-     * @param request the request body of the boat finding
-     * @return a boat information
-     * @throws Exception a boat not found exception
-     */
-    @GetMapping("/find")
-    public ResponseEntity<String> findBoatByName(@RequestBody BoatFindModel request) throws Exception {
-        String name = request.getName();
-        Boat target = boatService.findBoatByName(name);
-        return ResponseEntity.ok("The boat created by " + authManager.getNetId()
-                + " is found. Here is the boat: " + target.toString());
-    }
-
-    /**
-     * the method to find the id of a certain boat.
-     *
-     * @param request the request (name) of the boat finding
-     * @return the boat's id
-     * @throws Exception the boat could not be found
-     */
-    @GetMapping("/findId")
-    public ResponseEntity<String> findBoatIdByName(@RequestBody BoatFindModel request) throws Exception {
-        String name = request.getName();
-        Boat target = boatService.findBoatByName(name);
-        return ResponseEntity.ok("The boat created by " + authManager.getNetId()
-                + " is found. Here is the boat: " + target.getId());
-    }
-
-
-    /**
      * the method to insert a certain user in a boat for a specific position.
      *
      * @param request the request body of the insertion
