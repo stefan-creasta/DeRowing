@@ -17,7 +17,6 @@ public class CompetitionCreateModel {
     private Type type;
     private int numPeople;
 
-
     /**
      *  Constructor for CompetitionCreateModel.
      *

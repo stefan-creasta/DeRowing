@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.activity.domain.entities;
 
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
@@ -125,7 +126,7 @@ public abstract class Activity {
      * @return a string contains information about the activity.
      */
     public String toString() {
-        return "The Activity is created by: " + owner.getNetId() + "\n The name is: "
+        return "The activity is created by: " + owner.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
     }
@@ -136,5 +137,30 @@ public abstract class Activity {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    /**
+     * The method to check whether two activities are equal.
+     *
+     * @param o Another activity to be compared with
+     * @return a boolean value representing the result
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Activity activity = (Activity) o;
+        return id == activity.id && boatId == activity.boatId && startTime == activity.startTime
+                && Objects.equals(owner, activity.owner)
+                && Objects.equals(activityName, activity.activityName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, owner, activityName, boatId, startTime);
     }
 }
