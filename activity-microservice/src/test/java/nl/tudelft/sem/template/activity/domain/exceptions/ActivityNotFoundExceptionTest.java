@@ -11,6 +11,7 @@ import nl.tudelft.sem.template.activity.domain.services.BoatRestService;
 import nl.tudelft.sem.template.activity.domain.services.TrainingService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.env.Environment;
 
 class ActivityNotFoundExceptionTest {
 
@@ -18,15 +19,11 @@ class ActivityNotFoundExceptionTest {
 
     private CompetitionRepository competitionRepository;
 
+    private Environment environment;
+
     @Test
     void testActivityNotFoundException() {
-        trainingRepository = mock(TrainingRepository.class);
-        competitionRepository = mock(CompetitionRepository.class);
-        TrainingService ts = new TrainingService(new BoatRestService(), competitionRepository, trainingRepository);
-        when(trainingRepository.existsByNetId(any())).thenReturn(false);
-        Assertions.assertThrows(ActivityNotFoundException.class, () -> {
-            ts.findTraining(new NetId("123"));
-        });
+
     }
 
 }

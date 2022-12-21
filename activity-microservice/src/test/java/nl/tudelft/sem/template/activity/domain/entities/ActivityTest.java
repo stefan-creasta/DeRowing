@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Type;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +14,8 @@ public class ActivityTest {
 
     @BeforeEach
     public void setup() {
-        test = new Competition(new NetId("123"), "TestActivity", 123L, 123L,
-                false, GenderConstraint.NO_CONSTRAINT, false);
+        test = new Training(new NetId("123"), "name", 123L, 123L, 1,
+                Type.C4);
     }
 
     @Test
@@ -30,7 +31,7 @@ public class ActivityTest {
 
     @Test
     void getActivityName() {
-        assertEquals("TestActivity", test.getActivityName());
+        assertEquals("name", test.getActivityName());
     }
 
     @Test
@@ -66,12 +67,9 @@ public class ActivityTest {
         String toString = test.toString();
         assertEquals(
                 "The activity is created by: 123\n"
-                        + " The name is: TestActivity\n"
+                        + " The name is: name\n"
                         + " The boatId is: 123\n"
-                        + " The start time is: 123\n"
-                        + " Allow Amateurs: false\n"
-                        + " Gender Constraint: NO_CONSTRAINT\n"
-                        + " singleOrganization: false",
+                        + " The start time is: 123",
                 toString
         );
     }

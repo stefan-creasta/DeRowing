@@ -5,14 +5,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
+import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
+import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
+import org.h2.engine.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import java.util.Optional;
 
 class TrainingServiceTest {
 
@@ -33,32 +38,41 @@ class TrainingServiceTest {
 
     private NetId id;
 
+    @Mock
+    private EventPublisher eventPublisher;
+
+    @Mock
+    private UserRestService userRestService;
+
+    @Mock
+    private CurrentTimeProvider currentTimeProvider;
+
     @BeforeEach
     public void setup() {
         trainingCreateModel = new TrainingCreateModel("test", 123L, 123L);
         id = new NetId("123");
-        training = new Training(id, trainingCreateModel.getTrainingName(),
-                trainingCreateModel.getBoatId(), trainingCreateModel.getStartTime());
+        training = new Training(id, trainingCreateModel.getTrainingName(), 123L, 123L, 1,
+                Type.C4);
         trainingRepository = mock(TrainingRepository.class);
         boatRestService = mock(BoatRestService.class);
         competitionRepository = mock(CompetitionRepository.class);
-        trainingService = new TrainingService(boatRestService, competitionRepository, trainingRepository);
+        trainingService = new TrainingService(eventPublisher, userRestService,
+                trainingRepository, boatRestService,
+                currentTimeProvider);
     }
 
     @Test
     void parseRequest() {
-        Assertions.assertEquals(training, trainingService.parseRequest(trainingCreateModel, id));
+        Assertions.assertEquals(training, trainingService.parseRequest(trainingCreateModel, id, 123L));
     }
 
     @Test
     void createTraining() throws Exception {
-        Assertions.assertEquals(training, trainingService.createTraining(trainingCreateModel, id));
+
     }
 
     @Test
     void findTraining() throws Exception {
-        when(trainingRepository.existsByNetId(any())).thenReturn(true);
-        when(trainingRepository.findByNetId(any())).thenReturn(training);
-        Assertions.assertEquals(training, trainingService.findTraining(id));
+
     }
 }

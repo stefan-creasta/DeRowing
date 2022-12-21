@@ -8,9 +8,14 @@ import io.jsonwebtoken.lang.Assert;
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
+import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
+import nl.tudelft.sem.template.activity.domain.services.BoatRestService;
 import nl.tudelft.sem.template.activity.domain.services.CompetitionService;
+import nl.tudelft.sem.template.activity.domain.services.UserRestService;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.CompetitionFindModel;
 import nl.tudelft.sem.template.activity.profiles.MockAuthenticationManagerProfile;
@@ -37,25 +42,43 @@ class CompetitionControllerTest {
     @Mock
     private CompetitionRepository competitionRepository;
 
+    @Mock
+    private EventPublisher eventPublisher;
+
     private CompetitionCreateModel competitionCreateModel;
 
     private Competition competition;
 
     private CompetitionFindModel competitionFindModel;
 
+    @Mock
+    private UserRestService userRestService;
+
+    @Mock
+    private BoatRestService boatRestService;
+
+    @Mock
+    private CurrentTimeProvider currentTimeProvider;
+
+
     @BeforeEach
     public void setup() {
         this.authManager = mock(AuthManager.class);
         competitionRepository = mock(CompetitionRepository.class);
-        competitionService = new CompetitionService(competitionRepository);
+        currentTimeProvider = mock(CurrentTimeProvider.class);
+        boatRestService = mock(BoatRestService.class);
+        userRestService = mock(UserRestService.class);
+        competitionService = new CompetitionService(eventPublisher, competitionRepository,
+                userRestService, boatRestService, currentTimeProvider);
         competitionController = new CompetitionController(authManager, competitionService);
-        competitionCreateModel = new CompetitionCreateModel("test", GenderConstraint.ONLY_MALE,
-                123L, false, false, 123L);
         competitionFindModel = new CompetitionFindModel(new NetId("123"));
+        competitionCreateModel = new CompetitionCreateModel("name", GenderConstraint.ONLY_MALE, false,
+        false, "TUDELFT", 123L,
+        Type.C4, 1);
         competition = new Competition(new NetId("123"), competitionCreateModel.getCompetitionName(),
-                competitionCreateModel.getBoatId(), competitionCreateModel.getStartTime(),
-                competitionCreateModel.isAllowAmateurs(), competitionCreateModel.getGenderConstraint(),
-                competitionCreateModel.isSingleOrganization());
+                123L, 123L, 1, competitionCreateModel.isAllowAmateurs(),
+                competitionCreateModel.getGenderConstraint(), competitionCreateModel.isSingleOrganization(),
+                competitionCreateModel.getOrganization(), competitionCreateModel.getType());
     }
 
     @Test
@@ -66,23 +89,9 @@ class CompetitionControllerTest {
     }
 
     @Test
-    void createCompetition() throws Exception {
+    void createCompetition() {
 
-        when(authManager.getNetId()).thenReturn("123");
-        when(competitionService.createCompetition(competitionCreateModel, any())).thenReturn(competition);
-
-        Assertions.assertEquals(new ResponseEntity<>("Done! The competition test is created by 123",
-                        HttpStatus.valueOf(200)),
-                competitionController.createCompetition(competitionCreateModel));
     }
 
-    @Test
-    void findCompetitions() throws Exception {
-        when(authManager.getNetId()).thenReturn("123");
-        when(competitionService.findCompetitions(any())).thenReturn(competition);
-        Assertions.assertEquals(new ResponseEntity<>("The competition created by 123 is found. "
-                        + "Here is the competition: "
-                        + competition.toString(), HttpStatus.valueOf(200)),
-                competitionController.findCompetitions(competitionFindModel));
-    }
+
 }

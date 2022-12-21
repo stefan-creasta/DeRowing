@@ -126,7 +126,7 @@ public abstract class Activity {
      * @return a string contains information about the activity.
      */
     public String toString() {
-        return "The activity is created by: " + netId.getNetId() + "\n The name is: "
+        return "The activity is created by: " + owner.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
     }
@@ -155,12 +155,12 @@ public abstract class Activity {
         }
         Activity activity = (Activity) o;
         return id == activity.id && boatId == activity.boatId && startTime == activity.startTime
-                && Objects.equals(netId, activity.netId)
+                && Objects.equals(owner, activity.owner)
                 && Objects.equals(activityName, activity.activityName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, netId, activityName, boatId, startTime);
+        return Objects.hash(id, owner, activityName, boatId, startTime);
     }
 }
