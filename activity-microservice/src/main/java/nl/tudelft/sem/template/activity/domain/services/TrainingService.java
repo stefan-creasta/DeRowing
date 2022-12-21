@@ -54,7 +54,7 @@ public class TrainingService extends ActivityService {
      */
     public Training parseRequest(TrainingCreateModel request, NetId netId, long boatId) {
         return new Training(netId, request.getTrainingName(), boatId,
-                request.getStartTime(), request.getNumPeople(), request.getType());
+                request.getStartTime(), request.getType());
     }
 
 
@@ -68,7 +68,7 @@ public class TrainingService extends ActivityService {
      */
     public String createTraining(TrainingCreateModel request, NetId netId) throws Exception {
         try {
-            long boatId = boatRestService.getBoatId(request.getType(), request.getNumPeople());
+            long boatId = boatRestService.getBoatId(request.getType());
             if (boatId == -1) {
                 return "Could not contact boat service";
             }
@@ -167,7 +167,6 @@ public class TrainingService extends ActivityService {
      */
     public Training update(Training training, TrainingEditModel request) {
         training.setActivityName(request.getTrainingName());
-        training.setNumPeople(request.getNumPeople());
         training.setStartTime(request.getStartTime());
         return training;
     }

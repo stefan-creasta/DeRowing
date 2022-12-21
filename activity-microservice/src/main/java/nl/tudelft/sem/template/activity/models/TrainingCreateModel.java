@@ -8,7 +8,6 @@ public class TrainingCreateModel {
     private String trainingName;
     private long startTime;
     private Type type;
-    private int numPeople;
     private long boatId;
 
     /**

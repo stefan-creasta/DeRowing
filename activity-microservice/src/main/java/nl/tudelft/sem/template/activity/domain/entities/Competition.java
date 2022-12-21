@@ -32,10 +32,10 @@ public class Competition extends Activity {
      * @param genderConstraint what genders are allowed
      * @param singleOrganization whether only one organization is allowed
      */
-    public Competition(NetId netId, String activityName, long boatId, long startTime, int numPeople,
+    public Competition(NetId netId, String activityName, long boatId, long startTime,
                        boolean allowAmateurs, GenderConstraint genderConstraint,
                        boolean singleOrganization, String organization, Type type) {
-        super(netId, activityName, boatId, startTime, numPeople, type);
+        super(netId, activityName, boatId, startTime, type);
         this.allowAmateurs = allowAmateurs;
         this.genderConstraint = genderConstraint;
         this.singleOrganization = singleOrganization;
