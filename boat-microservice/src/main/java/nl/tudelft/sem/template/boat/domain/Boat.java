@@ -48,7 +48,7 @@ public class Boat {
      *
      * @param type the type of the boat
      */
-    public Boat(String name, Type type, int cox, int coach, int port, int starboard, int sculling) {
+    public Boat(String name, Type type) {
         this.name = name;
         this.type = type;
         HashMap<Position, List<NetId>> newMapForRowers = new HashMap<>();
@@ -59,12 +59,39 @@ public class Boat {
         newMapForRowers.put(Position.SCULLING, new ArrayList<>());
         this.rowers = new Rowers(newMapForRowers);
 
+        assignPositionLimits();
+    }
+
+    /**
+     * Method for assigning the required number of rowers for each position based on the boat type.
+     */
+    private void assignPositionLimits() {
         HashMap<Position, Integer> newMapForRequiredRowers = new HashMap<>();
-        newMapForRequiredRowers.put(Position.COX, cox);
-        newMapForRequiredRowers.put(Position.COACH, coach);
-        newMapForRequiredRowers.put(Position.PORT, port);
-        newMapForRequiredRowers.put(Position.STARBOARD, starboard);
-        newMapForRequiredRowers.put(Position.SCULLING, sculling);
+        newMapForRequiredRowers.put(Position.COACH, 1); // all boats have 1 coach
+
+        // assign the required number of rowers for each position based on the boat type
+        switch (this.type) {
+            case C4:
+                newMapForRequiredRowers.put(Position.PORT, 2);
+                newMapForRequiredRowers.put(Position.STARBOARD, 2);
+                newMapForRequiredRowers.put(Position.SCULLING, 0);
+                break;
+            case PLUS4:
+                newMapForRequiredRowers.put(Position.COX, 1);
+                newMapForRequiredRowers.put(Position.PORT, 2);
+                newMapForRequiredRowers.put(Position.STARBOARD, 2);
+                newMapForRequiredRowers.put(Position.SCULLING, 0);
+                break;
+            case PLUS8:
+                newMapForRequiredRowers.put(Position.COX, 1);
+                newMapForRequiredRowers.put(Position.PORT, 4);
+                newMapForRequiredRowers.put(Position.STARBOARD, 4);
+                newMapForRequiredRowers.put(Position.SCULLING, 0);
+                break;
+            default:
+                break;
+        }
+
         this.requiredRowers = new RequiredRowers(newMapForRequiredRowers);
     }
 

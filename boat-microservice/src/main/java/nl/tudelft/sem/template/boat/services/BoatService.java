@@ -33,13 +33,8 @@ public class BoatService extends RestService {
     public Boat parseRequest(BoatCreateModel request) {
         String name = request.getName();
         Type type = request.getType();
-        int cox = request.getCox();
-        int coach = request.getCoach();
-        int port = request.getPort();
-        int starboard = request.getStarboard();
-        int sculling = request.getSculling();
 
-        return new Boat(name, type, cox, coach, port, starboard, sculling);
+        return new Boat(name, type);
     }
 
 
