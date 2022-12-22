@@ -131,19 +131,15 @@ public class TrainingService extends ActivityService {
      * @throws Exception An exception which is thrown when facing failures.
      */
     public String deleteTraining(long trainingId) throws Exception {
-        try {
-            Training training = findTraining(trainingId);
-            trainingRepository.delete(training);
-            long boatId = training.getBoatId();
-            BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
-            if (boatRestService.deleteBoat(boatDeleteModel)) {
-                return "Successfully deleted the training.";
-            } else {
-                return "Boat deletion fail.";
-            }
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in delete the specified training.");
+        Training training = trainingRepository.findById(trainingId);
+        if (training == null) {
+            return "training not found";
         }
+        long boatId = training.getBoatId();
+        BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
+        restServiceFacade.performBoatModel(boatDeleteModel, "/boat/delete", null);
+        trainingRepository.delete(training);
+        return "Successfully deleted competition";
     }
 
     /**

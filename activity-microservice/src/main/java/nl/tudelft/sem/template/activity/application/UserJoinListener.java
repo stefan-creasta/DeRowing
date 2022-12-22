@@ -20,6 +20,10 @@ public class UserJoinListener {
 
     @EventListener
     public void onUserJoin(UserJoinEvent event) {
-        userRestService.userJoinRequest(event);
+        try {
+            userRestService.performUserRequest(event, "/join", null);
+        } catch (Exception e) {
+            System.out.println("User join event failed");
+        }
     }
 }

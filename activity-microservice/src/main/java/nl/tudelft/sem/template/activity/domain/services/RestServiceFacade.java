@@ -14,11 +14,11 @@ public class RestServiceFacade {
         this.userRestService = userRestService;
     }
 
-    public Object performUserModel(Object model, String path, Class t) throws Exception {
+    public Object performUserModel(Object model, String path, Class<?> t) throws Exception {
         return userRestService.performUserRequest(model, path, t);
     }
 
-    public Object performBoatModel(Object model, String path, Class t) throws Exception {
+    public Object performBoatModel(Object model, String path, Class<?> t) throws Exception {
         return boatRestService.performBoatRequest(model, path, t);
     }
 }

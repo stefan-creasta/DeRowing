@@ -96,20 +96,6 @@ public class CompetitionService extends ActivityService {
         return informUser(model, competitionRepository, eventPublisher);
     }
 
-    /**
-     * A method to find a competition from the database.
-     *
-     * @param id the netId of the requester
-     * @return the Competition of the requester
-     * @throws Exception the competition not found exception
-     */
-    public Competition findCompetitions(long id) throws Exception {
-        try {
-            return competitionRepository.findById(id);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in findCompetitions");
-        }
-    }
 
     /**
      * A method to request to join an activity.
@@ -175,7 +161,7 @@ public class CompetitionService extends ActivityService {
      * @throws Exception An exception to show that there's something wrong during the deleting process.
      */
     public String deleteCompetition(long competitionId) throws Exception {
-        Competition competition = findCompetitions(competitionId);
+        Competition competition = competitionRepository.findById(competitionId);
         if (competition == null) {
             return "Competition not found";
         }
