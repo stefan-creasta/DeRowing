@@ -45,7 +45,6 @@ import org.springframework.test.web.servlet.ResultActions;
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"test", "mockTokenVerifier", "mockAuthenticationManager",
         "mockBoatRestService", "mockUserRestService", "mockApplicationEventPublisher"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 class CompetitionIntegrationTest {
 
@@ -72,6 +71,13 @@ class CompetitionIntegrationTest {
         when(mockAuthenticationManager.getNetId()).thenReturn("ExampleUser");
         when(mockJwtTokenVerifier.validateToken(anyString())).thenReturn(true);
         when(mockJwtTokenVerifier.getNetIdFromToken(anyString())).thenReturn("ExampleUser");
+        // Reset mock counters
+        reset(mockApplcationEventPublisher);
+        reset(mockBoatRestService);
+        reset(mockBoatRestService);
+        // Reset database state
+        competitionRepository.deleteAll();
+        competitionRepository.resetSequence();
     }
 
     /**
