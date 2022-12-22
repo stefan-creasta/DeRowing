@@ -106,6 +106,12 @@ public class UserService {
      * @throws Exception the NetId already in
      */
     public List<Message> getNotifications(NetId netId) throws Exception {
-        return messageRepository.findMessagesByNetId(netId.getNetId());
+        try {
+            List<Message> result = messageRepository.findMessagesByNetId(netId.getNetId());
+            return result;
+        }
+        catch (Exception e) {
+            throw new Exception("Can not retrieve the user's messages");
+        }
     }
 }
