@@ -1,8 +1,6 @@
 package nl.tudelft.sem.template.user.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import nl.tudelft.sem.template.user.domain.entities.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,5 +24,60 @@ public class UserTest {
                         + " Certification: PLUS4\n"
                         + " Organization: Proteus\n"
                         + " Status: Professional", toString);
+    }
+
+    @Test
+    void testGetNetId() {
+        assertEquals(new NetId("123"), sut.getNetId());
+    }
+
+    @Test
+    void testGetGender() {
+        assertEquals(Gender.MALE, sut.getGender());
+    }
+
+    @Test
+    void testGetCertificate() {
+        assertEquals(Certificate.PLUS4, sut.getCertificate());
+    }
+
+    @Test
+    void testGetOrganization() {
+        assertEquals("Proteus", sut.getOrganization());
+    }
+
+    @Test
+    void testIsAmateur() {
+        assertEquals(false, sut.isAmateur());
+    }
+
+    @Test
+    void testSetNetId() {
+        sut.setNetId(new NetId("hminh"));
+        assertEquals(new NetId("hminh"), sut.getNetId());
+    }
+
+    @Test
+    void testSetGender() {
+        sut.setGender(Gender.FEMALE);
+        assertEquals(Gender.FEMALE, sut.getGender());
+    }
+
+    @Test
+    void testSetCertificate() {
+        sut.setCertificate(Certificate.PLUS4);
+        assertEquals(Certificate.PLUS4, sut.getCertificate());
+    }
+
+    @Test
+    void testSetOrganization() {
+        sut.setOrganization("Delft");
+        assertEquals("Delft", sut.getOrganization());
+    }
+
+    @Test
+    void testSetAmateur() {
+        sut.setAmateur(true);
+        assertEquals(true, sut.isAmateur());
     }
 }
