@@ -36,6 +36,9 @@ public class BoatRestService implements RestService {
     }
 
     public Object deserialize(Object response, Class<?> target) {
+        if (target == null) {
+             return null;
+        }
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(response, target);
     }
