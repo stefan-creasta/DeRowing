@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.activity.domain.entities;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import lombok.NoArgsConstructor;
@@ -31,10 +32,10 @@ public class Competition extends Activity {
      * @param genderConstraint what genders are allowed
      * @param singleOrganization whether only one organization is allowed
      */
-    public Competition(NetId netId, String activityName, long boatId, long startTime, int numPeople,
+    public Competition(NetId netId, String activityName, long boatId, long startTime,
                        boolean allowAmateurs, GenderConstraint genderConstraint,
                        boolean singleOrganization, String organization, Type type) {
-        super(netId, activityName, boatId, startTime, numPeople, type);
+        super(netId, activityName, boatId, startTime, type);
         this.allowAmateurs = allowAmateurs;
         this.genderConstraint = genderConstraint;
         this.singleOrganization = singleOrganization;
@@ -82,5 +83,32 @@ public class Competition extends Activity {
 
     public void setOrganization(String organization) {
         this.organization = organization;
+    }
+
+    /**
+     * Method to judge whether two competitions are equal.
+     *
+     * @param o another competition to be compared with
+     * @return a boolean value which shows the result
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        Competition that = (Competition) o;
+        return allowAmateurs == that.allowAmateurs && singleOrganization == that.singleOrganization
+                && genderConstraint == that.genderConstraint;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), allowAmateurs, genderConstraint, singleOrganization);
     }
 }

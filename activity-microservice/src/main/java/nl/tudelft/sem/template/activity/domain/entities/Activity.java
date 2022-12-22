@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.activity.domain.entities;
 
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
@@ -47,15 +48,13 @@ public abstract class Activity {
      * @param activityName the name of the activity
      * @param boatId    the id of the boat
      * @param startTime the start time of the activity
-     * @param numPeople the number of people in the boat
      * @param type the type of the boat
      */
-    public Activity(NetId netId, String activityName, long boatId, long startTime, int numPeople, Type type) {
+    public Activity(NetId netId, String activityName, long boatId, long startTime, Type type) {
         this.owner = netId;
         this.activityName = activityName;
         this.boatId = boatId;
         this.startTime = startTime;
-        this.numPeople = numPeople;
         this.type = type;
     }
 
@@ -115,17 +114,13 @@ public abstract class Activity {
         this.owner = owner;
     }
 
-    public void setNumPeople(int numPeople) {
-        this.numPeople = numPeople;
-    }
-
     /**
      * A method provide string format information.
      *
      * @return a string contains information about the activity.
      */
     public String toString() {
-        return "The Activity is created by: " + owner.getNetId() + "\n The name is: "
+        return "The activity is created by: " + owner.getNetId() + "\n The name is: "
                 + activityName  + "\n The boatId is: "
                 + boatId + "\n The start time is: " + startTime;
     }
@@ -136,5 +131,30 @@ public abstract class Activity {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    /**
+     * The method to check whether two activities are equal.
+     *
+     * @param o Another activity to be compared with
+     * @return a boolean value representing the result
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Activity activity = (Activity) o;
+        return id == activity.id && boatId == activity.boatId && startTime == activity.startTime
+                && Objects.equals(owner, activity.owner)
+                && Objects.equals(activityName, activity.activityName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, owner, activityName, boatId, startTime);
     }
 }
