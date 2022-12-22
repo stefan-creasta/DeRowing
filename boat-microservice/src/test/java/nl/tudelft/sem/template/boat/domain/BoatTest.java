@@ -8,9 +8,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import nl.tudelft.sem.template.boat.builders.Director;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class BoatTest {
+
+    private transient Director director;
+
+    @BeforeEach
+    public void setup() {
+        director = new Director();
+    }
 
     @Test
     void addRowerToPosition() {
@@ -23,7 +32,7 @@ class BoatTest {
         rowers.put(Position.PORT, new ArrayList<>());
         rowers.put(Position.STARBOARD, new ArrayList<>());
         rowers.put(Position.SCULLING, new ArrayList<>());
-        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
+        Boat boat = director.constructBoat(Type.PLUS4);
         boat.addRowerToPosition(Position.COX, netId);
         assertEquals(rowers, boat.getRowers());
     }
@@ -31,13 +40,13 @@ class BoatTest {
     @Test
     void removePosition() {
         HashMap<Position, Integer> requiredRowers = new HashMap<>();
-        requiredRowers.put(Position.COX, 1);
+        requiredRowers.put(Position.COX, 0);
         requiredRowers.put(Position.COACH, 1);
-        requiredRowers.put(Position.PORT, 1);
-        requiredRowers.put(Position.STARBOARD, 1);
+        requiredRowers.put(Position.PORT, 2);
         requiredRowers.put(Position.SCULLING, 0);
-        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
-        boat.removePosition(Position.SCULLING);
+        requiredRowers.put(Position.STARBOARD, 2);
+        Boat boat = director.constructBoat(Type.C4);
+        boat.removePosition(Position.COX);
         assertEquals(requiredRowers, boat.getRequiredRowers());
     }
 
@@ -50,7 +59,7 @@ class BoatTest {
         rowers.put(Position.STARBOARD, new ArrayList<>());
         rowers.put(Position.SCULLING, new ArrayList<>());
         NetId netId = new NetId();
-        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
+        Boat boat = director.constructBoat(Type.PLUS4);
         boat.addRowerToPosition(Position.COX, netId);
         assertTrue(boat.removeRower(netId));
         assertEquals(rowers, boat.getRowers());
@@ -58,26 +67,20 @@ class BoatTest {
 
     @Test
     void cannotRemoveRower() {
-        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
-        NetId netId = new NetId();
+        Boat boat = director.constructBoat(Type.C4);
+        NetId netId = new NetId("a");
         assertFalse(boat.removeRower(netId));
     }
 
     @Test
-    void canRowerBeAddedFalsePosition() {
-        Boat boat = new Boat("boat", Type.PLUS4, 0, 1, 1, 1, 1);
-        assertFalse(boat.canRowerBeAdded(Position.COX));
-    }
-
-    @Test
-    void canRowerBeAddedFalsePosition2() {
-        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 0);
+    void cannotAddRower() {
+        Boat boat = director.constructBoat(Type.C4);
         assertFalse(boat.canRowerBeAdded(Position.SCULLING));
     }
 
     @Test
-    void canRowerBeAddedFalsePositionTrue() {
-        Boat boat = new Boat("boat", Type.C4, 1, 1, 1, 1, 1);
-        assertTrue(boat.canRowerBeAdded(Position.SCULLING));
+    void canAddRower() {
+        Boat boat = director.constructBoat(Type.PLUS8);
+        assertTrue(boat.canRowerBeAdded(Position.COX));
     }
 }

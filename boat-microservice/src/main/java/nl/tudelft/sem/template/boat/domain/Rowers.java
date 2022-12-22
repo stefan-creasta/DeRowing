@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.boat.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -8,11 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
 public class Rowers {
@@ -23,6 +22,19 @@ public class Rowers {
 
     protected HashMap<Position, List<NetId>> currentRowers;
 
+    /**
+     * Empty constructor for Rowers class.
+     */
+    public Rowers() {
+        this.currentRowers = new HashMap<>();
+        for (Position position : Position.values()) {
+            this.currentRowers.put(position, new ArrayList<>());
+        }
+    }
+
+    /**
+     * Basic constructor for Rowers class.
+     */
     public Rowers(HashMap<Position, List<NetId>> currentRowers) {
         this.currentRowers = currentRowers;
     }
