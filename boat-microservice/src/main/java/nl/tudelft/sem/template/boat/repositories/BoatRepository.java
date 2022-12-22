@@ -19,7 +19,7 @@ public interface BoatRepository extends JpaRepository<Boat, Integer> {
     @Query(value = "ALTER SEQUENCE HIBERNATE_SEQUENCE restart with 1", nativeQuery = true)
     @Transactional
     void resetSequence();
-    
+
     /**
      * Method that returns all elements stored in the repository.
      *
