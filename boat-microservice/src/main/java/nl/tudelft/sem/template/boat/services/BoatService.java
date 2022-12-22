@@ -93,26 +93,22 @@ public class BoatService extends RestService {
     }
 
     /**
-     * A method which finds the boats that have certain positions available.
+     * A method which finds the boats that have a certain position available.
      *
-     * @param requiredPositions the number of positions of each type that are available
-     * @return a list of boats that fulfill the requirements
+     * @param requiredBoats the list of boats which must be searched for the available position
+     * @param position the desired position
+     * @return a list of boat ids that fulfill the requirements
      */
-    public List<Boat> findBoatsByEmptyPositions(Map<Position, Integer> requiredPositions) throws Exception {
+    public List<Long> findBoatsByPosition(List<Long> requiredBoats, Position position) throws Exception {
         try {
-            List<Boat> result = new ArrayList<>();
-
-            // iterate through all boats in the DB
-            List<Boat> boats = boatRepository.findAll();
-            for (Boat boat : boats) {
-                // check the number available positions for each of them
-                for (Position p : Position.values()) {
-                    if (requiredPositions.get(p) <= boat.getRequiredRowers().get(p)) {
-                        result.add(boat);
-                    }
+            List<Long> result = new ArrayList<>();
+            for (int i = 0; i < requiredBoats.size(); i++) {
+                long id = requiredBoats.get(i);
+                Boat boat = boatRepository.findById((int) id).get();
+                if (boat.getRequiredRowers().get(position) > 0) {
+                    result.add(id);
                 }
             }
-
             return result;
         } catch (Exception e) {
             throw new Exception("Something went wrong in findBoatsByEmptyPositions");

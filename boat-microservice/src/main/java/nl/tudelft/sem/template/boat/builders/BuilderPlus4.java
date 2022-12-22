@@ -13,11 +13,10 @@ import nl.tudelft.sem.template.boat.domain.Type;
 
 @Getter
 @Setter
-public class BuilderPlus4 extends BoatBuilder {
+public class BuilderPlus4 implements BoatBuilder {
     private Boat boat;
 
     public BuilderPlus4() {
-        super();
     }
 
     public void reset() {
