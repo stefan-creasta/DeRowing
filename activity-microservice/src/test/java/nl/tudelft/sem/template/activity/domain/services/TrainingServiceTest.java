@@ -59,6 +59,7 @@ class TrainingServiceTest {
 
     @BeforeEach
     public void setup() {
+        trainingCreateModel = new TrainingCreateModel("test", 123L, Type.C4);
         eventPublisher = mock(EventPublisher.class);
         trainingRepository = mock(TrainingRepository.class);
         userRestService = mock(UserRestService.class);
@@ -71,7 +72,6 @@ class TrainingServiceTest {
         acceptRequestModel = new AcceptRequestModel();
         trainingService = new TrainingService(eventPublisher, userRestService,
                 trainingRepository, boatRestService, currentTimeProvider);
-        trainingCreateModel = new TrainingCreateModel("test", 123L, 123L);
         id = new NetId("123");
         training = new Training(id, trainingCreateModel.getTrainingName(), 123L, 123L,
                 Type.C4);

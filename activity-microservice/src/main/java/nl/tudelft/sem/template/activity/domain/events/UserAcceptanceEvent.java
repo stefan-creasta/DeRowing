@@ -20,6 +20,7 @@ public class UserAcceptanceEvent {
      */
     public UserAcceptanceEvent(boolean isAccepted, Position position, NetId eventRequester) {
         this.isAccepted = isAccepted;
+        this.position = position;
         this.eventRequester = eventRequester;
         this.position = position;
     }

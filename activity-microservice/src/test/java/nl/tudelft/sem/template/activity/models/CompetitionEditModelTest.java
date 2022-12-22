@@ -24,8 +24,6 @@ class CompetitionEditModelTest {
         model.setStartTime(123L);
         model.setCompetitionName("name");
         model.setGenderConstraint(GenderConstraint.NO_CONSTRAINT);
-        model.setNumPeople(1);
-        model.setType(Type.C4);
     }
 
     @Test
@@ -56,11 +54,6 @@ class CompetitionEditModelTest {
     @Test
     void getStartTime() {
         assertEquals(123L, model.getStartTime());
-    }
-
-    @Test
-    void getType() {
-        assertEquals(Type.C4, model.getType());
     }
 
     @Test
@@ -97,19 +90,6 @@ class CompetitionEditModelTest {
     void setStartTime() {
         model.setStartTime(321L);
         assertEquals(321L, model.getStartTime());
-    }
-
-    @Test
-    void setType() {
-        model.setType(Type.PLUS4);
-        assertEquals(Type.PLUS4, model.getType());
-    }
-
-
-    @Test
-    void setNumPeople() {
-        model.setNumPeople(2);
-        assertEquals(2, model.getNumPeople());
     }
 
     @Test

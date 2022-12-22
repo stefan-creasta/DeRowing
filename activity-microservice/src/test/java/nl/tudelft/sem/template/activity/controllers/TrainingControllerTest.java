@@ -47,12 +47,12 @@ class TrainingControllerTest {
         authManager = mock(AuthManager.class);
         trainingService = mock(TrainingService.class);
         training = new Training(new NetId("123"), "name", 123L, 123L, Type.C4);
-        trainingCreateModel = new TrainingCreateModel("123", 123L, 123L);
         acceptRequestModel = new AcceptRequestModel();
         joinRequestModel = new JoinRequestModel();
         trainingEditModel = new TrainingEditModel();
         activityCancelModel = new ActivityCancelModel(123L);
         trainingController = new TrainingController(authManager, trainingService);
+        trainingCreateModel = new TrainingCreateModel("test", 123L, Type.C4);
     }
 
     @Test

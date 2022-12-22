@@ -27,12 +27,10 @@ class TrainingCreateModelTest {
         startTime = 123L;
         type = Type.C4;
         boatId = 123L;
-        model = new TrainingCreateModel(name, startTime, boatId);
+        model = new TrainingCreateModel(name, startTime, Type.C4);
         model.setTrainingName(name);
         model.setStartTime(startTime);
         model.setType(type);
-        model.setBoatId(boatId);
-
     }
 
     @Test
@@ -50,10 +48,6 @@ class TrainingCreateModelTest {
         assertEquals(type, model.getType());
     }
 
-    @Test
-    void getBoatId() {
-        assertEquals(boatId, model.getBoatId());
-    }
 
     @Test
     void setTrainingName() {
@@ -76,17 +70,11 @@ class TrainingCreateModelTest {
         assertEquals(type2, model.getType());
     }
 
-    @Test
-    void setBoatId() {
-        long boatId2 = 2;
-        model.setBoatId(boatId2);
-        assertEquals(boatId2, model.getBoatId());
-    }
 
     @Test
     void testEquals() {
-        TrainingCreateModel model1 = new TrainingCreateModel(name, startTime, boatId);
-        TrainingCreateModel model2 = new TrainingCreateModel(name, startTime, boatId);
+        TrainingCreateModel model1 = new TrainingCreateModel(name, startTime, Type.C4);
+        TrainingCreateModel model2 = new TrainingCreateModel(name, startTime, Type.C4);
         assertEquals(model1, model2);
     }
 
@@ -94,20 +82,20 @@ class TrainingCreateModelTest {
     void canEqual() {
         assertFalse(model.canEqual(null));
         assertFalse(model.canEqual(new Object()));
-        assertTrue(model.canEqual(new TrainingCreateModel(name, startTime, boatId)));
+        assertTrue(model.canEqual(new TrainingCreateModel(name, startTime, Type.C4)));
     }
 
     @Test
     void testHashCode() {
-        TrainingCreateModel model1 = new TrainingCreateModel(name, startTime, boatId);
-        TrainingCreateModel model2 = new TrainingCreateModel(name, startTime, boatId);
+        TrainingCreateModel model1 = new TrainingCreateModel(name, startTime, Type.C4);
+        TrainingCreateModel model2 = new TrainingCreateModel(name, startTime, Type.C4);
         assertEquals(model1.hashCode(), model2.hashCode());
     }
 
     @Test
     void testToString() {
         String expected = "TrainingCreateModel(trainingName=" + name + ", startTime=" + startTime
-                + ", type=" + type + ", boatId=" + boatId + ")";
+                + ", type=" + type + ")";
         assertEquals(expected, model.toString());
     }
 }

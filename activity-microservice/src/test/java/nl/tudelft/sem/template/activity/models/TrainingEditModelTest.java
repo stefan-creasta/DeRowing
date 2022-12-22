@@ -33,8 +33,6 @@ class TrainingEditModelTest {
         id = 1L;
         trainingEditModel.setTrainingName(trainingName);
         trainingEditModel.setStartTime(startTime);
-        trainingEditModel.setType(type);
-        trainingEditModel.setNumPeople(numPeople);
         trainingEditModel.setId(id);
     }
 
@@ -48,15 +46,6 @@ class TrainingEditModelTest {
         assertEquals(startTime, trainingEditModel.getStartTime());
     }
 
-    @Test
-    void getType() {
-        assertEquals(type, trainingEditModel.getType());
-    }
-
-    @Test
-    void getNumPeople() {
-        assertEquals(numPeople, trainingEditModel.getNumPeople());
-    }
 
     @Test
     void getId() {
@@ -76,18 +65,6 @@ class TrainingEditModelTest {
     }
 
     @Test
-    void setType() {
-        trainingEditModel.setType(Type.PLUS4);
-        assertEquals(Type.PLUS4, trainingEditModel.getType());
-    }
-
-    @Test
-    void setNumPeople() {
-        trainingEditModel.setNumPeople(2);
-        assertEquals(2, trainingEditModel.getNumPeople());
-    }
-
-    @Test
     void setId() {
         trainingEditModel.setId(2L);
         assertEquals(2L, trainingEditModel.getId());
@@ -98,8 +75,6 @@ class TrainingEditModelTest {
         TrainingEditModel trainingEditModel2 = new TrainingEditModel();
         trainingEditModel2.setTrainingName(trainingName);
         trainingEditModel2.setStartTime(startTime);
-        trainingEditModel2.setType(type);
-        trainingEditModel2.setNumPeople(numPeople);
         trainingEditModel2.setId(id);
         assertEquals(trainingEditModel, trainingEditModel2);
     }
@@ -116,15 +91,13 @@ class TrainingEditModelTest {
         TrainingEditModel trainingEditModel2 = new TrainingEditModel();
         trainingEditModel2.setTrainingName(trainingName);
         trainingEditModel2.setStartTime(startTime);
-        trainingEditModel2.setType(type);
-        trainingEditModel2.setNumPeople(numPeople);
         trainingEditModel2.setId(id);
         assertEquals(trainingEditModel.hashCode(), trainingEditModel2.hashCode());
     }
 
     @Test
     void testToString() {
-        assertEquals("TrainingEditModel(trainingName=trainingName, startTime=1, type=C4, numPeople=1, id=1)",
+        assertEquals("TrainingEditModel(trainingName=trainingName, startTime=1, id=1)",
                 trainingEditModel.toString());
     }
 }
