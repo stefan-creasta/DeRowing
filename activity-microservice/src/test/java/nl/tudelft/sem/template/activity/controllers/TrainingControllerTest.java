@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
@@ -59,7 +60,7 @@ class TrainingControllerTest {
         id = new NetId("123");
         //trainingService = new TrainingService(boatRestService, competitionRepository, trainingRepository);
         trainingController = new TrainingController(authManager, trainingService);
-        trainingCreateModel = new TrainingCreateModel("test", 123L, 123L);
+        trainingCreateModel = new TrainingCreateModel("test", 123L, Type.C4);
         trainingFindModel = new TrainingFindModel("test", null);
         //training = new Training(id, trainingCreateModel.getTrainingName(),
         //trainingCreateModel.getBoatId(), trainingCreateModel.getStartTime());

@@ -14,7 +14,6 @@ public class CompetitionEditModel {
     private boolean singleOrganization;
     private String organization;
     private long startTime;
-    private Type type;
     private long id;
 
     /**
@@ -26,7 +25,6 @@ public class CompetitionEditModel {
      * @param singleOrganization if single organization constraint
      * @param organization the organization
      * @param startTime the starttime
-     * @param type the boat type
      * @param id the boat id
      */
     public CompetitionEditModel(String competitionName, GenderConstraint genderConstraint, boolean allowAmateurs,
@@ -38,7 +36,6 @@ public class CompetitionEditModel {
         this.singleOrganization = singleOrganization;
         this.organization = organization;
         this.startTime = startTime;
-        this.type = type;
         this.id = id;
     }
 }

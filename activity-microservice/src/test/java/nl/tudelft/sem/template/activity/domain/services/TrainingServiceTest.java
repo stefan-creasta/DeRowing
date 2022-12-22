@@ -49,7 +49,7 @@ class TrainingServiceTest {
 
     @BeforeEach
     public void setup() {
-        trainingCreateModel = new TrainingCreateModel("test", 123L, 123L);
+        trainingCreateModel = new TrainingCreateModel("test", 123L, Type.C4);
         id = new NetId("123");
         training = new Training(id, trainingCreateModel.getTrainingName(), 123L, 123L,
                 Type.C4);

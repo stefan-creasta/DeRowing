@@ -100,7 +100,9 @@ class CompetitionIntegrationTest {
      * @return A new competition
      */
     public Competition fabricateCompetition(long boatId, Type type) {
-        return new Competition(new NetId("maarten"), "test", boatId, 100000000000000L, true,
+        long curr = currentTimeProvider.getCurrentTime().toEpochMilli();
+        curr += 2 * (24 * 60 * 60 * 1000);
+        return new Competition(new NetId("maarten"), "test", boatId, curr, true,
                 GenderConstraint.NO_CONSTRAINT, false, "TUDELFT", type);
     }
 
