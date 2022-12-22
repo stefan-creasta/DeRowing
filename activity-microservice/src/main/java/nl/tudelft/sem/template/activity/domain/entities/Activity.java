@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public abstract class Activity {
     @Column(name = "owner")
     private NetId owner;
     @Column(name = "attendees")
-    @ElementCollection(targetClass = NetId.class)
+    @ElementCollection(targetClass = NetId.class, fetch = FetchType.EAGER)
     private List<NetId> attendees;
     @Column(name = "activityName")
     private String activityName;

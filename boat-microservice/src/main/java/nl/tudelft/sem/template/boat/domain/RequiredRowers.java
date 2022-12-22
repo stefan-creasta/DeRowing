@@ -11,16 +11,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
 public class RequiredRowers {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue (strategy = GenerationType.SEQUENCE)
 	long id;
 
     protected HashMap<Position, Integer> amountOfPositions;
 
+    /**
+     * Empty constructor for RequiredRowers class.
+     */
+    public RequiredRowers() {
+        this.amountOfPositions = new HashMap<>();
+        for (Position position : Position.values()) {
+            this.amountOfPositions.put(position, Integer.MIN_VALUE);
+        }
+    }
+
+    /**
+     * Basic constructor for RequiredRowers class.
+     */
     public RequiredRowers(HashMap<Position, Integer> currentRowers) {
         this.amountOfPositions = currentRowers;
     }

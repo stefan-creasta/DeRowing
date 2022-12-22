@@ -90,6 +90,9 @@ public class TrainingService extends ActivityService {
      */
     public String joinTraining(JoinRequestModel request) throws Exception {
         Training training = trainingRepository.findById(request.getActivityId());
+        if (training == null) {
+            return "this competition ID does not exist";
+        }
         long startTime = training.getStartTime();
         boolean isInOneDay = (startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 1800000;
         if (isInOneDay) {

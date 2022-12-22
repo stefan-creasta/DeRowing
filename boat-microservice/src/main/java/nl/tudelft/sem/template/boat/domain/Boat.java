@@ -26,15 +26,10 @@ public class Boat {
      * Identifier for the boat.
      */
     @Id
-    @Column(name = "id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    //@Id
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-
-    @Column(name = "type", nullable = false)
+    @Column(name = "type")
     private Type type;
 
     // TODO: create connection to Users table
@@ -48,30 +43,26 @@ public class Boat {
      *
      * @param type the type of the boat
      */
-    public Boat(String name, Type type, int cox, int coach, int port, int starboard, int sculling) {
-        this.name = name;
+    public Boat(Type type) {
         this.type = type;
-        HashMap<Position, List<NetId>> newMapForRowers = new HashMap<>();
-        newMapForRowers.put(Position.COX, new ArrayList<>());
-        newMapForRowers.put(Position.COACH, new ArrayList<>());
-        newMapForRowers.put(Position.PORT, new ArrayList<>());
-        newMapForRowers.put(Position.STARBOARD, new ArrayList<>());
-        newMapForRowers.put(Position.SCULLING, new ArrayList<>());
-        this.rowers = new Rowers(newMapForRowers);
-
-        HashMap<Position, Integer> newMapForRequiredRowers = new HashMap<>();
-        newMapForRequiredRowers.put(Position.COX, cox);
-        newMapForRequiredRowers.put(Position.COACH, coach);
-        newMapForRequiredRowers.put(Position.PORT, port);
-        newMapForRequiredRowers.put(Position.STARBOARD, starboard);
-        newMapForRequiredRowers.put(Position.SCULLING, sculling);
-        this.requiredRowers = new RequiredRowers(newMapForRequiredRowers);
+        this.rowers = new Rowers();
+        this.requiredRowers = new RequiredRowers();
     }
 
+    /**
+     * Basic getter for the current rowers.
+     *
+     * @return the current rowers for the boat
+     */
     public Map<Position, List<NetId>> getRowers() {
         return this.rowers.currentRowers;
     }
 
+    /**
+     * Basic getter for the required rowers.
+     *
+     * @return the required rowers for a boat
+     */
     public HashMap<Position, Integer> getRequiredRowers() {
         return this.requiredRowers.amountOfPositions;
     }
@@ -82,11 +73,9 @@ public class Boat {
      * @param currentNetId the user's netId to be added
      */
     public void addRowerToPosition(Position position, NetId currentNetId) {
-        if (this.rowers.currentRowers.get(position).size() < this.requiredRowers.amountOfPositions.get(position)) {
-            this.rowers.currentRowers.get(position).add(currentNetId);
-            int val = requiredRowers.amountOfPositions.get(position);
-            requiredRowers.amountOfPositions.replace(position, val - 1);
-        }
+        this.rowers.currentRowers.get(position).add(currentNetId);
+        int val = requiredRowers.amountOfPositions.get(position);
+        requiredRowers.amountOfPositions.replace(position, val - 1);
     }
 
     /**
@@ -144,7 +133,7 @@ public class Boat {
             return false;
         }
         Boat boat = (Boat) o;
-        if (!(id == boat.id && name.equals(boat.name) && type == boat.type)) {
+        if (!(id == boat.id && type == boat.type)) {
             return false;
         }
         return Objects.equals(rowers, boat.rowers) && Objects.equals(requiredRowers, boat.requiredRowers);
@@ -152,6 +141,6 @@ public class Boat {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, type, rowers, requiredRowers);
+        return Objects.hash(id, type, rowers, requiredRowers);
     }
 }
