@@ -57,7 +57,7 @@ public class BoatRestService implements RestService {
         int port = Integer.parseInt(environment.getProperty("boat.port"));
         Object genericResponse = RestService.performRequest(model, url, port, path, HttpMethod.POST);
         return (genericResponse != null)
-                ? deserialize(genericResponse.toString(), t)
+                ? deserialize(genericResponse, t)
                 : null;
     }
 }
