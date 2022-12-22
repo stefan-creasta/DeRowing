@@ -15,11 +15,6 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.tudelft.sem.template.boat.builders.BoatBuilder;
-import nl.tudelft.sem.template.boat.builders.BuilderC4;
-import nl.tudelft.sem.template.boat.builders.BuilderPlus4;
-import nl.tudelft.sem.template.boat.builders.BuilderPlus8;
-
 
 @Entity
 @Table(name = "boats")
@@ -55,18 +50,20 @@ public class Boat {
         this.requiredRowers = new RequiredRowers();
     }
 
-
     /**
-     * Method for assigning the right Builder type to the Boat class.
+     * Basic getter for the current rowers.
+     *
+     * @return the current rowers for the boat
      */
-    private void assignBuilder() {
-
-    }
-
     public Map<Position, List<NetId>> getRowers() {
         return this.rowers.currentRowers;
     }
 
+    /**
+     * Basic getter for the required rowers.
+     *
+     * @return the required rowers for a boat
+     */
     public HashMap<Position, Integer> getRequiredRowers() {
         return this.requiredRowers.amountOfPositions;
     }

@@ -1,23 +1,17 @@
 package nl.tudelft.sem.template.boat.builders;
 
-import java.util.HashMap;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import nl.tudelft.sem.template.boat.domain.Boat;
-import nl.tudelft.sem.template.boat.domain.NetId;
 import nl.tudelft.sem.template.boat.domain.Position;
-import nl.tudelft.sem.template.boat.domain.RequiredRowers;
-import nl.tudelft.sem.template.boat.domain.Rowers;
 import nl.tudelft.sem.template.boat.domain.Type;
 
 @Getter
 @Setter
-public class BuilderC4 extends BoatBuilder {
+public class BuilderC4 implements BoatBuilder {
     private Boat boat;
 
     public BuilderC4() {
-        super();
     }
 
     public void reset() {
