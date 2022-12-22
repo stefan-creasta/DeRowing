@@ -1,7 +1,8 @@
-package nl.tudelft.sem.template.user.domain;
+package nl.tudelft.sem.template.user.domain.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import nl.tudelft.sem.template.user.domain.Position;
 import nl.tudelft.sem.template.user.domain.entities.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ public class MessageTest {
     Message message;
     @BeforeEach
     public void setup() {
-	message = new Message("rithik","vluong", 2L, "qwerqwer" ,Position.COACH);
+	message = new Message("rithik","vluong", 2L, "qwerqwer" , Position.COACH);
     }
 
     @Test

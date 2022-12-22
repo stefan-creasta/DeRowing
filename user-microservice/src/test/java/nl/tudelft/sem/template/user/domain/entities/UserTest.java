@@ -1,7 +1,10 @@
-package nl.tudelft.sem.template.user.domain;
+package nl.tudelft.sem.template.user.domain.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import nl.tudelft.sem.template.user.domain.Certificate;
+import nl.tudelft.sem.template.user.domain.Gender;
+import nl.tudelft.sem.template.user.domain.NetId;
 import nl.tudelft.sem.template.user.domain.entities.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
