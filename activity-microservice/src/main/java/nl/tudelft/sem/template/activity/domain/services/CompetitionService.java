@@ -109,11 +109,7 @@ public class CompetitionService extends ActivityService {
      * @throws Exception the competition not found exception
      */
     public Competition findCompetitions(long id) throws Exception {
-        try {
-            return competitionRepository.findById(id);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in findCompetitions");
-        }
+        return competitionRepository.findById(id);
     }
 
     /**

@@ -1,5 +1,16 @@
 package nl.tudelft.sem.template.activity.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
@@ -37,18 +48,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import javax.xml.transform.Result;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -76,6 +75,9 @@ public class TrainingIntegrationTest {
     @Autowired
     private TrainingRepository trainingRepository;
 
+    /**
+     * Reset the mocks before each test.
+     */
     @BeforeEach
     public void setup() {
         // Authorization mocking
@@ -92,11 +94,27 @@ public class TrainingIntegrationTest {
         trainingRepository.resetSequence();
     }
 
+    /**
+     * Creates a training.
+     *
+     * @param owner the owner of the training
+     * @param boatId the id of the boat
+     * @return a training create model
+     */
     public Training fabricateTraining(String owner, long boatId) {
         long curr = currentTimeProvider.getCurrentTime().toEpochMilli();
         curr += 2 * (24 * 60 * 60 * 1000);
         return new Training(new NetId("barrack"), "name", 1L, curr, Type.C4);
     }
+
+    /**
+     * Performs a post request using mockMVC.
+     *
+     * @param body the body of the request
+     * @param path the path of the request
+     * @return the result of the request
+     * @throws Exception if the request fails
+     */
     public ResultActions performPost(Object body, String path) throws Exception {
         return mockMvc.perform(post(path)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -197,9 +215,8 @@ public class TrainingIntegrationTest {
         assertEquals("We could not get your user information from the user service", response);
 
         // Successful request
-        when(mockUserRestService.getUserData()).thenAnswer(x -> {
-           return new UserDataRequestModel(Gender.MALE, "TUDELFT", false, Certificate.C4);
-        });
+        when(mockUserRestService.getUserData()).thenAnswer(x ->
+                new UserDataRequestModel(Gender.MALE, "TUDELFT", false, Certificate.C4));
         res = performPost(body, "/training/join");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Done! Your request has been processed", response);
@@ -283,7 +300,7 @@ public class TrainingIntegrationTest {
         t = fabricateTraining("barrack", 1L);
         trainingRepository.save(t);
 
-        when (mockBoatRestService.deleteBoat(any(BoatDeleteModel.class))).thenReturn(true);
+        when(mockBoatRestService.deleteBoat(any(BoatDeleteModel.class))).thenReturn(true);
         res = performPost(body, "/training/cancel");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Successfully deleted the training.", response);

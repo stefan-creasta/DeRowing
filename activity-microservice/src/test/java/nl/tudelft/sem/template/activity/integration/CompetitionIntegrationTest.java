@@ -336,6 +336,28 @@ class CompetitionIntegrationTest {
     }
 
     @Test
+    public void joinGenderErrorTest() throws Exception {
+        JoinRequestModel body = new JoinRequestModel();
+        body.setPosition(Position.COX);
+        body.setActivityId(1L);
+
+        // Set database state
+        Competition c = fabricateCompetition(1L, Type.C4);
+        c.setGenderConstraint(GenderConstraint.ONLY_MALE);
+        competitionRepository.save(c);
+
+        // Configure mocks
+        UserDataRequestModel model = new UserDataRequestModel(Gender.FEMALE, "TUDELFT", true, Certificate.C4);
+        when(mockUserRestService.getUserData()).thenReturn(model);
+
+        ResultActions res = performPost(body, "/competition/join");
+
+        // Assert return value
+        String response = res.andReturn().getResponse().getContentAsString();
+        assertEquals("you do not meet the constraints of this competition", response);
+    }
+
+    @Test
     public void joinActivityAllErrorsTest() throws Exception {
         // Create body
         JoinRequestModel body = new JoinRequestModel();
