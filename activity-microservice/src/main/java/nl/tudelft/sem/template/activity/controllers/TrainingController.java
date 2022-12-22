@@ -2,6 +2,9 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Position;
+import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.services.TrainingService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 @RequestMapping("/training")
 @RestController
@@ -119,4 +123,20 @@ public class TrainingController {
 
     }
 
+    /**
+     * The method to get all trainings.
+     *
+     * @param position the position the user wants
+     * @return a list of matching trainings
+     */
+    @PostMapping("/find")
+    public ResponseEntity<List<Training>> getTrainings(@RequestBody Position position) {
+        try {
+            List<Training> result = trainingService.getSuitableCompetition(position);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no competition that you are suitable for", e);
+        }
+    }
 }

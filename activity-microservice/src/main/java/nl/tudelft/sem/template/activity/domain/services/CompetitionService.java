@@ -5,15 +5,25 @@ import nl.tudelft.sem.template.activity.domain.GenderConstraint;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.Position;
 import nl.tudelft.sem.template.activity.domain.Type;
+import nl.tudelft.sem.template.activity.domain.entities.Activity;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
-import nl.tudelft.sem.template.activity.models.*;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompetitionService extends ActivityService {
@@ -69,21 +79,17 @@ public class CompetitionService extends ActivityService {
      * @throws Exception the already using this netId exception
      */
     public String createCompetition(CompetitionCreateModel request, NetId netId) throws Exception {
-        try {
-            CreateBoatModel createBoatModel = new CreateBoatModel();
-            createBoatModel.setType(request.getType());
-            CreateBoatResponseModel response = (CreateBoatResponseModel) restServiceFacade.performBoatModel
-                    (createBoatModel, "/boat/create", CreateBoatResponseModel.class);
-            long boatId = response.getBoatId();
-            if (boatId == -1) {
-                return "Could not contact boat service";
-            }
-            Competition competition = parseRequest(request, netId, boatId);
-            competitionRepository.save(competition);
-            return "Successfully created competition";
-        } catch (DataIntegrityViolationException e) {
-            return "activity already exists";
+        CreateBoatModel createBoatModel = new CreateBoatModel();
+        createBoatModel.setType(request.getType());
+        CreateBoatResponseModel response = (CreateBoatResponseModel) restServiceFacade.performBoatModel(createBoatModel,
+                "/boat/create", CreateBoatResponseModel.class);
+        if (response == null) {
+            throw new Exception("Could not create boat");
         }
+        long boatId = response.getBoatId();
+        Competition competition = parseRequest(request, netId, boatId);
+        competitionRepository.save(competition);
+        return "Successfully created competition";
     }
 
     /**
@@ -103,7 +109,7 @@ public class CompetitionService extends ActivityService {
      * @param request the join request
      * @return status of request
      */
-    public String joinCompetition(JoinRequestModel request) {
+    public String joinCompetition(JoinRequestModel request) throws Exception {
         Competition competition = competitionRepository.findById(request.getActivityId());
         if (competition == null) {
             return "this competition ID does not exist";
@@ -113,27 +119,23 @@ public class CompetitionService extends ActivityService {
         if (isInOneDay) {
             return "Sorry you can't join this competition since it will start in one day.";
         }
-        try {
-            UserDataRequestModel userData = (UserDataRequestModel)
-                    restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
-            if (userData == null) {
-                return "We could not get your user information from the user service";
-            }
-            if (!competition.isAllowAmateurs() && userData.isAmateur()
-                    || !checkGender(userData.getGender(), competition.getGenderConstraint())
-                    || (competition.isSingleOrganization() &&
-                    !userData.getOrganization().equals(competition.getOrganization()))) {
-                return "you do not meet the constraints of this competition";
-            }
-            if (request.getPosition() == Position.COX
-                    && competition.getType().getValue() > userData.getCertificate().getValue()) {
-                return "you do not have the required certificate to be cox";
-            }
-            eventPublisher.publishJoining(competition.getOwner(), request.getPosition(), request.getActivityId());
-            return "Done! Your request has been processed";
-        } catch (Exception e) {
-            return "Could not communicate with the user microservice";
+        UserDataRequestModel userData = (UserDataRequestModel)
+                restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
+        if (userData == null) {
+            return "We could not get your user information from the user service";
         }
+        if (!competition.isAllowAmateurs() && userData.isAmateur()
+                || !checkGender(userData.getGender(), competition.getGenderConstraint())
+                || (competition.isSingleOrganization()
+                && !userData.getOrganization().equals(competition.getOrganization()))) {
+            return "you do not meet the constraints of this competition";
+        }
+        if (request.getPosition() == Position.COX
+                && competition.getType().getValue() > userData.getCertificate().getValue()) {
+            return "you do not have the required certificate to be cox";
+        }
+        eventPublisher.publishJoining(competition.getOwner(), request.getPosition(), request.getActivityId());
+        return "Done! Your request has been processed";
     }
 
     /**
@@ -214,12 +216,24 @@ public class CompetitionService extends ActivityService {
      * @param position The position to filter from
      * @return a list of competitions
      */
-    public List<Competition> getSuitableCompetition(Position position) {
-        UserDataRequestModel userDataRequestModel = userRestService.getUserData();
-        List<Competition> competitionsAreMetConstraints = competitionRepository
-                .findSuitableCompetitions(userDataRequestModel.getGender(),
-                        userDataRequestModel.getOrganization(),
-                        userDataRequestModel.isAmateur());
-        return boatRestService.checkIfPositionAvailable(competitionsAreMetConstraints, position);
+    public List<Competition> getSuitableCompetition(Position position) throws Exception {
+        UserDataRequestModel userData = (UserDataRequestModel)
+                restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
+        if (userData == null) {
+            throw new Exception("We could not get your user information from the user service");
+        }
+        List<Long> boatIds = competitionRepository.findAll().stream()
+                .filter(competition -> competition.getStartTime()
+                        > currentTimeProvider.getCurrentTime().toEpochMilli() + 86400000)
+                .filter(competition -> checkGender(userData.getGender(), competition.getGenderConstraint()))
+                .filter(competition -> competition.isAllowAmateurs() || !userData.isAmateur())
+                .filter(competition -> !competition.isSingleOrganization()
+                        || userData.getOrganization().equals(competition.getOrganization()))
+                .map(Activity::getBoatId)
+                .collect(Collectors.toList());
+
+        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
+        List<Long> suitableCompetitions = (List<Long>) restServiceFacade.performBoatModel(model, "/boat/check", List.class);
+        return competitionRepository.findAllByBoatIdIn(suitableCompetitions);
     }
 }

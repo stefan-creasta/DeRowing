@@ -20,6 +20,11 @@ public class BoatChangeListener {
         this.restServiceFacade = restServiceFacade;
     }
 
+    /**
+     * Event Listener for BoatChangeEvent.
+     *
+     * @param event the event that is triggered when a boat is changed.
+     */
     @EventListener
     public void onBoatChange(BoatChangeEvent event) {
         try {

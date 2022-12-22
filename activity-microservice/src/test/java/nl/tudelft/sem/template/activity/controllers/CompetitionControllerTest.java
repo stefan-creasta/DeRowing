@@ -85,7 +85,7 @@ class CompetitionControllerTest {
     }
 
     @Test
-    void joinCompetition() {
+    void joinCompetition() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
         when(competitionService.joinCompetition(joinRequestModel)).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),

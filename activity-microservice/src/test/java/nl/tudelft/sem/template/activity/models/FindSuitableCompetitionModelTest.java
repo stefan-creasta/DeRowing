@@ -16,7 +16,7 @@ class FindSuitableCompetitionModelTest {
 
     private FindSuitableCompetitionModel model;
 
-    private List<Competition> competitions;
+    private List<Long> competitions;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +36,7 @@ class FindSuitableCompetitionModelTest {
 
     @Test
     void setCompetitions() {
-        List<Competition> competitions2 = new ArrayList<>();
+        List<Long> competitions2 = new ArrayList<>();
         model.setCompetitions(competitions2);
         assertEquals(competitions2, model.getCompetitions());
     }

@@ -2,15 +2,23 @@ package nl.tudelft.sem.template.activity.domain.services;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.Position;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.domain.entities.Activity;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
-import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
-import nl.tudelft.sem.template.activity.models.*;
-import org.springframework.dao.DataIntegrityViolationException;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
+import nl.tudelft.sem.template.activity.models.TrainingEditModel;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainingService extends ActivityService {
@@ -61,8 +69,8 @@ public class TrainingService extends ActivityService {
     public String createTraining(TrainingCreateModel request, NetId netId) throws Exception {
         CreateBoatModel createBoatModel = new CreateBoatModel();
         createBoatModel.setType(request.getType());
-        CreateBoatResponseModel response = (CreateBoatResponseModel) restServiceFacade.performBoatModel
-                (createBoatModel, "/boat/create", CreateBoatResponseModel.class);
+        CreateBoatResponseModel response = (CreateBoatResponseModel) restServiceFacade.performBoatModel(createBoatModel,
+                "/boat/create", CreateBoatResponseModel.class);
         long boatId = response.getBoatId();
         if (boatId == -1) {
             return "Could not contact boat service";
@@ -142,7 +150,7 @@ public class TrainingService extends ActivityService {
         BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
         restServiceFacade.performBoatModel(boatDeleteModel, "/boat/delete", null);
         trainingRepository.delete(training);
-        return "Successfully deleted competition";
+        return "Successfully deleted training";
     }
 
     /**
@@ -174,5 +182,28 @@ public class TrainingService extends ActivityService {
         } catch (Exception e) {
             throw new Exception("Something went wrong in editing training");
         }
+    }
+
+    /**
+     * The method to get all trainings.
+     *
+     * @param position the preferred position of the user
+     * @return the list of matching trainings
+     * @throws Exception the exception
+     */
+    public List<Training> getSuitableCompetition(Position position) throws Exception {
+        UserDataRequestModel userData = (UserDataRequestModel)
+                restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
+        if (userData == null) {
+            throw new Exception("We could not get your user information from the user service");
+        }
+        List<Long> boatIds = trainingRepository.findAll().stream()
+                .filter(competition -> competition.getStartTime()
+                        > currentTimeProvider.getCurrentTime().toEpochMilli() + (30 * 60 * 1000))
+                .map(Activity::getBoatId)
+                .collect(Collectors.toList());
+        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
+        List<Long> suitableCompetitions = (List<Long>) restServiceFacade.performBoatModel(model, "/boat/check", List.class);
+        return trainingRepository.findAllByBoatIdIn(suitableCompetitions);
     }
 }

@@ -1,25 +1,10 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.tudelft.sem.template.activity.domain.Position;
-import nl.tudelft.sem.template.activity.domain.Type;
-import nl.tudelft.sem.template.activity.domain.entities.Activity;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
-import nl.tudelft.sem.template.activity.domain.events.BoatChangeEvent;
-import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
-import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
-import nl.tudelft.sem.template.activity.models.CreateBoatModel;
-import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
-import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
-import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionResponseModel;
-import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BoatRestService implements RestService {
@@ -27,6 +12,11 @@ public class BoatRestService implements RestService {
     private final transient int port;
     private final transient String url;
 
+    /**
+     * Constructor for BoatRestService.
+     *
+     * @param environment the environment
+     */
     @Autowired
     public BoatRestService(Environment environment) {
         this.environment = environment;
@@ -38,14 +28,30 @@ public class BoatRestService implements RestService {
         this.port = Integer.parseInt(boatport);
     }
 
+    /**
+     * Method to perform a request to the boat microservice.
+     *
+     * @param response the response in json
+     * @param target  the target class
+     * @return the object cast to target class
+     */
     public Object deserialize(Object response, Class<?> target) {
         if (target == null) {
-             return null;
+            return null;
         }
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(response, target);
     }
 
+    /**
+     * Method to perform a request to the boat microservice.
+     *
+     * @param model the model to send
+     * @param path the path to send the model to
+     * @param t the class to cast the response to
+     * @return the response cast to the class t
+     * @throws Exception if the request fails
+     */
     public Object performBoatRequest(Object model, String path, Class<?> t) throws Exception {
         String url = environment.getProperty("boat.url");
         int port = Integer.parseInt(environment.getProperty("boat.port"));
@@ -53,6 +59,5 @@ public class BoatRestService implements RestService {
         return (genericResponse != null)
                 ? deserialize(genericResponse.toString(), t)
                 : null;
-
     }
 }

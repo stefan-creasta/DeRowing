@@ -17,6 +17,11 @@ public class UserAcceptanceListener {
         this.restServiceFacade = restServiceFacade;
     }
 
+    /**
+     * Event Listener for UserAcceptanceEvent.
+     *
+     * @param event the event that is triggered when a user accepts a boat.
+     */
     @EventListener
     public void onUserAcceptance(UserAcceptanceEvent event) {
         try {

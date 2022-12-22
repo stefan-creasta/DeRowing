@@ -73,7 +73,7 @@ class TrainingControllerTest {
     }
 
     @Test
-    void joinTrainingTest() {
+    void joinTrainingTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
         when(trainingService.joinTraining(joinRequestModel)).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
