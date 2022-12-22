@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.tudelft.sem.template.activity.domain.Position;
 import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
@@ -18,99 +19,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BoatRestService extends RestService {
-    // Here we can create methods, that use the parent class' performRequest()
-    // to get information from other microservices
+public class BoatRestService implements RestService {
     private final transient Environment environment;
-    private transient String boatUrl = "boat.url";
-    private transient String boatPort = "boat.port";
+    private final transient int port;
+    private final transient String url;
 
     @Autowired
     public BoatRestService(Environment environment) {
         this.environment = environment;
+        String boatport = environment.getProperty("boat.port");
+        this.url = environment.getProperty("boat.url");
+        if (url == null || boatport == null) {
+            System.out.println("No ports and/or url found in the application.properties file");
+        }
+        this.port = Integer.parseInt(boatport);
     }
 
-
-    /**
-     * A method to inform the boat service of an extra user.
-     *
-     * @param model the model to insert a user into a boat
-     * @return boolean whether the request was successful
-     */
-    public boolean informBoatOfJoining(BoatChangeEvent model) {
-        String url = environment.getProperty(boatUrl);
-        int port = Integer.parseInt(environment.getProperty(boatPort));
-        try {
-            performRequest(model, url, port, "/boat/insert", HttpMethod.POST);
-            return true;
-        } catch (UnsuccessfulRequestException e) {
-            System.out.println("Boat microservice seems unavailable");
-            return false;
-        }
+    public Object deserialize(Object response, Class<?> target) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(response, target);
     }
 
-    /**
-     * Tells the boat service to create a new boat.
-     *
-     * @param type      the type of boat to create
-     * @return the boat id of the newly creted boat.
-     */
-    public long getBoatId(Type type) {
-        String url = environment.getProperty(boatUrl);
-        int port = Integer.parseInt(environment.getProperty(boatPort));
-        CreateBoatModel model = new CreateBoatModel();
-        model.setType(type);
-        try {
-            CreateBoatResponseModel response =
-                    (CreateBoatResponseModel)
-                            performRequest(model, url, port, "/boat/create", HttpMethod.POST);
-            if (response == null) {
-                return -1;
-            }
-            return response.getBoatId();
-        } catch (UnsuccessfulRequestException e) {
-            System.out.println("Boat microservice seems unavailable");
-            return -1;
-        }
-    }
+    public Object performBoatRequest(Object model, String path, Class<?> t) throws Exception {
+        String url = environment.getProperty("boat.url");
+        int port = Integer.parseInt(environment.getProperty("boat.port"));
+        Object genericResponse = RestService.performRequest(model, url, port, path, HttpMethod.POST);
+        return (genericResponse != null)
+                ? deserialize(genericResponse.toString(), t)
+                : null;
 
-    /**
-     * Checks if competitions are available for the specific position of the boat.
-     *
-     * @param competitions The list of all competitions
-     * @param position     The position to check for
-     * @return a list of competitions, or an empty list if no competitions available
-     */
-    public List<Competition> checkIfPositionAvailable(List<Competition> competitions, Position position) {
-        String url = environment.getProperty(boatUrl);
-        int port = Integer.parseInt(environment.getProperty(boatPort));
-        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(competitions, position);
-        try {
-            FindSuitableCompetitionResponseModel response =
-                    (FindSuitableCompetitionResponseModel)
-                            performRequest(model, url, port, "/boat/check", HttpMethod.POST);
-            return response.getCompetitions();
-        } catch (UnsuccessfulRequestException e) {
-            System.out.println("There is no such competition that you are suitable for");
-            return new ArrayList<>();
-        }
-    }
-
-    /**
-     * The method to delete a boat when delete an activity.
-     *
-     * @param boatDeleteModel the id of the boat to be deleted
-     * @return a boolean value representing the result
-     */
-    public boolean deleteBoat(BoatDeleteModel boatDeleteModel) {
-        String url = environment.getProperty(boatUrl);
-        int port = Integer.parseInt(environment.getProperty(boatPort));
-        try {
-            performRequest(boatDeleteModel, url, port, "/boat/delete", HttpMethod.POST);
-            return true;
-        } catch (UnsuccessfulRequestException e) {
-            System.out.println("Boat microservice seems unavailable");
-            return false;
-        }
     }
 }

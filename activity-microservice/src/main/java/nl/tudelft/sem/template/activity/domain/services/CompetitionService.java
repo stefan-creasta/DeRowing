@@ -10,13 +10,7 @@ import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
-import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
-import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
-import nl.tudelft.sem.template.activity.models.JoinRequestModel;
-import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
-import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
-import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
+import nl.tudelft.sem.template.activity.models.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -26,8 +20,7 @@ public class CompetitionService extends ActivityService {
 
     private final transient EventPublisher eventPublisher;
     private final transient CompetitionRepository competitionRepository;
-    private final transient UserRestService userRestService;
-    private final transient BoatRestService boatRestService;
+    private final transient RestServiceFacade restServiceFacade;
     private final transient CurrentTimeProvider currentTimeProvider;
 
     /**
@@ -35,17 +28,15 @@ public class CompetitionService extends ActivityService {
      *
      * @param eventPublisher        the event publisher
      * @param competitionRepository the competition repository
-     * @param userRestService       the user rest service
-     * @param boatRestService       the boat rest service
+     * @param restServiceFacade     the rest service facade
      * @param currentTimeProvider   the current time provider
      */
     public CompetitionService(EventPublisher eventPublisher, CompetitionRepository competitionRepository,
-                              UserRestService userRestService, BoatRestService boatRestService,
+                              RestServiceFacade restServiceFacade,
                               CurrentTimeProvider currentTimeProvider) {
         this.eventPublisher = eventPublisher;
         this.competitionRepository = competitionRepository;
-        this.userRestService = userRestService;
-        this.boatRestService = boatRestService;
+        this.restServiceFacade = restServiceFacade;
         this.currentTimeProvider = currentTimeProvider;
     }
 
@@ -79,7 +70,11 @@ public class CompetitionService extends ActivityService {
      */
     public String createCompetition(CompetitionCreateModel request, NetId netId) throws Exception {
         try {
-            long boatId = boatRestService.getBoatId(request.getType());
+            CreateBoatModel createBoatModel = new CreateBoatModel();
+            createBoatModel.setType(request.getType());
+            CreateBoatResponseModel response = (CreateBoatResponseModel) restServiceFacade.performBoatModel
+                    (createBoatModel, "/boat/create", CreateBoatResponseModel.class);
+            long boatId = response.getBoatId();
             if (boatId == -1) {
                 return "Could not contact boat service";
             }
@@ -132,21 +127,27 @@ public class CompetitionService extends ActivityService {
         if (isInOneDay) {
             return "Sorry you can't join this competition since it will start in one day.";
         }
-        UserDataRequestModel userData = userRestService.getUserData();
-        if (userData == null) {
-            return "We could not get your user information from the user service";
+        try {
+            UserDataRequestModel userData = (UserDataRequestModel)
+                    restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
+            if (userData == null) {
+                return "We could not get your user information from the user service";
+            }
+            if (!competition.isAllowAmateurs() && userData.isAmateur()
+                    || !checkGender(userData.getGender(), competition.getGenderConstraint())
+                    || (competition.isSingleOrganization() &&
+                    !userData.getOrganization().equals(competition.getOrganization()))) {
+                return "you do not meet the constraints of this competition";
+            }
+            if (request.getPosition() == Position.COX
+                    && competition.getType().getValue() > userData.getCertificate().getValue()) {
+                return "you do not have the required certificate to be cox";
+            }
+            eventPublisher.publishJoining(competition.getOwner(), request.getPosition(), request.getActivityId());
+            return "Done! Your request has been processed";
+        } catch (Exception e) {
+            return "Could not communicate with the user microservice";
         }
-        if (!competition.isAllowAmateurs() && userData.isAmateur()
-            || !checkGender(userData.getGender(), competition.getGenderConstraint())
-            || (competition.isSingleOrganization() && !userData.getOrganization().equals(competition.getOrganization()))) {
-            return "you do not meet the constraints of this competition";
-        }
-        if (request.getPosition() == Position.COX
-                && competition.getType().getValue() > userData.getCertificate().getValue()) {
-            return "you do not have the required certificate to be cox";
-        }
-        eventPublisher.publishJoining(competition.getOwner(), request.getPosition(), request.getActivityId());
-        return "Done! Your request has been processed";
     }
 
     /**

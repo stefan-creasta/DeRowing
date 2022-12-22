@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 
-public abstract class RestService {
+public interface RestService {
     /**
      * A method to perform a request to another microservice.
      *
@@ -40,10 +40,8 @@ public abstract class RestService {
         } catch (Exception e) {
             throw new UnsuccessfulRequestException();
         }
+
     }
 
-    public Object deserialize(Object response, Class<?> target) {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.convertValue(response, target);
-    }
+    public Object deserialize(Object response, Class<?> target);
 }
