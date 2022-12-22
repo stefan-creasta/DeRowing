@@ -7,11 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
 public class RequiredRowers {
@@ -21,6 +19,19 @@ public class RequiredRowers {
 
     protected HashMap<Position, Integer> amountOfPositions;
 
+    /**
+     * Empty constructor for RequiredRowers class.
+     */
+    public RequiredRowers() {
+        this.amountOfPositions = new HashMap<>();
+        for (Position position : Position.values()) {
+            this.amountOfPositions.put(position, Integer.MIN_VALUE);
+        }
+    }
+
+    /**
+     * Basic constructor for RequiredRowers class.
+     */
     public RequiredRowers(HashMap<Position, Integer> currentRowers) {
         this.amountOfPositions = currentRowers;
     }

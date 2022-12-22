@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.boat.builders.Director;
 import nl.tudelft.sem.template.boat.domain.Boat;
 import nl.tudelft.sem.template.boat.domain.Position;
 import nl.tudelft.sem.template.boat.domain.Type;
@@ -20,8 +21,11 @@ public class BoatService extends RestService {
     @Autowired
     private BoatRepository boatRepository;
 
+    private Director director;
+
     public BoatService(BoatRepository boatRepository) {
         this.boatRepository = boatRepository;
+        this.director = new Director();
     }
 
     /**
@@ -31,15 +35,8 @@ public class BoatService extends RestService {
      * @return a new Boat
      */
     public Boat parseRequest(BoatCreateModel request) {
-        String name = request.getName();
         Type type = request.getType();
-        int cox = request.getCox();
-        int coach = request.getCoach();
-        int port = request.getPort();
-        int starboard = request.getStarboard();
-        int sculling = request.getSculling();
-
-        return new Boat(name, type, cox, coach, port, starboard, sculling);
+        return director.constructBoat(type);
     }
 
 

@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.activity.domain.Position;
 @Data
 public class UserAcceptanceEvent {
     boolean isAccepted;
+
     Position position;
     NetId eventRequester;
 
@@ -21,5 +22,6 @@ public class UserAcceptanceEvent {
         this.isAccepted = isAccepted;
         this.position = position;
         this.eventRequester = eventRequester;
+        this.position = position;
     }
 }
