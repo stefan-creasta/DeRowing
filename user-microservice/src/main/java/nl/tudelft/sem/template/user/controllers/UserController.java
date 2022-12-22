@@ -64,7 +64,8 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<String> createUser(@RequestBody UserDetailModel request) {
         try {
-            userService.createUser(request, new NetId(authManager.getNetId()));
+
+            userService.createUser(userService.parseRequest(request, new NetId(authManager.getNetId())));
             return ResponseEntity.ok("Congratulations " + authManager.getNetId() + ", you have created your user");
         } catch (Exception e) {
             return ResponseEntity.ok("Something went wrong in creating the user");

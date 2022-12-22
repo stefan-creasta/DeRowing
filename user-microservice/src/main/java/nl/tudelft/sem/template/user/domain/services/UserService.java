@@ -45,20 +45,17 @@ public class UserService {
     /**
      * Method to create and persist a new User.
      *
-     * @param request the request body
-     * @param netId   the netId of the requester
      * @return a new User
      * @throws Exception the already using the NetId exception
      */
-    public User createUser(UserDetailModel request, NetId netId) throws Exception {
+    public String createUser(User user) throws Exception {
         try {
-            User user = parseRequest(request, netId);
             userRepository.save(user);
-            return user;
+            return "Information of user is successfully saved in database";
         } catch (DataIntegrityViolationException e) {
-            throw new NetIdAlreadyInUseException(netId);
+            throw new NetIdAlreadyInUseException(user.getNetId());
         } catch (Exception e) {
-            throw new Exception("Something went wrong in createCompetition");
+            throw new Exception("Something went wrong in createUser");
         }
     }
 
