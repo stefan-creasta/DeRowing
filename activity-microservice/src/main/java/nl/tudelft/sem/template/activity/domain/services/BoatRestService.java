@@ -53,15 +53,13 @@ public class BoatRestService extends RestService {
      * Tells the boat service to create a new boat.
      *
      * @param type      the type of boat to create
-     * @param numPeople the number of people the boat can hold
      * @return the boat id of the newly creted boat.
      */
-    public long getBoatId(Type type, int numPeople) {
+    public long getBoatId(Type type) {
         String url = environment.getProperty(boatUrl);
         int port = Integer.parseInt(environment.getProperty(boatPort));
         CreateBoatModel model = new CreateBoatModel();
         model.setType(type);
-        model.setNumPeople(numPeople);
         try {
             CreateBoatResponseModel response =
                     (CreateBoatResponseModel)

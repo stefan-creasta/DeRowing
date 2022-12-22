@@ -51,7 +51,7 @@ class TrainingServiceTest {
     public void setup() {
         trainingCreateModel = new TrainingCreateModel("test", 123L, 123L);
         id = new NetId("123");
-        training = new Training(id, trainingCreateModel.getTrainingName(), 123L, 123L, 1,
+        training = new Training(id, trainingCreateModel.getTrainingName(), 123L, 123L,
                 Type.C4);
         trainingRepository = mock(TrainingRepository.class);
         boatRestService = mock(BoatRestService.class);
