@@ -1,8 +1,10 @@
-package nl.tudelft.sem.template.boat.domain;
+package nl.tudelft.sem.template.boat.domain.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -10,6 +12,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.tudelft.sem.template.boat.authentication.AuthManager;
 import nl.tudelft.sem.template.boat.authentication.JwtTokenVerifier;
+import nl.tudelft.sem.template.boat.domain.Boat;
+import nl.tudelft.sem.template.boat.domain.NetId;
+import nl.tudelft.sem.template.boat.domain.Position;
+import nl.tudelft.sem.template.boat.domain.Type;
 import nl.tudelft.sem.template.boat.models.BoatCreateModel;
 import nl.tudelft.sem.template.boat.models.BoatDeleteModel;
 import nl.tudelft.sem.template.boat.models.BoatEmptyPositionsModel;
@@ -49,7 +55,7 @@ public class BoatIntegrationTest {
     
     private final transient String bearerMockedToken = "Bearer MockedToken";
     
-    private final transient String createURL = "/boat/create";
+    private final transient String createUrl = "/boat/create";
 
     /**
      * The setup for each test, its main purpose being to reset the database.
@@ -82,7 +88,7 @@ public class BoatIntegrationTest {
     @Test
     public void createBoatTest() throws Exception {
         BoatCreateModel body = new BoatCreateModel(Type.C4);
-        ResultActions res = mvc.perform(post(createURL)
+        ResultActions res = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(body))
                 .header(authorization, bearerMockedToken));
@@ -97,7 +103,7 @@ public class BoatIntegrationTest {
     @Test
     public void deleteBoatTest() throws Exception {
         BoatCreateModel body1 = new BoatCreateModel(Type.C4);
-        ResultActions res1 = mvc.perform(post(createURL)
+        ResultActions res1 = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(body1))
                 .header(authorization, bearerMockedToken));
@@ -116,7 +122,7 @@ public class BoatIntegrationTest {
     @Test
     public void insertRowerTest() throws Exception {
         BoatCreateModel body1 = new BoatCreateModel(Type.PLUS4);
-        ResultActions res1 = mvc.perform(post(createURL)
+        ResultActions res1 = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(body1))
                 .header(authorization, bearerMockedToken));
@@ -141,7 +147,7 @@ public class BoatIntegrationTest {
     @Test
     public void removeRowerTest() throws Exception {
         BoatCreateModel body1 = new BoatCreateModel(Type.PLUS4);
-        ResultActions res1 = mvc.perform(post(createURL)
+        ResultActions res1 = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(body1))
                 .header(authorization, bearerMockedToken));
@@ -172,23 +178,23 @@ public class BoatIntegrationTest {
     }
 
     @Test
-    public void findBoatsByEmptyPositionsTest() throws Exception {
+    public void findBoatsByPosition() throws Exception {
         BoatCreateModel body1 = new BoatCreateModel(Type.C4);
-        ResultActions res1 = mvc.perform(post(createURL)
+        ResultActions res1 = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(body1))
                 .header(authorization, bearerMockedToken));
         res1.andExpect(status().isOk());
 
         BoatCreateModel body2 = new BoatCreateModel(Type.PLUS4);
-        ResultActions res2 = mvc.perform(post(createURL)
+        ResultActions res2 = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(body2))
                 .header(authorization, bearerMockedToken));
         res2.andExpect(status().isOk());
 
         BoatCreateModel body3 = new BoatCreateModel(Type.PLUS8);
-        ResultActions res3 = mvc.perform(post(createURL)
+        ResultActions res3 = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(body3))
                 .header(authorization, bearerMockedToken));
@@ -214,7 +220,7 @@ public class BoatIntegrationTest {
 
     @Test
     public void createNullBoatTest() throws Exception {
-        ResultActions res = mvc.perform(post(createURL)
+        ResultActions res = mvc.perform(post(createUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(null))
                 .header(authorization, bearerMockedToken));
@@ -253,7 +259,7 @@ public class BoatIntegrationTest {
     }
 
     @Test
-    public void findNullBoatsByEmptyPositionsTest() throws Exception {
+    public void findNullBoatsByPosition() throws Exception {
         ResultActions res = mvc.perform(post("/boat/check")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(serialize(null))
@@ -263,7 +269,7 @@ public class BoatIntegrationTest {
     }
 
     @Test
-    public void findErrorBoatsByEmptyPositionsTest() throws Exception {
+    public void findErrorBoatsByPosition() throws Exception {
         List<Long> desiredList = new ArrayList<>();
         desiredList.add((long) 1);
         desiredList.add((long) 2);
