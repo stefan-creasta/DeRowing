@@ -20,6 +20,7 @@ import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
 import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionResponseModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -233,7 +234,9 @@ public class CompetitionService extends ActivityService {
                 .collect(Collectors.toList());
 
         FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
-        List<Long> suitableCompetitions = (List<Long>) restServiceFacade.performBoatModel(model, "/boat/check", List.class);
-        return competitionRepository.findAllByBoatIdIn(suitableCompetitions);
+        FindSuitableCompetitionResponseModel suitableCompetitions =
+                (FindSuitableCompetitionResponseModel) restServiceFacade.performBoatModel(model,
+                        "/boat/check", FindSuitableCompetitionResponseModel.class);
+        return competitionRepository.findAllByBoatIdIn(suitableCompetitions.getBoatId());
     }
 }
