@@ -23,9 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 /**
- * Hello World example controller.
+ * The controller for competitions.
  * <p>
- * This controller shows how you can extract information from the JWT token.
+ * This controller handles API calls related to competitions.
  * </p>
  */
 @RequestMapping("/competition")

@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Hello World example controller.
+ * The controller for the User microservice.
  * <p>
- * This controller shows how you can extract information from the JWT token.
+ * This controller handles API endpoints for the user microservice.
  * </p>
  */
 @RestController
@@ -108,7 +108,7 @@ public class UserController {
             return bb.body("The message is successfully saved");
         } catch (Exception e) {
             ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body("The message is successfully saved");
+            return bb.body("Something went wrong in sending the application of participant to activity owner");
         }
     }
 
