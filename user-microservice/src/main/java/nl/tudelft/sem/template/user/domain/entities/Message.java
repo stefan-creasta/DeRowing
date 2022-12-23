@@ -46,10 +46,9 @@ public class Message {
         if (!(o instanceof Message)) {
             return false;
         }
-        Message message = (Message) o;
-        return  getReceiver().equals(message.getReceiver())
-            && sender.equals(message.sender)
-            && getContent().equals(message.getContent()) && position == message.position;
+        Message other = (Message) o;
+        return receiver.equals(other.getReceiver()) && sender.equals(other.sender)
+            && activityId == other.activityId && content.equals(other.content) && position.equals(other.position);
     }
 
     @Override

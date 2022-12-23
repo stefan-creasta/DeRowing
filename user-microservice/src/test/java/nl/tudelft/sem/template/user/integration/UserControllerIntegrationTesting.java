@@ -143,7 +143,7 @@ public class UserControllerIntegrationTesting {
 	    "ExampleUser wants to join this competition/training session. "
 	    + "They want to join for position COACH",
 	    Position.COACH);
-	Message result = messageRepository.findById(1L).get();
+	Message result = messageRepository.findById(2L).get();
 	assertEquals(message, result);
     }
 
