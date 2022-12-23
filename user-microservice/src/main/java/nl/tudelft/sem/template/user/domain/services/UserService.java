@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.user.domain.services;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
-import nl.tudelft.sem.template.user.domain.Position;
 import nl.tudelft.sem.template.user.domain.entities.Message;
 import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.exceptions.NetIdAlreadyInUseException;
@@ -38,27 +37,23 @@ public class UserService {
         String organization = request.getOrganization();
         boolean amateur = request.isAmateur();
 
-        User user = new User(netId, gender, certificate, organization, amateur);
-        return user;
+        return new User(netId, gender, certificate, organization, amateur);
     }
 
     /**
      * Method to create and persist a new User.
      *
-     * @param request the request body
-     * @param netId   the netId of the requester
      * @return a new User
      * @throws Exception the already using the NetId exception
      */
-    public User createUser(UserDetailModel request, NetId netId) throws Exception {
+    public String createUser(User user) throws Exception {
         try {
-            User user = parseRequest(request, netId);
             userRepository.save(user);
-            return user;
+            return "Information of user is successfully saved in database";
         } catch (DataIntegrityViolationException e) {
-            throw new NetIdAlreadyInUseException(netId);
+            throw new NetIdAlreadyInUseException(user.getNetId());
         } catch (Exception e) {
-            throw new Exception("Something went wrong in createCompetition");
+            throw new Exception("Something went wrong in createUser");
         }
     }
 
@@ -69,7 +64,7 @@ public class UserService {
      * @return the user to be found
      * @throws Exception the NetId not found exception
      */
-    public User findUser(NetId netId) throws Exception {
+    public User findUser(String netId) throws Exception {
         try {
             return userRepository.findByNetId(netId);
         } catch (Exception e) {
@@ -80,18 +75,13 @@ public class UserService {
     /**
      * Saves a message in the message database.
      *
-     * @param receiver   NetId of the recipient
-     * @param sender     NetId of the sender
-     * @param activityId activity Id of the activity
-     * @param content    the message in String format
-     * @param position   the position that the user applied for
+     * @param message the incoming message
      * @return a String indicating whether the message is saved or not
      * @throws Exception a NetId already in use exception
      */
-    public String saveMessage(NetId receiver, NetId sender,
-                              long activityId, String content, Position position) throws Exception {
+    public String saveMessage(Message message) throws Exception {
         try {
-            messageRepository.save(new Message(receiver.getNetId(), sender.getNetId(), activityId, content, position));
+            messageRepository.save(message);
             return "The message is successfully saved";
         } catch (Exception e) {
             throw new Exception("Something went wrong when saving this message");
@@ -105,7 +95,11 @@ public class UserService {
      * @return the list of messages (inbox)
      * @throws Exception the NetId already in
      */
-    public List<Message> getNotifications(NetId netId) throws Exception {
-        return messageRepository.findMessagesByNetId(netId.getNetId());
+    public List<Message> getNotifications(String netId) throws Exception {
+        try {
+            return messageRepository.findMessagesByNetId(netId);
+        } catch (Exception e) {
+            throw new Exception("Can not retrieve the user's messages");
+        }
     }
 }
