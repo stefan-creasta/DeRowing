@@ -234,6 +234,7 @@ public class TrainingIntegrationTest {
 
     @Test
     public void editTest() throws Exception {
+        when(mockAuthenticationManager.getNetId()).thenReturn("barrack");
         // set db state
         Training t = fabricateTraining("barrack", 1L);
         trainingRepository.save(t);
@@ -273,6 +274,7 @@ public class TrainingIntegrationTest {
 
     @Test
     public void cancelTest() throws Exception {
+        when(mockAuthenticationManager.getNetId()).thenReturn("barrack");
         // set db state
         Training t = fabricateTraining("barrack", 1L);
         trainingRepository.save(t);

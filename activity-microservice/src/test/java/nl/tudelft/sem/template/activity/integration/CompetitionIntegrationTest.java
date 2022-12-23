@@ -189,7 +189,8 @@ class CompetitionIntegrationTest {
         assertEquals("The user is informed of your decision", response);
 
         // Assert 2 informing events where published
-        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(), body.getRequestee(), activityId);
+        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(),
+                body.getRequestee(), activityId);
         BoatChangeEvent b = new BoatChangeEvent(1L, Position.COX, body.getRequestee());
         verify(mockApplicationEventPublisher, times(1)).publishEvent(ArgumentMatchers.refEq(e));
         verify(mockApplicationEventPublisher, times(1)).publishEvent(ArgumentMatchers.refEq(b));
@@ -215,7 +216,8 @@ class CompetitionIntegrationTest {
         assertEquals("The user is informed of your decision", response);
 
         // Assert 2 informing events where published
-        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(), body.getRequestee(), activityId);
+        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(),
+                body.getRequestee(), activityId);
         BoatChangeEvent b = new BoatChangeEvent(1L, Position.COX, body.getRequestee());
         verify(mockApplicationEventPublisher, times(1)).publishEvent(ArgumentMatchers.refEq(e));
         verify(mockApplicationEventPublisher, times(0)).publishEvent(ArgumentMatchers.refEq(b));
@@ -241,7 +243,8 @@ class CompetitionIntegrationTest {
         assertEquals("Could not find activity", response);
 
         // Assert 2 informing events where published
-        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(), body.getRequestee(), activityId);
+        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(),
+                body.getRequestee(), activityId);
         BoatChangeEvent b = new BoatChangeEvent(1L, Position.COX, body.getRequestee());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(ArgumentMatchers.refEq(e));
         verify(mockApplicationEventPublisher, times(0)).publishEvent(ArgumentMatchers.refEq(b));
@@ -418,6 +421,7 @@ class CompetitionIntegrationTest {
 
     @Test
     public void cancelTest() throws Exception {
+        when(mockAuthenticationManager.getNetId()).thenReturn("maarten");
         // Set database state
         Competition c = fabricateCompetition(1L, Type.C4);
         competitionRepository.save(c);
@@ -445,6 +449,7 @@ class CompetitionIntegrationTest {
         assertEquals("Competition not found", response);
 
         // boatRestService fails
+        when(mockAuthenticationManager.getNetId()).thenReturn("maarten");
         when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenThrow(new UnsuccessfulRequestException());
         Competition c = fabricateCompetition(1L, Type.C4);
         competitionRepository.save(c);
@@ -457,6 +462,7 @@ class CompetitionIntegrationTest {
 
     @Test
     public void editTest() throws Exception {
+        when(mockAuthenticationManager.getNetId()).thenReturn("maarten");
         // Set database state
         Competition c = fabricateCompetition(1L, Type.C4);
         competitionRepository.save(c);

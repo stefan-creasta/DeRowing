@@ -21,7 +21,6 @@ import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import nl.tudelft.sem.template.activity.models.PositionEntryModel;
 import nl.tudelft.sem.template.activity.models.FindSuitableActivityResponseModel;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -160,11 +159,11 @@ public class CompetitionService extends ActivityService {
      * The method to delete a specified competition.
      *
      * @param competitionId The id of the specified competition
+     * @param netId The netId of the requester
      * @return A String which shows whether the competition is deleted successfully.
      * @throws Exception An exception to show that there's something wrong during the deleting process.
      */
-    public String deleteCompetition(long competitionId) throws Exception {
-        String netId = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String deleteCompetition(long competitionId, String netId) throws Exception {
         Competition competition = competitionRepository.findById(competitionId);
         if (competition == null) {
             return "Competition not found";

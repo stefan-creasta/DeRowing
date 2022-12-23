@@ -13,7 +13,8 @@ public class UserAcceptanceEvent {
 
     /**
      * A constructor.
-     *  @param isAccepted if user is accepted
+     *
+     * @param isAccepted if user is accepted
      * @param position the owner of the activity
      * @param eventRequester the user requesting to join the activity
      * @param activityId the activity id

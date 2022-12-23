@@ -118,7 +118,7 @@ public class CompetitionController {
     @PostMapping("/cancel")
     public ResponseEntity<String> cancelCompetition(@RequestBody ActivityCancelModel activityCancelModel) throws Exception {
         try {
-            String status = competitionService.deleteCompetition(activityCancelModel.getId());
+            String status = competitionService.deleteCompetition(activityCancelModel.getId(), authManager.getNetId());
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when canceling the competition.");

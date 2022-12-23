@@ -83,7 +83,7 @@ class TrainingControllerTest {
     @Test
     void editTrainingTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(trainingService.editTraining(trainingEditModel)).thenReturn("success");
+        when(trainingService.editTraining(trainingEditModel, authManager.getNetId())).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
                 trainingController.editTraining(trainingEditModel));
     }
@@ -91,7 +91,7 @@ class TrainingControllerTest {
     @Test
     void cancelTrainingTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(trainingService.deleteTraining(123L)).thenReturn("success");
+        when(trainingService.deleteTraining(123L, authManager.getNetId())).thenReturn("success");
         //when(activityCancelModel.getId()).thenReturn(123L);
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
                 trainingController.cancelTraining(activityCancelModel));

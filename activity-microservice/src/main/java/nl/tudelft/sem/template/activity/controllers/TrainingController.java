@@ -100,7 +100,7 @@ public class TrainingController {
     @PostMapping("/edit")
     public ResponseEntity<String> editTraining(@RequestBody TrainingEditModel request) {
         try {
-            String response = trainingService.editTraining(request);
+            String response = trainingService.editTraining(request, authManager.getNetId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when editing training.");
@@ -116,7 +116,7 @@ public class TrainingController {
     @PostMapping("/cancel")
     public ResponseEntity<String> cancelTraining(@RequestBody ActivityCancelModel activityCancelModel) {
         try {
-            String response = trainingService.deleteTraining(activityCancelModel.getId());
+            String response = trainingService.deleteTraining(activityCancelModel.getId(), authManager.getNetId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when canceling training.");

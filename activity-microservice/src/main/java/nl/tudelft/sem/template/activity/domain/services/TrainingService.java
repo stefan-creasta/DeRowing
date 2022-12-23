@@ -17,7 +17,6 @@ import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -140,11 +139,11 @@ public class TrainingService extends ActivityService {
      * The method to delete a training.
      *
      * @param trainingId The id of the training which is to be deleted.
+     * @param netId     The netId of the user who wants to delete the training.
      * @return A string representing the status of the deletion.
      * @throws Exception An exception which is thrown when facing failures.
      */
-    public String deleteTraining(long trainingId) throws Exception {
-        String netId = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String deleteTraining(long trainingId, String netId) throws Exception {
         Training training = trainingRepository.findById(trainingId);
         if (training == null) {
             return "training not found";
@@ -176,12 +175,12 @@ public class TrainingService extends ActivityService {
      * The method to edit a training.
      *
      * @param request The request which contains all information about the training to be edited.
+     * @param netId  The netId of the user who is editing the training.
      * @return A message showing whether the training is edited successfully.
      * @throws Exception An exception to be thrown when facing difficulties.
      */
-    public String editTraining(TrainingEditModel request) throws Exception {
+    public String editTraining(TrainingEditModel request, String netId) throws Exception {
         try {
-            String netId = SecurityContextHolder.getContext().getAuthentication().getName();
             Training training = trainingRepository.findById(request.getId());
             if (!training.getOwner().toString().equals(netId)) {
                 return "You are not the owner of this competition";

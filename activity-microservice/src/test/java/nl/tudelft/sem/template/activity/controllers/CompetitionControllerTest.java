@@ -96,7 +96,7 @@ class CompetitionControllerTest {
     @Test
     void cancelCompetition() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(competitionService.deleteCompetition(123L)).thenReturn("success");
+        when(competitionService.deleteCompetition(123L, authManager.getNetId())).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
                 competitionController.cancelCompetition(activityCancelModel));
     }
