@@ -22,6 +22,7 @@ import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
 import nl.tudelft.sem.template.user.domain.models.UserJoinRequestModel;
 import nl.tudelft.sem.template.user.domain.repositories.MessageRepository;
 import nl.tudelft.sem.template.user.domain.repositories.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -133,37 +134,10 @@ public class UserControllerIntegrationTesting {
     }
 
     @Test
-    public void sendApplicationOfRequesterToOwnerTest() throws Exception {
-	UserJoinRequestModel body = new UserJoinRequestModel(new NetId("hminh"), Position.COACH, 2L);
-	ResultActions res = performPost(body, "/join");
-	String response = res.andReturn().getResponse().getContentAsString();
-	assertEquals("The message is successfully saved", response);
-	Message message = new Message("hminh", "ExampleUser", 2L,
-	    "ExampleUser wants to join this competition/training session. "
-	    + "They want to join for position COACH",
-	    Position.COACH);
-	Message result = messageRepository.findById(1L).get();
-	assertEquals(message, result);
-    }
-
-    @Test
     public void sendDecisionOfOwnerToRequesterTest() throws Exception {
 	UserAcceptanceUpdateModel body = new UserAcceptanceUpdateModel(true, Position.COACH, new NetId("hminh"));
 	Message expected = new Message("hminh", "ExampleUser", 0L,
 	    "ExampleUser accepted your request. You have been selected for position COACH",
-	    Position.COACH);
-	ResultActions res = performPost(body, "/update");
-	String content = res.andReturn().getResponse().getContentAsString();
-	assertEquals("The message is successfully saved", content);
-	Message result = messageRepository.findById(1L).get();
-	assertEquals(expected, result);
-    }
-
-    @Test
-    public void sendDecisionOfOwnerToRequesterTestNotAccepted() throws Exception {
-	UserAcceptanceUpdateModel body = new UserAcceptanceUpdateModel(false, Position.COACH, new NetId("hminh"));
-	Message expected = new Message("hminh", "ExampleUser", 0L,
-	    "ExampleUser did not accept your request. Consider joining another activity!",
 	    Position.COACH);
 	ResultActions res = performPost(body, "/update");
 	String content = res.andReturn().getResponse().getContentAsString();

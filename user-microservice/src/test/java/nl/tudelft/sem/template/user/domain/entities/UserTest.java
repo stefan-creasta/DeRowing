@@ -31,7 +31,7 @@ public class UserTest {
 
     @Test
     void testGetNetId() {
-        assertEquals(new NetId("123"), sut.getNetId());
+        assertEquals("123", sut.getNetId());
     }
 
     @Test
