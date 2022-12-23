@@ -15,7 +15,7 @@ public class UserTest {
 
     @BeforeEach
     public void setup() {
-        sut = new User("123", Gender.MALE, Certificate.PLUS4, "Proteus", false);
+        sut = new User(new NetId("123"), Gender.MALE, Certificate.PLUS4, "Proteus", false);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class UserTest {
 
     @Test
     void testGetNetId() {
-        assertEquals("123", sut.getNetId());
+        assertEquals(new NetId("123"), sut.getNetId());
     }
 
     @Test
@@ -56,8 +56,8 @@ public class UserTest {
 
     @Test
     void testSetNetId() {
-        sut.setNetId("hminh");
-        assertEquals("hminh", sut.getNetId());
+        sut.setNetId(new NetId("hminh"));
+        assertEquals(new NetId("hminh"), sut.getNetId());
     }
 
     @Test

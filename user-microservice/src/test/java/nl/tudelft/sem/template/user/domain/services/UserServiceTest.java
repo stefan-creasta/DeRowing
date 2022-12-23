@@ -39,7 +39,7 @@ public class UserServiceTest {
         userService = new UserService(userRepository, messageRepository);
         userDetailModel = new UserDetailModel(Gender.FEMALE, "Delft", true, Certificate.PLUS4);
         netId = new NetId("vluong");
-        result = new User("vluong", Gender.FEMALE, Certificate.PLUS4, "Delft", true);
+        result = new User(new NetId("vluong"), Gender.FEMALE, Certificate.PLUS4, "Delft", true);
     }
 
     @Test

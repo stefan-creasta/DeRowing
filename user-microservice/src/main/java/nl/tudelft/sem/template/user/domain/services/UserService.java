@@ -37,7 +37,7 @@ public class UserService {
         String organization = request.getOrganization();
         boolean amateur = request.isAmateur();
 
-        return new User(netId.getNetId(), gender, certificate, organization, amateur);
+        return new User(netId, gender, certificate, organization, amateur);
     }
 
     /**
@@ -51,7 +51,7 @@ public class UserService {
             userRepository.save(user);
             return "Information of user is successfully saved in database";
         } catch (DataIntegrityViolationException e) {
-            throw new NetIdAlreadyInUseException(new NetId(user.getNetId()));
+            throw new NetIdAlreadyInUseException(user.getNetId());
         } catch (Exception e) {
             throw new Exception("Something went wrong in createUser");
         }
@@ -65,11 +65,9 @@ public class UserService {
      * @throws Exception the NetId not found exception
      */
     public User findUser(NetId netId) throws Exception {
-        try {
-            return userRepository.findByNetId(netId);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in findUser");
-        }
+
+        return userRepository.findByNetId(netId);
+
     }
 
     /**

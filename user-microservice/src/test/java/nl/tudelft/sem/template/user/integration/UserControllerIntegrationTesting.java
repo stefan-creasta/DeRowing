@@ -113,13 +113,13 @@ public class UserControllerIntegrationTesting {
     @Test
     public void createUserTest() throws Exception {
 	UserDetailModel body = new UserDetailModel(Gender.MALE, "Delft", true, Certificate.PLUS4);
-	User expected = new User("ExampleUser", Gender.MALE, Certificate.PLUS4, "Delft", true);
+	User expected = new User(new NetId("ExampleUser"), Gender.MALE, Certificate.PLUS4, "Delft", true);
 	ResultActions res = performPost(body, "/create");
 	String response = res.andReturn().getResponse().getContentAsString();
 
 	res.andExpect(status().isOk());
 	assertEquals("Congratulations ExampleUser, you have created your user", response);
-	User user = userRepository.findByNetId("ExampleUser");
+	User user = userRepository.findByNetId(new NetId("ExampleUser"));
 	assertEquals(expected, user);
     }
 

@@ -15,7 +15,8 @@ import java.util.Objects;
 public class User {
 
     @Id
-    private String netId;
+    @EmbeddedId
+    private NetId netId;
     @Column
     private Gender gender;
     @Column
@@ -34,7 +35,7 @@ public class User {
      * @param organization  the organization the user is a part of
      * @param amateur       whether the user is amateur or not
      */
-    public User(String netId, Gender gender, Certificate certificate, String organization, boolean amateur) {
+    public User(NetId netId, Gender gender, Certificate certificate, String organization, boolean amateur) {
         this.netId = netId;
         this.gender = gender;
         this.certificate = certificate;
@@ -42,7 +43,7 @@ public class User {
         this.amateur = amateur;
     }
 
-    public String getNetId() {
+    public NetId getNetId() {
         return netId;
     }
 
@@ -62,7 +63,7 @@ public class User {
         return amateur;
     }
 
-    public void setNetId(String netId) {
+    public void setNetId(NetId netId) {
         this.netId = netId;
     }
 
@@ -88,7 +89,7 @@ public class User {
      * @return a string containing information about the user
      */
     public String toString() {
-        return "Your NetId: " + netId + "\n Gender: " + gender.toString() + "\n Certification: "
+        return "Your NetId: " + netId.getNetId() + "\n Gender: " + gender.toString() + "\n Certification: "
                 + certificate.toString() +  "\n Organization: "
                 + organization + "\n Status: "
                 + (amateur ? "Amateur" : "Professional");
