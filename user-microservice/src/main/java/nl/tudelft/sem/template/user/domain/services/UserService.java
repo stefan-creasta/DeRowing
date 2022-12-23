@@ -37,7 +37,7 @@ public class UserService {
         String organization = request.getOrganization();
         boolean amateur = request.isAmateur();
 
-        return new User(netId, gender, certificate, organization, amateur);
+        return new User(netId.getNetId(), gender, certificate, organization, amateur);
     }
 
     /**
@@ -51,7 +51,7 @@ public class UserService {
             userRepository.save(user);
             return "Information of user is successfully saved in database";
         } catch (DataIntegrityViolationException e) {
-            throw new NetIdAlreadyInUseException(user.getNetId());
+            throw new NetIdAlreadyInUseException(new NetId(user.getNetId()));
         } catch (Exception e) {
             throw new Exception("Something went wrong in createUser");
         }
