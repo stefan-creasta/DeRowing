@@ -15,31 +15,31 @@ class FindSuitableCompetitionResponseModelTest {
 
     private FindSuitableCompetitionResponseModel model;
 
-    private List<Competition> competitions;
+    private List<Long> boatId;
 
     @BeforeEach
     void setUp() {
-        competitions = new ArrayList<>();
+        boatId = new ArrayList<>();
         model = new FindSuitableCompetitionResponseModel();
-        model.setCompetitions(competitions);
+        model.setBoatId(boatId);
     }
 
     @Test
     void getCompetitions() {
-        assertEquals(competitions, model.getCompetitions());
+        assertEquals(boatId, model.getBoatId());
     }
 
     @Test
     void setCompetitions() {
-        List<Competition> competitions2 = new ArrayList<>();
-        model.setCompetitions(competitions2);
-        assertEquals(competitions2, model.getCompetitions());
+        List<Long> boatId2 = new ArrayList<>();
+        model.setBoatId(boatId2);
+        assertEquals(boatId2, model.getBoatId());
     }
 
     @Test
     void testEquals() {
         FindSuitableCompetitionResponseModel model2 = new FindSuitableCompetitionResponseModel();
-        model2.setCompetitions(competitions);
+        model2.setBoatId(boatId);
         assertEquals(model, model2);
     }
 
@@ -52,13 +52,13 @@ class FindSuitableCompetitionResponseModelTest {
     @Test
     void testHashCode() {
         FindSuitableCompetitionResponseModel model2 = new FindSuitableCompetitionResponseModel();
-        model2.setCompetitions(competitions);
+        model2.setBoatId(boatId);
         assertEquals(model.hashCode(), model2.hashCode());
     }
 
     @Test
     void testToString() {
-        assertEquals("FindSuitableCompetitionResponseModel(competitions=" + competitions + ")",
+        assertEquals("FindSuitableCompetitionResponseModel(boatId=" + boatId + ")",
                 model.toString());
     }
 }
