@@ -1,0 +1,190 @@
+# Manual Testing
+
+## User microservice
+
+ - The user shall be able to fill in their details such as gender/organization/level/certificate to finish creating their profile
+
+   Action: send a POST request to the /create endpoint of the user port, with the body of the request as the aforementioned details of the user in 	JSON format.
+
+   Expected result: The user is saved in the userRepository, and a success message "congratulations <user>, you have created your user" message in response body.
+
+
+ - The user (or the activity microservice as required) shall be able to view the details of the user
+
+   Action: send a POST request to the /getdetails endpoint of the user port, with the token of the user (and no request body)
+
+   Expected result: The gender/organization/level (boolean - true if amateur)/certificate of the user in JSON format in the response body
+
+
+ - The user shall be able to view all the messages they received
+
+   Action: send a GET request to the /notifications endpoint of the user port, with the token filled in.
+
+   Expected result: the list of messages the user receives, in the response body. An empty list if the user hasn't received any messages at all.
+
+
+
+ - The user shall be notified once the activity owner makes a decision on their application to the activity
+
+   Action: It is called by the activity microservice via a POST mapping with the /update endpoint with a UserJoinRequestModel as the request body, and the token of the user.
+
+   Expected result: (called by the activity microservice) A new message with activity id, content in String form, sender/receiver netIds and Position stored in the message repository and a response body with a confirmation message if successful. A response body with a failure message if unsuccessful.
+
+
+
+ - The activity owner shall be notified once a user makes an application to the activity they created
+
+   Action: It is called by the activity microservice via a POST mapping with the /join endpoint with a UserAcceptanceUpdateModel as the request body, and the token of the user.
+
+   Expected result: (called by the activity microservice) A new message with activity id, content in String form, sender/receiver netIds and Position stored in the message repository and a response body with a confirmation message if successful. A response body with a failure message if unsuccessful.
+
+
+
+## Activity microservice
+
+### Competition
+
+ - The user shall be able to create a competition
+
+   Action: Send a POST request to the /competition/create endpoint of the activity port. In the request body, enter the competition name, gender constraint, whether to allow amateurs, whether to allow single organization or not, the organization, the start time and the type of boat.
+           The activity microservice invokes the /boat/create endpoint of the boat microservice to create a new boat for the competition.
+           It then creates a new competition with said boat and owner id, and then saves it in the competition repository.
+
+   Expected result: The competition is successfully created. Response body with message "Successfully created competition". The competition is also saved in the competition repository. If the boat couldn't be created, an exception with message "Could not create boat" thrown.
+
+
+ - The user shall be able to join a competition.
+
+   Action: Send a POST request to the /competition/join endpoint of the activity port. In the request body, enter the activity id and the position preferred.
+           The activity microservice finds said competition on the database, as well checking the constraints if they apply. It invokes the /getdetails endpoint on the user microservice to get the details of the user.
+           If the user is capable of joining said competition, it makes use of the Event Publisher to complete the user's application. It invokes the /join endpoint of the user microservice to inform the activity owner.
+  
+   Expected result: A message is sent to the message repository of the activity owner to inform them of the new applicant. A String response entity informs the user if the application was successful..
+
+
+ - The activity owner shall be able to inform the participants of their application decision.
+
+   Action: Send a POST request to the /competition/inform endpoint of the activity port. In the request body, mention the accepted status, activity id, netId of the requestee and the position
+           The activity microservice makes use of an Event Publisher. If the user is accepted, the boat of said activity is modified to add said person. A message is also sent to the applicant via invoking the /update endpoint of the user microservice.
+   
+   Expected result: A message is sent to the participant about their decision. The boat is modified to add the user if accepted.
+
+
+ - The activity owner is capable of canceling the activity they created
+
+   Action: Send a POST request to the /competition/cancel endpoint of the activity port. Competition is found from the competition repository. Disallows action if you are not the owner. 
+           Communicates with the boat microservice via the /boat/delete endpoint to delete the boat, and deletes the competition from the repository.
+   
+   Expected result: Returns a String response entity "Successfully deleted competition" if successfully done, "Competition not found", "You are not the owner of the competition" or "Internal error while deleting the competition" as relevant.
+
+
+ - The activity owner is capable of editing the activity they created.
+
+   Action: Send a POST request to the /competition/cancel endpoint of the activity port. Competition is found from the competition repository. Disallows action if you are not the owner. 
+           
+   Expected result: Returns a String response entity "Successfully edited competition" if successfully done, "Competition not found", "You are not the owner of the competition" or "Something went wrong in editing competition" as relevant.
+
+
+ - The user shall be able to view the competitions they can join
+
+   Action: Send a GET request to /competition/find endpoint of the activity port. It invokes the /find endpoint of the user microservice to extract relevant data
+           It then performs a series of filters to obtain the relevant competitions.
+		It then communicates with the boat microservice via /boat/check to get the appropriate boatIds still non-filled. It then finds all competitions by boat id that can be joined.
+
+   Expected result : A response entity with a list of competitions or an empty list.
+
+
+### Training
+   
+
+ - The user shall be able to create a training
+
+   Action: Send a POST request to the /training/create endpoint of the activity port. In the request body, enter the training name, the start time and the type of boat.
+           The activity microservice invokes the /boat/create endpoint of the boat microservice to create a new boat for the training
+           It then creates a new training with said boat and owner id, and then saves it in the training repository.
+
+   Expected result: The competition is successfully created. Response body with message "Successfully created competition". The competition is also saved in the competition repository. If the boat couldn't be created, an exception with message "Could not create boat" thrown.
+
+
+ - The user shall be able to join a training.
+
+   Action: Send a POST request to the /training/join endpoint of the activity port. In the request body, enter the activity id and the position preferred.
+           The activity microservice finds said training on the database. It invokes the /getdetails endpoint on the user microservice to get the details of the user.
+           If the user is capable of joining said training, it makes use of the Event Publisher to complete the user's application. It invokes the /join endpoint of the user microservice to inform the activity owner.
+  
+   Expected result: A message is sent to the message repository of the activity owner to inform them of the new applicant. A String response entity informs the user if the application was successful..
+
+
+ - The activity owner shall be able to inform the participants of their application decision.
+
+   Action: Send a POST request to the /training/inform endpoint of the activity port. In the request body, mention the accepted status, activity id, netId of the requestee and the position
+           The activity microservice makes use of an Event Publisher. If the user is accepted, the boat of said activity is modified to add said person. A message is also sent to the applicant via invoking the /update endpoint of the user microservice.
+   
+   Expected result: A message is sent to the participant about their decision. The boat is modified to add the user if accepted.
+
+
+ - The activity owner is capable of canceling the activity they created
+
+   Action: Send a POST request to the /training/cancel endpoint of the activity port. Training is found from the training repository. Disallows action if you are not the owner. 
+           Communicates with the boat microservice via the /boat/delete endpoint to delete the boat, and deletes the training from the repository.
+   
+   Expected result: Returns a String response entity "Successfully deleted training" if successfully done, "Training not found", "You are not the owner of the training" or "Internal error while deleting the training" as relevant.
+
+
+ - The activity owner is capable of editing the activity they created.
+
+   Action: Send a POST request to the /training/cancel endpoint of the activity port. Training is found from the training repository. Disallows action if you are not the owner. 
+           
+   Expected result: Returns a String response entity "Successfully edited training" if successfully done, "Training not found", "You are not the owner of the training" or "Something went wrong in editing training" as relevant.
+
+
+ - The user shall be able to view the trainings they can join
+
+   Action: Send a GET request to /training/find endpoint of the activity port. It invokes the /find endpoint of the user microservice to extract relevant data
+           It then performs a series of filters to obtain the relevant competitions.
+		It then communicates with the boat microservice via /boat/check to get the appropriate boatIds still non-filled. It then finds all trainings by boat id that can be joined.
+
+   Expected result : A response entity with a list of trainings or an empty list.
+
+
+## Authentication microservice
+
+ - The user shall be able to register with the system
+
+   Action: Send a POST request with the body consisting of the user's netId and password in JSON format
+
+   Expected result: a 200 OK response, with the user registered
+
+ 
+ - The user shall be able to authenticate (if they previously registered), to obtain a unique JWT token
+
+   Action: Send a POST request with the body consisting of the user's netId and password in JSON format
+
+   Expected result: a successful response, with the response body consisting of the user's uniquely generated token
+
+
+## Boat microservice
+
+-	The user shall be able to create a boat by introducing a boat type: C4, 4+ or 8+. Creating a boat will add a pre-defined value for each position, representing the number of people who must join this boat doing that respective task.
+Action: send a POST request to the /create endpoint of the boat port, with the body of the request in JSON format, containing the boat’s type.
+Expected result: The boat is saved in the database, and the boat’s id is saved in the response body.
+
+
+-	The user shall be able to insert a user in a certain boat for a position.
+Action: send a POST request to the /insert endpoint of the boat port, with the body of the request in JSON format, containing the boat’s id, the desired position and the user’s netId.
+Expected result: The user’s netId is saved in the boat’s map rowers field for that particular position and the response body is empty. It will be a bad request if the boat id cannot be found in the database.
+
+
+-	The user shall be able to remove a user in a certain boat for a position.
+Action: send a POST request to the /remove endpoint of the boat port, with the body of the request in JSON format, containing the boat’s id, the desired position and the user’s netId.
+Expected result: The user’s netId is removed from the boat’s map rowers field for that particular position and the response body is empty. It will be a bad request if the boat id cannot be found in the database.
+
+
+-	The user shall be able to delete a boat.
+Action: send a POST request to the /delete endpoint of the boat port, with the body of the request in JSON format, containing the boat’s id.
+Expected result: The boat is deleted from the database, and the response body is empty. It will be a bad request if the boat id cannot be found in the database.
+
+
+-	The user shall be able to check what boats can have one more rower for a certain position.
+Action: send a POST request to the /remove endpoint of the boat port, with the body of the request in JSON format, containing a list of boat ids (the boats that need to be checked for this property) and the desired position.
+Expected result: The response body contains the list of boats (the boat ids) that respect the desired property. It will be a bad request if one of the boat ids cannot be found in the database.
