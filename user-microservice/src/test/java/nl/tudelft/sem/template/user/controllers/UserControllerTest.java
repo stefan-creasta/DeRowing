@@ -40,7 +40,7 @@ class UserControllerTest {
         userService = mock(UserService.class);
         userController = new UserController(authManager, userService);
         when(authManager.getNetId()).thenReturn("vluong");
-        user = new User(new NetId("vluong"), Gender.MALE, Certificate.PLUS4, "Delft", true);
+        user = new User("vluong", Gender.MALE, Certificate.PLUS4, "Delft", true);
     }
 
     @Test

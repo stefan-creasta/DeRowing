@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.user.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.user.domain.Position;
 import javax.persistence.Table;
@@ -10,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.EnumType;
+import java.util.Objects;
 
 @Table(name = "message")
 @Entity
@@ -20,16 +22,39 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column
+    @JsonProperty("receiver")
     private String receiver;
     @Column
+    @JsonProperty("sender")
     private String sender;
     @Column
+    @JsonProperty("activityId")
     private long activityId;
     @Column
+    @JsonProperty("content")
     String content;
     @Column
     @Enumerated(EnumType.STRING)
+    @JsonProperty("position")
     Position position;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Message)) {
+            return false;
+        }
+        Message other = (Message) o;
+        return receiver.equals(other.getReceiver()) && sender.equals(other.sender)
+            && activityId == other.activityId && content.equals(other.content) && position.equals(other.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getReceiver(), sender, getActivityId(), getContent(), position);
+    }
 
     /**
      * A basic constructor for a message.

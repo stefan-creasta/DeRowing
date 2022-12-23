@@ -67,7 +67,7 @@ public class UserController {
      *
      * @return the user's information
      */
-    @PostMapping("/getdetails")
+    @GetMapping("/getdetails")
     public ResponseEntity<UserDetailModel> getDetailsOfUser() {
         try {
             User target = userService.findUser(new NetId(authManager.getNetId()));
@@ -122,8 +122,7 @@ public class UserController {
     public ResponseEntity<List<Message>> getNotifications() {
         try {
             List<Message> notifications = userService.getNotifications(authManager.getNetId());
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body(notifications);
+            return ResponseEntity.ok(notifications);
         } catch (Exception e) {
             return null;
         }
