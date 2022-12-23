@@ -20,6 +20,7 @@ import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
 import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
+import nl.tudelft.sem.template.activity.models.PositionEntryModel;
 import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionResponseModel;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -217,7 +218,7 @@ public class CompetitionService extends ActivityService {
      * @param position The position to filter from
      * @return a list of competitions
      */
-    public List<Competition> getSuitableCompetition(Position position) throws Exception {
+    public List<Competition> getSuitableCompetition(PositionEntryModel position) throws Exception {
         UserDataRequestModel userData = (UserDataRequestModel)
                 restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
         if (userData == null) {
@@ -233,7 +234,7 @@ public class CompetitionService extends ActivityService {
                 .map(Activity::getBoatId)
                 .collect(Collectors.toList());
 
-        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
+        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position.getPosition());
         FindSuitableCompetitionResponseModel suitableCompetitions =
                 (FindSuitableCompetitionResponseModel) restServiceFacade.performBoatModel(model,
                         "/boat/check", FindSuitableCompetitionResponseModel.class);

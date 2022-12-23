@@ -10,6 +10,7 @@ import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.PositionEntryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -149,8 +150,9 @@ public class CompetitionController {
      * @throws Exception Activity not found exception
      */
     @GetMapping("/find")
-    public ResponseEntity<List<Competition>> getCompetitions(@RequestBody Position position) {
+    public ResponseEntity<List<Competition>> getCompetitions(@RequestBody PositionEntryModel position) {
         try {
+            //System.out.println("you reached the method");
             List<Competition> result = competitionService.getSuitableCompetition(position);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
