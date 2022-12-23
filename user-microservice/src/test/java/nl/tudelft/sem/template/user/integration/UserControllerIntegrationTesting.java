@@ -1,5 +1,11 @@
 package nl.tudelft.sem.template.user.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,23 +28,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -57,6 +52,9 @@ public class UserControllerIntegrationTesting {
     @Autowired
     private MessageRepository messageRepository;
 
+    /**
+     * Set up before testing.
+     */
     @BeforeEach
     public void setup() {
 	// Authorization mocking
@@ -67,6 +65,14 @@ public class UserControllerIntegrationTesting {
 	userRepository.deleteAll();
     }
 
+    /**
+     * performing post request.
+     *
+     * @param body model
+     * @param path path
+     * @return the response
+     * @throws Exception exception
+     */
     public ResultActions performPost(Object body, String path) throws Exception {
 	return mockMvc.perform(post(path)
 	    .contentType(MediaType.APPLICATION_JSON)
@@ -74,6 +80,13 @@ public class UserControllerIntegrationTesting {
 	    .header("Authorization", "Bearer MockedToken"));
     }
 
+    /**
+     * performing post request.
+     *
+     * @param path path
+     * @return the response
+     * @throws Exception exception
+     */
     public ResultActions performGet(String path) throws Exception {
 	return mockMvc.perform(get(path)
 	    .contentType(MediaType.APPLICATION_JSON)
@@ -120,15 +133,15 @@ public class UserControllerIntegrationTesting {
     }
 
     @Test
-    public void sendApplicationOfRequesterToOwnerTest() throws Exception{
+    public void sendApplicationOfRequesterToOwnerTest() throws Exception {
 	UserJoinRequestModel body = new UserJoinRequestModel(new NetId("hminh"), Position.COACH, 2L);
 	ResultActions res = performPost(body, "/join");
 	String response = res.andReturn().getResponse().getContentAsString();
 	assertEquals("The message is successfully saved", response);
-	Message message = new Message("hminh", "ExampleUser", 2L
-	    , "ExampleUser wants to join this competition/training session. "
-	    + "They want to join for position COACH"
-	    , Position.COACH);
+	Message message = new Message("hminh", "ExampleUser", 2L,
+	    "ExampleUser wants to join this competition/training session. "
+	    + "They want to join for position COACH",
+	    Position.COACH);
 	Message result = messageRepository.findById(1L).get();
 	assertEquals(message, result);
     }
@@ -136,9 +149,9 @@ public class UserControllerIntegrationTesting {
     @Test
     public void sendDecisionOfOwnerToRequesterTest() throws Exception {
 	UserAcceptanceUpdateModel body = new UserAcceptanceUpdateModel(true, Position.COACH, new NetId("hminh"));
-	Message expected = new Message("hminh", "ExampleUser", 0L
-	    , "ExampleUser accepted your request. You have been selected for position COACH"
-	    , Position.COACH);
+	Message expected = new Message("hminh", "ExampleUser", 0L,
+	    "ExampleUser accepted your request. You have been selected for position COACH",
+	    Position.COACH);
 	ResultActions res = performPost(body, "/update");
 	String content = res.andReturn().getResponse().getContentAsString();
 	assertEquals("The message is successfully saved", content);
@@ -149,9 +162,9 @@ public class UserControllerIntegrationTesting {
     @Test
     public void sendDecisionOfOwnerToRequesterTestNotAccepted() throws Exception {
 	UserAcceptanceUpdateModel body = new UserAcceptanceUpdateModel(false, Position.COACH, new NetId("hminh"));
-	Message expected = new Message("hminh", "ExampleUser", 0L
-	    , "ExampleUser did not accept your request. Consider joining another activity!"
-	    , Position.COACH);
+	Message expected = new Message("hminh", "ExampleUser", 0L,
+	    "ExampleUser did not accept your request. Consider joining another activity!",
+	    Position.COACH);
 	ResultActions res = performPost(body, "/update");
 	String content = res.andReturn().getResponse().getContentAsString();
 	assertEquals("The message is successfully saved", content);
@@ -171,7 +184,8 @@ public class UserControllerIntegrationTesting {
 	ResultActions res = performGet("/notifications");
 	String json = res.andReturn().getResponse().getContentAsString();
 	ObjectMapper mapper = new ObjectMapper();
-	List<Message> messages = mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, Message.class));
+	List<Message> messages = mapper.readValue(json,
+	    mapper.getTypeFactory().constructCollectionType(List.class, Message.class));
 	Message message = new Message("ExampleUser", "ExampleUser",
 	    0L, "ExampleUser did not accept your request. Consider joining another activity!", Position.COACH);
 	Message message1 = new Message("ExampleUser", "ExampleUser",
@@ -179,4 +193,4 @@ public class UserControllerIntegrationTesting {
 	assertEquals(message, messages.get(0));
 	assertEquals(message1, messages.get(1));
     }
- }
+}

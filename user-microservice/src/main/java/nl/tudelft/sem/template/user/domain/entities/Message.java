@@ -40,8 +40,12 @@ public class Message {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Message)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Message)) {
+            return false;
+        }
         Message message = (Message) o;
         return  getReceiver().equals(message.getReceiver())
             && sender.equals(message.sender)
