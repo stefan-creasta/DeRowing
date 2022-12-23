@@ -24,9 +24,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 /**
- * Hello World example controller.
+ * The controller for the Boat microservice.
  * <p>
- * This controller shows how you can extract information from the JWT token.
+ * This controller handles API calls for the boat microservice.
  * </p>
  */
 @RequestMapping("/boat")

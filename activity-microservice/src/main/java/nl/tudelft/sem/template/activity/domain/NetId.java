@@ -39,4 +39,9 @@ public class NetId implements Serializable {
     public int hashCode() {
         return Objects.hash(netIdValue);
     }
+
+    @Override
+    public String toString() {
+        return netIdValue;
+    }
 }

@@ -127,7 +127,7 @@ public class UserControllerIntegrationTesting {
     public void getDetailTest() throws Exception {
 	UserDetailModel body = new UserDetailModel(Gender.MALE, "Delft", true, Certificate.PLUS4);
 	performPost(body, "/create");
-	ResultActions res = performGet("/getdetails");
+	ResultActions res = performPost("", "/getdetails");
 	String json = res.andReturn().getResponse().getContentAsString();
 	UserDetailModel result = new ObjectMapper().readValue(json, UserDetailModel.class);
 	assertEquals(body, result);

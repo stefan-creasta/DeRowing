@@ -212,9 +212,7 @@ public class BoatIntegrationTest {
         String response4 = res4.andReturn().getResponse().getContentAsString();
         res4.andExpect(status().isOk());
         BoatListModel sol = new ObjectMapper().readValue(response4, BoatListModel.class);
-        List<Long> expectedList = new ArrayList<>();
-        expectedList.add((long) 2);
-        expectedList.add((long) 3);
+        List<Long> expectedList = List.of(1L, 2L, 3L);
         assertEquals(expectedList, sol.getBoatId());
     }
 

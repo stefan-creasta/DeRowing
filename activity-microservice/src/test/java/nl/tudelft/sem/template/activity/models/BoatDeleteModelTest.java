@@ -15,13 +15,13 @@ class BoatDeleteModelTest {
 
     @Test
     void getId() {
-        Assertions.assertEquals(123L, model.getId());
+        Assertions.assertEquals(123L, model.getBoatId());
     }
 
     @Test
     void setId() {
-        model.setId(321L);
-        Assertions.assertEquals(321L, model.getId());
+        model.setBoatId(321L);
+        Assertions.assertEquals(321L, model.getBoatId());
     }
 
     @Test

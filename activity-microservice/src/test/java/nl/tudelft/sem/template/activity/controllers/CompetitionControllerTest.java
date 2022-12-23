@@ -14,6 +14,7 @@ import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
+import nl.tudelft.sem.template.activity.models.PositionEntryModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ class CompetitionControllerTest {
 
     private CompetitionEditModel competitionEditModel;
 
-    private Position position;
+    private PositionEntryModel positionEntryModel;
 
     @BeforeEach
     void setup() {
@@ -56,7 +57,7 @@ class CompetitionControllerTest {
         joinRequestModel = new JoinRequestModel();
         competitionEditModel = new CompetitionEditModel();
         activityCancelModel = new ActivityCancelModel(123L);
-        position = Position.COX;
+        positionEntryModel = new PositionEntryModel(Position.COX);
         competitionController = new CompetitionController(authManager, competitionService);
     }
 
@@ -95,7 +96,7 @@ class CompetitionControllerTest {
     @Test
     void cancelCompetition() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(competitionService.deleteCompetition(123L)).thenReturn("success");
+        when(competitionService.deleteCompetition(123L, authManager.getNetId())).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
                 competitionController.cancelCompetition(activityCancelModel));
     }
@@ -103,7 +104,7 @@ class CompetitionControllerTest {
     @Test
     void editCompetition() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(competitionService.editCompetition(competitionEditModel)).thenReturn("success");
+        when(competitionService.editCompetition(competitionEditModel, authManager.getNetId())).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
                 competitionController.editCompetition(competitionEditModel));
     }
@@ -112,8 +113,8 @@ class CompetitionControllerTest {
     void getCompetitions() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
         List<Competition> result = new ArrayList<>();
-        when(competitionService.getSuitableCompetition(position)).thenReturn(result);
+        when(competitionService.getSuitableCompetition(positionEntryModel)).thenReturn(result);
         Assertions.assertEquals(new ResponseEntity<>(result, HttpStatus.valueOf(200)),
-                competitionController.getCompetitions(position));
+                competitionController.getCompetitions(positionEntryModel));
     }
 }

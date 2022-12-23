@@ -11,7 +11,6 @@ import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
-import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import java.time.Instant;
 
 class TrainingServiceTest {
@@ -111,10 +109,11 @@ class TrainingServiceTest {
 
     @Test
     void deleteTraining() throws Exception {
+        when(authManager.getNetId()).thenReturn("123");
         BoatDeleteModel boatDeleteModel = new BoatDeleteModel(123L);
         when(trainingService.findTraining(123L)).thenReturn(training);
         Assertions.assertEquals("Successfully deleted training",
-                trainingService.deleteTraining(123L));
+                trainingService.deleteTraining(123L, authManager.getNetId()));
     }
 
     @Test
@@ -135,7 +134,7 @@ class TrainingServiceTest {
         TrainingEditModel trainingEditModel = new TrainingEditModel();
         trainingEditModel.setTrainingName("newName");
         Assertions.assertThrows(Exception.class, () -> {
-            trainingService.editTraining(trainingEditModel);
+            trainingService.editTraining(trainingEditModel, authManager.getNetId());
         });
     }
 }

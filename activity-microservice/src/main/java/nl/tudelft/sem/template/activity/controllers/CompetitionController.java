@@ -10,6 +10,7 @@ import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.PositionEntryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 /**
- * Hello World example controller.
+ * The controller for competitions.
  * <p>
- * This controller shows how you can extract information from the JWT token.
+ * This controller handles API calls related to competitions.
  * </p>
  */
 @RequestMapping("/competition")
@@ -117,7 +118,7 @@ public class CompetitionController {
     @PostMapping("/cancel")
     public ResponseEntity<String> cancelCompetition(@RequestBody ActivityCancelModel activityCancelModel) throws Exception {
         try {
-            String status = competitionService.deleteCompetition(activityCancelModel.getId());
+            String status = competitionService.deleteCompetition(activityCancelModel.getId(), authManager.getNetId());
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when canceling the competition.");
@@ -134,7 +135,7 @@ public class CompetitionController {
     @PostMapping("/edit")
     public ResponseEntity<String> editCompetition(@RequestBody CompetitionEditModel request) throws Exception {
         try {
-            String status = competitionService.editCompetition(request);
+            String status = competitionService.editCompetition(request, authManager.getNetId());
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when editing competition.");
@@ -149,13 +150,13 @@ public class CompetitionController {
      * @throws Exception Activity not found exception
      */
     @GetMapping("/find")
-    public ResponseEntity<List<Competition>> getCompetitions(@RequestBody Position position) {
+    public ResponseEntity<List<Competition>> getCompetitions(@RequestBody PositionEntryModel position) {
         try {
+            //System.out.println("you reached the method");
             List<Competition> result = competitionService.getSuitableCompetition(position);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "There is no competition that you are suitable for", e);
+            throw new ResponseStatusException(HttpStatus.OK, "No suitable competition found.");
         }
     }
 }

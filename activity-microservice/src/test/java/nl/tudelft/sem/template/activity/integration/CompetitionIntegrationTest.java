@@ -28,9 +28,7 @@ import nl.tudelft.sem.template.activity.domain.events.UserAcceptanceEvent;
 import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
-import nl.tudelft.sem.template.activity.domain.services.BoatRestService;
 import nl.tudelft.sem.template.activity.domain.services.RestServiceFacade;
-import nl.tudelft.sem.template.activity.domain.services.UserRestService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
@@ -60,6 +58,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @AutoConfigureMockMvc
 class CompetitionIntegrationTest {
 
+    private static final long activityId = 1L;
     // Rest services are mocked to avoid having to run the other microservices
     @Autowired
     private RestServiceFacade mockRestServiceFacade;
@@ -190,7 +189,8 @@ class CompetitionIntegrationTest {
         assertEquals("The user is informed of your decision", response);
 
         // Assert 2 informing events where published
-        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(), body.getRequestee());
+        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(),
+                body.getRequestee(), activityId);
         BoatChangeEvent b = new BoatChangeEvent(1L, Position.COX, body.getRequestee());
         verify(mockApplicationEventPublisher, times(1)).publishEvent(ArgumentMatchers.refEq(e));
         verify(mockApplicationEventPublisher, times(1)).publishEvent(ArgumentMatchers.refEq(b));
@@ -216,7 +216,8 @@ class CompetitionIntegrationTest {
         assertEquals("The user is informed of your decision", response);
 
         // Assert 2 informing events where published
-        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(), body.getRequestee());
+        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(),
+                body.getRequestee(), activityId);
         BoatChangeEvent b = new BoatChangeEvent(1L, Position.COX, body.getRequestee());
         verify(mockApplicationEventPublisher, times(1)).publishEvent(ArgumentMatchers.refEq(e));
         verify(mockApplicationEventPublisher, times(0)).publishEvent(ArgumentMatchers.refEq(b));
@@ -242,7 +243,8 @@ class CompetitionIntegrationTest {
         assertEquals("Could not find activity", response);
 
         // Assert 2 informing events where published
-        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(), body.getRequestee());
+        UserAcceptanceEvent e = new UserAcceptanceEvent(body.isAccepted(), body.getPosition(),
+                body.getRequestee(), activityId);
         BoatChangeEvent b = new BoatChangeEvent(1L, Position.COX, body.getRequestee());
         verify(mockApplicationEventPublisher, times(0)).publishEvent(ArgumentMatchers.refEq(e));
         verify(mockApplicationEventPublisher, times(0)).publishEvent(ArgumentMatchers.refEq(b));
@@ -419,6 +421,7 @@ class CompetitionIntegrationTest {
 
     @Test
     public void cancelTest() throws Exception {
+        when(mockAuthenticationManager.getNetId()).thenReturn("maarten");
         // Set database state
         Competition c = fabricateCompetition(1L, Type.C4);
         competitionRepository.save(c);
@@ -446,6 +449,7 @@ class CompetitionIntegrationTest {
         assertEquals("Competition not found", response);
 
         // boatRestService fails
+        when(mockAuthenticationManager.getNetId()).thenReturn("maarten");
         when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenThrow(new UnsuccessfulRequestException());
         Competition c = fabricateCompetition(1L, Type.C4);
         competitionRepository.save(c);
@@ -458,6 +462,7 @@ class CompetitionIntegrationTest {
 
     @Test
     public void editTest() throws Exception {
+        when(mockAuthenticationManager.getNetId()).thenReturn("maarten");
         // Set database state
         Competition c = fabricateCompetition(1L, Type.C4);
         competitionRepository.save(c);

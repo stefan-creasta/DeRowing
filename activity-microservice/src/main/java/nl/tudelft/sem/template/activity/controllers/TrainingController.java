@@ -9,6 +9,7 @@ import nl.tudelft.sem.template.activity.domain.services.TrainingService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.PositionEntryModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ public class TrainingController {
     @PostMapping("/edit")
     public ResponseEntity<String> editTraining(@RequestBody TrainingEditModel request) {
         try {
-            String response = trainingService.editTraining(request);
+            String response = trainingService.editTraining(request, authManager.getNetId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when editing training.");
@@ -115,7 +116,7 @@ public class TrainingController {
     @PostMapping("/cancel")
     public ResponseEntity<String> cancelTraining(@RequestBody ActivityCancelModel activityCancelModel) {
         try {
-            String response = trainingService.deleteTraining(activityCancelModel.getId());
+            String response = trainingService.deleteTraining(activityCancelModel.getId(), authManager.getNetId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when canceling training.");
@@ -126,13 +127,13 @@ public class TrainingController {
     /**
      * The method to get all trainings.
      *
-     * @param position the position the user wants
+     * @param model the requestBody of the user
      * @return a list of matching trainings
      */
     @PostMapping("/find")
-    public ResponseEntity<List<Training>> getTrainings(@RequestBody Position position) {
+    public ResponseEntity<List<Training>> getTrainings(@RequestBody PositionEntryModel model) {
         try {
-            List<Training> result = trainingService.getSuitableCompetition(position);
+            List<Training> result = trainingService.getSuitableCompetition(model.getPosition());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,

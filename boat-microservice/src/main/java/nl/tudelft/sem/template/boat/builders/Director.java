@@ -29,6 +29,7 @@ public class Director {
         switch (type) {
             case C4:
                 builderC4.reset();
+                builderC4.setCox(1);
                 builderC4.setCoach(1);
                 builderC4.setPort(2);
                 builderC4.setStarboard(2);

@@ -11,7 +11,8 @@ import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
-import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableActivityModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableActivityResponseModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
@@ -138,13 +139,17 @@ public class TrainingService extends ActivityService {
      * The method to delete a training.
      *
      * @param trainingId The id of the training which is to be deleted.
+     * @param netId     The netId of the user who wants to delete the training.
      * @return A string representing the status of the deletion.
      * @throws Exception An exception which is thrown when facing failures.
      */
-    public String deleteTraining(long trainingId) throws Exception {
+    public String deleteTraining(long trainingId, String netId) throws Exception {
         Training training = trainingRepository.findById(trainingId);
         if (training == null) {
             return "training not found";
+        }
+        if (!training.getOwner().toString().equals(netId)) {
+            return "You are not the owner of this competition";
         }
         long boatId = training.getBoatId();
         BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
@@ -170,12 +175,16 @@ public class TrainingService extends ActivityService {
      * The method to edit a training.
      *
      * @param request The request which contains all information about the training to be edited.
+     * @param netId  The netId of the user who is editing the training.
      * @return A message showing whether the training is edited successfully.
      * @throws Exception An exception to be thrown when facing difficulties.
      */
-    public String editTraining(TrainingEditModel request) throws Exception {
+    public String editTraining(TrainingEditModel request, String netId) throws Exception {
         try {
             Training training = trainingRepository.findById(request.getId());
+            if (!training.getOwner().toString().equals(netId)) {
+                return "You are not the owner of this competition";
+            }
             training = update(training, request);
             trainingRepository.save(training);
             return "Successfully edited training";
@@ -202,8 +211,10 @@ public class TrainingService extends ActivityService {
                         > currentTimeProvider.getCurrentTime().toEpochMilli() + (30 * 60 * 1000))
                 .map(Activity::getBoatId)
                 .collect(Collectors.toList());
-        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
-        List<Long> suitableCompetitions = (List<Long>) restServiceFacade.performBoatModel(model, "/boat/check", List.class);
-        return trainingRepository.findAllByBoatIdIn(suitableCompetitions);
+        FindSuitableActivityModel model = new FindSuitableActivityModel(boatIds, position);
+        FindSuitableActivityResponseModel suitableCompetitions =
+                (FindSuitableActivityResponseModel) restServiceFacade.performBoatModel(model,
+                        "/boat/check", FindSuitableActivityResponseModel.class);
+        return trainingRepository.findAllByBoatIdIn(suitableCompetitions.getBoatId());
     }
 }

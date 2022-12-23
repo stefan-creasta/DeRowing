@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.user.domain.Position;
 public class UserAcceptanceUpdateModel {
     boolean isAccepted;
     Position position;
+    long activityId;
     NetId eventRequester;
 
     /**

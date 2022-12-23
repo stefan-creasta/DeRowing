@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class BoatDeleteModel {
-    long id;
+    long boatId;
 
-    public BoatDeleteModel(long id) {
-        this.id = id;
+    public BoatDeleteModel(long boatId) {
+        this.boatId = boatId;
     }
 }

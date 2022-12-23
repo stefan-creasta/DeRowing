@@ -61,7 +61,7 @@ public class UserRestService implements RestService {
         int port = Integer.parseInt(environment.getProperty("user.port"));
         Object genericResponse = RestService.performRequest(model, url, port, path, HttpMethod.POST);
         return (genericResponse != null)
-                ? deserialize(genericResponse.toString(), t)
+                ? deserialize(genericResponse, t)
                 : null;
     }
 }

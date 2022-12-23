@@ -8,7 +8,6 @@ import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Activity;
 import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
-import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
@@ -17,10 +16,11 @@ import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
 import nl.tudelft.sem.template.activity.models.CompetitionEditModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
-import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableActivityModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
-import org.springframework.dao.DataIntegrityViolationException;
+import nl.tudelft.sem.template.activity.models.PositionEntryModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableActivityResponseModel;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -159,13 +159,17 @@ public class CompetitionService extends ActivityService {
      * The method to delete a specified competition.
      *
      * @param competitionId The id of the specified competition
+     * @param netId The netId of the requester
      * @return A String which shows whether the competition is deleted successfully.
      * @throws Exception An exception to show that there's something wrong during the deleting process.
      */
-    public String deleteCompetition(long competitionId) throws Exception {
+    public String deleteCompetition(long competitionId, String netId) throws Exception {
         Competition competition = competitionRepository.findById(competitionId);
         if (competition == null) {
             return "Competition not found";
+        }
+        if (!competition.getOwner().toString().equals(netId)) {
+            return "You are not the owner of this competition";
         }
         long boatId = competition.getBoatId();
         BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
@@ -179,12 +183,16 @@ public class CompetitionService extends ActivityService {
      * The method to edit a competition.
      *
      * @param request The competition editing model
+     * @param netId  The netId of the requester
      * @return A string shows the status after the edition
      * @throws Exception An exception to be shown when facing failures.
      */
-    public String editCompetition(CompetitionEditModel request) throws Exception {
+    public String editCompetition(CompetitionEditModel request, String netId) throws Exception {
         try {
             Competition competition = competitionRepository.findById(request.getId());
+            if (!netId.equals(competition.getOwner().toString())) {
+                return "You are not the owner of this competition";
+            }
             competition = update(competition, request);
             competitionRepository.save(competition);
             return "Successfully edited competition";
@@ -216,7 +224,7 @@ public class CompetitionService extends ActivityService {
      * @param position The position to filter from
      * @return a list of competitions
      */
-    public List<Competition> getSuitableCompetition(Position position) throws Exception {
+    public List<Competition> getSuitableCompetition(PositionEntryModel position) throws Exception {
         UserDataRequestModel userData = (UserDataRequestModel)
                 restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
         if (userData == null) {
@@ -232,8 +240,10 @@ public class CompetitionService extends ActivityService {
                 .map(Activity::getBoatId)
                 .collect(Collectors.toList());
 
-        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
-        List<Long> suitableCompetitions = (List<Long>) restServiceFacade.performBoatModel(model, "/boat/check", List.class);
-        return competitionRepository.findAllByBoatIdIn(suitableCompetitions);
+        FindSuitableActivityModel model = new FindSuitableActivityModel(boatIds, position.getPosition());
+        FindSuitableActivityResponseModel suitableCompetitions =
+                (FindSuitableActivityResponseModel) restServiceFacade.performBoatModel(model,
+                        "/boat/check", FindSuitableActivityResponseModel.class);
+        return competitionRepository.findAllByBoatIdIn(suitableCompetitions.getBoatId());
     }
 }
