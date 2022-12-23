@@ -134,6 +134,20 @@ public class UserControllerIntegrationTesting {
     }
 
     @Test
+    public void sendApplicationOfRequesterToOwnerTest() throws Exception {
+	UserJoinRequestModel body = new UserJoinRequestModel(new NetId("hminh"), Position.COACH, 2L);
+	ResultActions res = performPost(body, "/join");
+	String response = res.andReturn().getResponse().getContentAsString();
+	assertEquals("The message is successfully saved", response);
+	Message message = new Message("hminh", "ExampleUser", 2L,
+	    "ExampleUser wants to join this competition/training session. "
+	    + "They want to join for position COACH",
+	    Position.COACH);
+	Message result = messageRepository.findById(1L).get();
+	assertEquals(message, result);
+    }
+
+    @Test
     public void sendDecisionOfOwnerToRequesterTest() throws Exception {
 	UserAcceptanceUpdateModel body = new UserAcceptanceUpdateModel(true, Position.COACH, new NetId("hminh"));
 	Message expected = new Message("hminh", "ExampleUser", 0L,
