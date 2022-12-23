@@ -49,7 +49,7 @@ public class UserController {
      *
      * @return the user found in the database with the given id
      */
-    @GetMapping("/hello")
+    @PostMapping("/hello")
     public ResponseEntity<String> helloWorld() {
         return ResponseEntity.ok("Hello " + authManager.getNetId());
     }
@@ -76,7 +76,7 @@ public class UserController {
      *
      * @return the user's information
      */
-    @GetMapping("/getdetails")
+    @PostMapping("/getdetails")
     public ResponseEntity<UserDetailModel> getDetailsOfUser() {
         try {
             NetId netId = new NetId(authManager.getNetId());
