@@ -40,8 +40,8 @@ public class UserController {
      */
     @Autowired
     public UserController(AuthManager authManager, UserService userService) {
-        this.authManager = authManager;
-        this.userService = userService;
+	this.authManager = authManager;
+	this.userService = userService;
     }
 
     /**
@@ -53,13 +53,13 @@ public class UserController {
      */
     @PostMapping("/create")
     public ResponseEntity<String> createUser(@RequestBody UserDetailModel request) {
-        try {
+	try {
 
-            userService.createUser(userService.parseRequest(request, new NetId(authManager.getNetId())));
-            return ResponseEntity.ok("Congratulations " + authManager.getNetId() + ", you have created your user");
-        } catch (Exception e) {
-            return ResponseEntity.ok("Something went wrong in creating the user");
-        }
+	    userService.createUser(userService.parseRequest(request, new NetId(authManager.getNetId())));
+	    return ResponseEntity.ok("Congratulations " + authManager.getNetId() + ", you have created your user");
+	} catch (Exception e) {
+	    return ResponseEntity.ok("Something went wrong in creating the user");
+	}
     }
 
     /**
@@ -67,20 +67,16 @@ public class UserController {
      *
      * @return the user's information
      */
-    @PostMapping("/getdetails")
-    public ResponseEntity<UserDetailModel> getDetailsOfUser() {
-        try {
-            User target = userService.findUser(authManager.getNetId());
-            Gender gender = target.getGender();
-            String organization = target.getOrganization();
-            boolean amateur = target.isAmateur();
-            Certificate certificate = target.getCertificate();
-            UserDetailModel user = new UserDetailModel(gender, organization, amateur, certificate);
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body(user);
-        } catch (Exception e) {
-            return null;
-        }
+    @GetMapping("/getdetails")
+    public ResponseEntity<UserDetailModel> getDetailsOfUser() throws Exception {
+	User target = userService.findUser(new NetId(authManager.getNetId()));
+	Gender gender = target.getGender();
+	String organization = target.getOrganization();
+	boolean amateur = target.isAmateur();
+	Certificate certificate = target.getCertificate();
+	UserDetailModel user = new UserDetailModel(gender, organization, amateur, certificate);
+	ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+	return bb.body(user);
     }
 
     /**
@@ -92,24 +88,24 @@ public class UserController {
      */
     @PostMapping("/join")
     public ResponseEntity<String> sendApplicationOfRequesterToOwner(@RequestBody UserJoinRequestModel
-                                                                            userJoinRequest) {
-        try {
-            String content = authManager.getNetId() + " wants to join this competition/training session. "
-                    + "They want to join for position " + userJoinRequest.getPosition().toString();
-            Message message = new Message(
-                userJoinRequest.getOwner().getNetId(),
-                authManager.getNetId(),
-                userJoinRequest.getActivityId(),
-                content,
-                userJoinRequest.getPosition()
-            );
-            userService.saveMessage(message);
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body("The message is successfully saved");
-        } catch (Exception e) {
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body("The message is successfully saved");
-        }
+									userJoinRequest) {
+	try {
+	    String content = authManager.getNetId() + " wants to join this competition/training session. "
+		+ "They want to join for position " + userJoinRequest.getPosition().toString();
+	    Message message = new Message(
+		userJoinRequest.getOwner().getNetId(),
+		authManager.getNetId(),
+		userJoinRequest.getActivityId(),
+		content,
+		userJoinRequest.getPosition()
+	    );
+	    userService.saveMessage(message);
+	    ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+	    return bb.body("The message is successfully saved");
+	} catch (Exception e) {
+	    ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+	    return bb.body("The message is successfully saved");
+	}
     }
 
     /**
@@ -120,13 +116,12 @@ public class UserController {
      */
     @GetMapping("/notifications")
     public ResponseEntity<List<Message>> getNotifications() {
-        try {
-            List<Message> notifications = userService.getNotifications(authManager.getNetId());
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body(notifications);
-        } catch (Exception e) {
-            return null;
-        }
+	try {
+	    List<Message> notifications = userService.getNotifications(authManager.getNetId());
+	    return ResponseEntity.ok(notifications);
+	} catch (Exception e) {
+	    return null;
+	}
     }
 
     /**
@@ -138,28 +133,28 @@ public class UserController {
      */
     @PostMapping("/update")
     public ResponseEntity<String> sendDecisionOfOwnerToRequester(@RequestBody UserAcceptanceUpdateModel
-                                                                         userAcceptanceUpdateModel) {
-        try {
-            String content = "";
-            if (userAcceptanceUpdateModel.isAccepted()) {
-                content += authManager.getNetId() + " accepted your request. You have been selected for position "
-                        + userAcceptanceUpdateModel.getPosition().toString();
-            } else {
-                content += authManager.getNetId() + " did not accept your request. Consider joining another activity!";
-            }
-            Message message = new Message(
-                userAcceptanceUpdateModel.getEventRequester().getNetId(),
-                authManager.getNetId(),
-                0,
-                content,
-                userAcceptanceUpdateModel.getPosition()
-            );
-            userService.saveMessage(message);
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body("The message is successfully saved");
-        } catch (Exception e) {
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body("Something went wrong in sending decision of activity owner to participant");
-        }
+								     userAcceptanceUpdateModel) {
+	try {
+	    String content = "";
+	    if (userAcceptanceUpdateModel.isAccepted()) {
+		content += authManager.getNetId() + " accepted your request. You have been selected for position "
+		    + userAcceptanceUpdateModel.getPosition().toString();
+	    } else {
+		content += authManager.getNetId() + " did not accept your request. Consider joining another activity!";
+	    }
+	    Message message = new Message(
+		userAcceptanceUpdateModel.getEventRequester().getNetId(),
+		authManager.getNetId(),
+		0,
+		content,
+		userAcceptanceUpdateModel.getPosition()
+	    );
+	    userService.saveMessage(message);
+	    ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+	    return bb.body("The message is successfully saved");
+	} catch (Exception e) {
+	    ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+	    return bb.body("Something went wrong in sending decision of activity owner to participant");
+	}
     }
 }

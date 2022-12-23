@@ -39,7 +39,7 @@ public class UserServiceTest {
         userService = new UserService(userRepository, messageRepository);
         userDetailModel = new UserDetailModel(Gender.FEMALE, "Delft", true, Certificate.PLUS4);
         netId = new NetId("vluong");
-        result = new User(netId, Gender.FEMALE, Certificate.PLUS4, "Delft", true);
+        result = new User(new NetId("vluong"), Gender.FEMALE, Certificate.PLUS4, "Delft", true);
     }
 
     @Test
@@ -77,17 +77,17 @@ public class UserServiceTest {
 
     @Test
     public void findUserTest() throws Exception {
-        when(userRepository.findByNetId(netId.getNetId())).thenReturn(result);
-        User tempResult = userService.findUser(netId.getNetId());
-        verify(userRepository).findByNetId(netId.getNetId());
+        when(userRepository.findByNetId(netId)).thenReturn(result);
+        User tempResult = userService.findUser(netId);
+        verify(userRepository).findByNetId(netId);
         assertEquals(tempResult, result);
     }
 
     @Test
     public void findUserExceptionTest() throws Exception {
-        when(userRepository.findByNetId(netId.getNetId())).thenThrow(IllegalArgumentException.class);
+        when(userRepository.findByNetId(netId)).thenThrow(IllegalArgumentException.class);
         assertThatThrownBy(() -> {
-            userService.findUser(netId.getNetId());
+            userService.findUser(netId);
         }).isInstanceOf(Exception.class);
     }
 

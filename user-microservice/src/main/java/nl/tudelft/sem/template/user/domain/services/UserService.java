@@ -64,12 +64,10 @@ public class UserService {
      * @return the user to be found
      * @throws Exception the NetId not found exception
      */
-    public User findUser(String netId) throws Exception {
-        try {
-            return userRepository.findByNetId(netId);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in findUser");
-        }
+    public User findUser(NetId netId) throws Exception {
+
+        return userRepository.findByNetId(netId);
+
     }
 
     /**
