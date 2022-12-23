@@ -1,16 +1,16 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 
-public abstract class RestService {
+public interface RestService {
     /**
      * A method to perform a request to another microservice.
      *
@@ -24,7 +24,7 @@ public abstract class RestService {
      */
     public static Object performRequest(Object requestModel, String uri, int port, String path, HttpMethod method)
             throws UnsuccessfulRequestException {
-        String target = uri + ":" + port + "/" + path;
+        String target = uri + ":" + port + path;
 
         RestTemplate request = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -34,12 +34,14 @@ public abstract class RestService {
 
         headers.add("Authorization", "Bearer " + jwtToken);
         HttpEntity<Object> entity = new HttpEntity<>(requestModel, headers);
-        ResponseEntity<Object> response = request.exchange(target, method, entity, Object.class);
-        HttpStatus responseCode = response.getStatusCode();
-
-        if (!responseCode.is2xxSuccessful()) {
+        try {
+            ResponseEntity<Object> response = request.exchange(target, method, entity, Object.class);
+            return response.getBody();
+        } catch (Exception e) {
             throw new UnsuccessfulRequestException();
         }
-        return response.getBody();
+
     }
+
+    public Object deserialize(Object response, Class<?> target);
 }

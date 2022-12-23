@@ -1,4 +1,10 @@
 package nl.tudelft.sem.template.activity.domain;
 
-public abstract class Position {
+public enum Position {
+    COX,
+    COACH,
+    PORT,
+    STARBOARD,
+    SCULLING
 }
+
