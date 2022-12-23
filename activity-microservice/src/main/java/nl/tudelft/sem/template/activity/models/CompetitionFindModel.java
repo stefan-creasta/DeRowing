@@ -8,6 +8,8 @@ import nl.tudelft.sem.template.activity.domain.Position;
 @Data
 public class CompetitionFindModel {
     private NetId netId;
-    //private String competitionName;
-    //private Position preferredPosition;
+
+    public CompetitionFindModel(NetId netId) {
+        this.netId = netId;
+    }
 }

@@ -2,19 +2,25 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
+import nl.tudelft.sem.template.activity.domain.Position;
+import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.services.TrainingService;
+import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
+import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.PositionEntryModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
-import nl.tudelft.sem.template.activity.models.TrainingFindModel;
+import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 @RequestMapping("/training")
 @RestController
@@ -46,26 +52,92 @@ public class TrainingController {
     @PostMapping("/create")
     public ResponseEntity<String> createTraining(@RequestBody TrainingCreateModel request) throws Exception {
         try {
-            trainingService.createTraining(request, new NetId(authManager.getNetId()));
+            String response = trainingService.createTraining(request, new NetId(authManager.getNetId()));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.ok("Internal error when creating training.");
         }
-        return ResponseEntity.ok("Done! The Training " + request.getTrainingName()
-                + " is created by " + authManager.getNetId());
     }
 
     /**
-     * the method to find a specific training.
+     * A REST-mapping designed to accept / reject users from activities.
      *
-     * @param request   the request body of the training finding
-     * @return a training information
-     * @throws Exception a training not found exception
+     * @param model The request body
+     * @return A string informing success
      */
-    @GetMapping("/find")
-    public ResponseEntity<String> findTraining(@RequestBody TrainingFindModel request) throws Exception {
-        NetId netId = new NetId(authManager.getNetId());
-        Training target = trainingService.findTraining(netId);
-        return ResponseEntity.ok("The training created by " + authManager.getNetId()
-                + " is found. Here is the training: " + target.toString());
+    @PostMapping("/inform")
+    public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
+        try {
+            String status = trainingService.informUser(model);
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error when informing user.");
+        }
+    }
+
+    /**
+     * A REST-mapping designed to join users to activities.
+     *
+     * @param request the join request
+     * @return status of request
+     */
+    @PostMapping("/join")
+    public ResponseEntity<String> joinTraining(@RequestBody JoinRequestModel request) {
+        try {
+            String response = trainingService.joinTraining(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error when joining training.");
+        }
+    }
+
+    /**
+     * A method to edit the existing training.
+     *
+     * @param request The information that the training should have
+     * @return a message containing the information about the editing
+     */
+    @PostMapping("/edit")
+    public ResponseEntity<String> editTraining(@RequestBody TrainingEditModel request) {
+        try {
+            String response = trainingService.editTraining(request, authManager.getNetId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error when editing training.");
+        }
+    }
+
+    /**
+     * The method to delete a specified training.
+     *
+     * @param activityCancelModel the id of the training to be deleted.
+     * @return a message containing the information about the canceling.
+     */
+    @PostMapping("/cancel")
+    public ResponseEntity<String> cancelTraining(@RequestBody ActivityCancelModel activityCancelModel) {
+        try {
+            String response = trainingService.deleteTraining(activityCancelModel.getId(), authManager.getNetId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error when canceling training.");
+        }
+
+    }
+
+    /**
+     * The method to get all trainings.
+     *
+     * @param model the requestBody of the user
+     * @return a list of matching trainings
+     */
+    @PostMapping("/find")
+    public ResponseEntity<List<Training>> getTrainings(@RequestBody PositionEntryModel model) {
+        try {
+            List<Training> result = trainingService.getSuitableCompetition(model.getPosition());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no competition that you are suitable for", e);
+        }
     }
 }
