@@ -22,14 +22,17 @@ import nl.tudelft.sem.template.activity.domain.Position;
 import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.events.UserJoinEvent;
+import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.domain.services.BoatRestService;
+import nl.tudelft.sem.template.activity.domain.services.RestServiceFacade;
 import nl.tudelft.sem.template.activity.domain.services.UserRestService;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
@@ -52,17 +55,15 @@ import org.springframework.test.web.servlet.ResultActions;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"test", "mockTokenVerifier", "mockAuthenticationManager",
-        "mockBoatRestService", "mockUserRestService", "mockApplicationEventPublisher"})
+        "mockRestServiceFacade", "mockApplicationEventPublisher"})
 @AutoConfigureMockMvc
 public class TrainingIntegrationTest {
 
     // Rest services are mocked to avoid having to run the other microservices
     @Autowired
-    private BoatRestService mockBoatRestService;
+    private RestServiceFacade mockRestServiceFacade;
     @Autowired
     private ApplicationEventPublisher mockApplicationEventPublisher;
-    @Autowired
-    private UserRestService mockUserRestService;
     @Autowired
     private AuthManager mockAuthenticationManager;
     @Autowired
@@ -86,9 +87,7 @@ public class TrainingIntegrationTest {
         when(mockJwtTokenVerifier.getNetIdFromToken(anyString())).thenReturn("ExampleUser");
         // Reset mock counters
         reset(mockApplicationEventPublisher);
-        reset(mockBoatRestService);
-        reset(mockBoatRestService);
-        reset(mockUserRestService);
+        reset(mockRestServiceFacade);
         // Reset database state
         trainingRepository.deleteAll();
         trainingRepository.resetSequence();
@@ -143,18 +142,18 @@ public class TrainingIntegrationTest {
         TrainingCreateModel body = new TrainingCreateModel("testname", 100, Type.C4);
 
         // Case where boatMicroservice is online
-        when(mockBoatRestService.getBoatId(body.getType())).thenReturn(1L);
+        when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(1L));
 
         ResultActions res = performPost(body, "/training/create");
         String response = res.andReturn().getResponse().getContentAsString();
 
-        assertEquals("Training successfully created", response);
+        assertEquals("Successfully created training", response);
 
         Training t = trainingRepository.findById(1L);
         assertEquals("testname", t.getActivityName());
 
         // Case where boat microservice is offline
-        when(mockBoatRestService.getBoatId(body.getType())).thenReturn(-1L);
+        when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(-1L));
 
         res = performPost(body, "/training/create");
         response = res.andReturn().getResponse().getContentAsString();
@@ -215,8 +214,9 @@ public class TrainingIntegrationTest {
         assertEquals("We could not get your user information from the user service", response);
 
         // Successful request
-        when(mockUserRestService.getUserData()).thenAnswer(x ->
+        when(mockRestServiceFacade.performUserModel(any(), any(), any())).thenAnswer(x ->
                 new UserDataRequestModel(Gender.MALE, "TUDELFT", false, Certificate.C4));
+
         res = performPost(body, "/training/join");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Done! Your request has been processed", response);
@@ -229,7 +229,7 @@ public class TrainingIntegrationTest {
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("you do not have the required certificate to be cox", response);
 
-        verify(mockUserRestService, times(3)).getUserData();
+        verify(mockRestServiceFacade, times(3)).performUserModel(any(), any(), any());
     }
 
     @Test
@@ -282,30 +282,31 @@ public class TrainingIntegrationTest {
 
         ResultActions res = performPost(body, "/training/cancel");
         String response = res.andReturn().getResponse().getContentAsString();
-        assertEquals("Internal error when canceling training.", response);
+        assertEquals("training not found", response);
 
-        // With boat restservice offline
+
+        when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenReturn(null);
         body.setId(1L);
-        t = trainingRepository.findById(1L);
-        assertNotNull(t);
-        res = performPost(body, "/training/cancel");
-        response = res.andReturn().getResponse().getContentAsString();
-        assertEquals("Boat deletion fail.", response);
-
-        t = trainingRepository.findById(1L);
-        assertNull(t);
-
         trainingRepository.deleteAll();
         trainingRepository.resetSequence();
         t = fabricateTraining("barrack", 1L);
         trainingRepository.save(t);
 
-        when(mockBoatRestService.deleteBoat(any(BoatDeleteModel.class))).thenReturn(true);
         res = performPost(body, "/training/cancel");
         response = res.andReturn().getResponse().getContentAsString();
-        assertEquals("Successfully deleted the training.", response);
+        assertEquals("Successfully deleted training", response);
 
-        verify(mockBoatRestService, times(2)).deleteBoat(any(BoatDeleteModel.class));
+
+        // With boat rest service offline
+        when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenThrow(new UnsuccessfulRequestException());
+        trainingRepository.deleteAll();
+        trainingRepository.resetSequence();
+        trainingRepository.save(t);
+        res = performPost(body, "/training/cancel");
+        response = res.andReturn().getResponse().getContentAsString();
+        assertEquals("Internal error when canceling training.", response);
+
+        verify(mockRestServiceFacade, times(2)).performBoatModel(any(), any(), any());
     }
 }
 

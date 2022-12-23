@@ -2,46 +2,46 @@ package nl.tudelft.sem.template.activity.domain.services;
 
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.Position;
+import nl.tudelft.sem.template.activity.domain.entities.Activity;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
-import nl.tudelft.sem.template.activity.domain.exceptions.NetIdAlreadyInUseException;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
-import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
-import nl.tudelft.sem.template.activity.models.JoinRequestModel;
-import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
+import nl.tudelft.sem.template.activity.models.JoinRequestModel;
+import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
-import org.springframework.dao.DataIntegrityViolationException;
+import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainingService extends ActivityService {
 
     private final transient EventPublisher eventPublisher;
-    private final transient UserRestService userRestService;
+    private final transient RestServiceFacade restServiceFacade;
     private final transient TrainingRepository trainingRepository;
-    private final transient BoatRestService boatRestService;
     private final transient CurrentTimeProvider currentTimeProvider;
 
     /**
      * Instantiates a new CompetitionService.
      *
      * @param eventPublisher      the event publisher for user acceptance
-     * @param userRestService     the user rest service
+     * @param restServiceFacade   the rest service facade
      * @param trainingRepository  the repository for trainings
-     * @param boatRestService     the boat rest service
      * @param currentTimeProvider the current time provider
      */
-    public TrainingService(EventPublisher eventPublisher, UserRestService userRestService,
-                           TrainingRepository trainingRepository, BoatRestService boatRestService,
+    public TrainingService(EventPublisher eventPublisher, RestServiceFacade restServiceFacade,
+                           TrainingRepository trainingRepository,
                            CurrentTimeProvider currentTimeProvider) {
         this.eventPublisher = eventPublisher;
-        this.userRestService = userRestService;
+        this.restServiceFacade = restServiceFacade;
         this.trainingRepository = trainingRepository;
-        this.boatRestService = boatRestService;
         this.currentTimeProvider = currentTimeProvider;
     }
 
@@ -49,7 +49,7 @@ public class TrainingService extends ActivityService {
      * Method to parse the TrainingCreateModel.
      *
      * @param request the TrainingCreateModel aka the request body
-     * @param netId the netId of the requester
+     * @param netId   the netId of the requester
      * @return a new Training
      */
     public Training parseRequest(TrainingCreateModel request, NetId netId, long boatId) {
@@ -61,19 +61,23 @@ public class TrainingService extends ActivityService {
     /**
      * Create a new training.
      *
-     * @param netId the id of the owner
+     * @param netId   the id of the owner
      * @param request the request body
      * @return a new training
      * @throws Exception the already using this netId exception
      */
     public String createTraining(TrainingCreateModel request, NetId netId) throws Exception {
-        long boatId = boatRestService.getBoatId(request.getType());
+        CreateBoatModel createBoatModel = new CreateBoatModel();
+        createBoatModel.setType(request.getType());
+        CreateBoatResponseModel response = (CreateBoatResponseModel) restServiceFacade.performBoatModel(createBoatModel,
+                "/boat/create", CreateBoatResponseModel.class);
+        long boatId = response.getBoatId();
         if (boatId == -1) {
             return "Could not contact boat service";
         }
         Training training = parseRequest(request, netId, boatId);
         trainingRepository.save(training);
-        return "Training successfully created";
+        return "Successfully created training";
     }
 
     /**
@@ -92,18 +96,18 @@ public class TrainingService extends ActivityService {
      * @param request the join request
      * @return status of request
      */
-    public String joinTraining(JoinRequestModel request) {
+    public String joinTraining(JoinRequestModel request) throws Exception {
         Training training = trainingRepository.findById(request.getActivityId());
         if (training == null) {
             return "this competition ID does not exist";
         }
         long startTime = training.getStartTime();
-        boolean isInOneDay = (startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 86400000;
+        boolean isInOneDay = (startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 1800000;
         if (isInOneDay) {
             return "Sorry you can't join this training since it will start in one day.";
         }
-
-        UserDataRequestModel userData = userRestService.getUserData();
+        UserDataRequestModel userData = (UserDataRequestModel)
+                restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
         if (userData == null) {
             return "We could not get your user information from the user service";
         }
@@ -138,26 +142,22 @@ public class TrainingService extends ActivityService {
      * @throws Exception An exception which is thrown when facing failures.
      */
     public String deleteTraining(long trainingId) throws Exception {
-        try {
-            Training training = findTraining(trainingId);
-            trainingRepository.delete(training);
-            long boatId = training.getBoatId();
-            BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
-            if (boatRestService.deleteBoat(boatDeleteModel)) {
-                return "Successfully deleted the training.";
-            } else {
-                return "Boat deletion fail.";
-            }
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in delete the specified training.");
+        Training training = trainingRepository.findById(trainingId);
+        if (training == null) {
+            return "training not found";
         }
+        long boatId = training.getBoatId();
+        BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
+        restServiceFacade.performBoatModel(boatDeleteModel, "/boat/delete", null);
+        trainingRepository.delete(training);
+        return "Successfully deleted training";
     }
 
     /**
      * The method to update a training.
      *
      * @param training The training to be updated.
-     * @param request The edit model which contains all information about the updating.
+     * @param request  The edit model which contains all information about the updating.
      * @return A training which is updated.
      */
     public Training update(Training training, TrainingEditModel request) {
@@ -182,5 +182,28 @@ public class TrainingService extends ActivityService {
         } catch (Exception e) {
             throw new Exception("Something went wrong in editing training");
         }
+    }
+
+    /**
+     * The method to get all trainings.
+     *
+     * @param position the preferred position of the user
+     * @return the list of matching trainings
+     * @throws Exception the exception
+     */
+    public List<Training> getSuitableCompetition(Position position) throws Exception {
+        UserDataRequestModel userData = (UserDataRequestModel)
+                restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
+        if (userData == null) {
+            throw new Exception("We could not get your user information from the user service");
+        }
+        List<Long> boatIds = trainingRepository.findAll().stream()
+                .filter(competition -> competition.getStartTime()
+                        > currentTimeProvider.getCurrentTime().toEpochMilli() + (30 * 60 * 1000))
+                .map(Activity::getBoatId)
+                .collect(Collectors.toList());
+        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
+        List<Long> suitableCompetitions = (List<Long>) restServiceFacade.performBoatModel(model, "/boat/check", List.class);
+        return trainingRepository.findAllByBoatIdIn(suitableCompetitions);
     }
 }

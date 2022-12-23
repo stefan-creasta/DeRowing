@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import nl.tudelft.sem.template.activity.domain.Certificate;
@@ -14,11 +16,13 @@ import nl.tudelft.sem.template.activity.domain.events.EventPublisher;
 import nl.tudelft.sem.template.activity.domain.provider.implement.CurrentTimeProvider;
 import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepository;
 import nl.tudelft.sem.template.activity.models.CompetitionCreateModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import java.time.Instant;
 
@@ -26,8 +30,7 @@ class CompetitionServiceTest {
 
     private transient EventPublisher eventPublisher;
     private transient CompetitionRepository competitionRepository;
-    private transient UserRestService userRestService;
-    private transient BoatRestService boatRestService;
+    private transient RestServiceFacade restServiceFacade;
     private transient CompetitionService sut;
     private transient CurrentTimeProvider currentTimeProvider;
 
@@ -36,11 +39,9 @@ class CompetitionServiceTest {
         //Mock dependencies
         this.eventPublisher = Mockito.mock(EventPublisher.class);
         this.competitionRepository = Mockito.mock(CompetitionRepository.class);
-        this.userRestService = Mockito.mock(UserRestService.class);
-        this.boatRestService = Mockito.mock(BoatRestService.class);
+        this.restServiceFacade = Mockito.mock(RestServiceFacade.class);
         this.currentTimeProvider = Mockito.mock(CurrentTimeProvider.class);
-        this.sut = new CompetitionService(eventPublisher, competitionRepository,
-                userRestService, boatRestService, currentTimeProvider);
+        this.sut = new CompetitionService(eventPublisher, competitionRepository, restServiceFacade, currentTimeProvider);
     }
 
     public Competition fabricateCompetition(long id, long boatId, Type type) {
@@ -53,7 +54,7 @@ class CompetitionServiceTest {
         CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT, true,
                 true, "TUDELFT", 1000, Type.C4);
 
-        when(boatRestService.getBoatId(model.getType())).thenReturn(1L);
+        when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(1L));
         String result = sut.createCompetition(model, new NetId("maarten"));
         assertEquals("Successfully created competition", result);
 
@@ -64,9 +65,8 @@ class CompetitionServiceTest {
         CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT, true,
                 true, "TUDELFT", 1000, Type.C4);
 
-        when(boatRestService.getBoatId(model.getType())).thenReturn(-1L);
-        String result = sut.createCompetition(model, new NetId("maarten"));
-        assertEquals("Could not contact boat service", result);
+        when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(null);
+        assertThrows(Exception.class, () -> sut.createCompetition(model, new NetId("maarten")));
 
     }
 
@@ -75,14 +75,13 @@ class CompetitionServiceTest {
         CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT, true,
                 true, "TUDELFT", 1000, Type.C4);
 
-        when(boatRestService.getBoatId(model.getType())).thenReturn(1L);
+        when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(1L));
         when(competitionRepository.save(Mockito.any(Competition.class))).thenThrow(DataIntegrityViolationException.class);
-        String result = sut.createCompetition(model, new NetId("maarten"));
-        assertEquals("activity already exists", result);
+        assertThrows(DataIntegrityViolationException.class, () -> sut.createCompetition(model, new NetId("maarten")));
     }
 
     @Test
-    public void joinCompetitionTest() {
+    public void joinCompetitionTest() throws Exception {
         when(currentTimeProvider.getCurrentTime()).thenReturn(Instant.ofEpochMilli(-1000000000L));
         //Input
         JoinRequestModel request = new JoinRequestModel();
@@ -108,7 +107,8 @@ class CompetitionServiceTest {
         userData.setGender(Gender.MALE);
         userData.setCertificate(Certificate.C4);
 
-        when(userRestService.getUserData()).thenReturn(userData);
+        when(restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class)).thenReturn(userData);
+
         result = sut.joinCompetition(request);
         assertEquals("Done! Your request has been processed", result);
 

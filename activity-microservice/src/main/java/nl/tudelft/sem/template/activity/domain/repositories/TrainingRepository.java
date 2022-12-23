@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface TrainingRepository extends JpaRepository<Training, NetId> {
@@ -37,4 +38,6 @@ public interface TrainingRepository extends JpaRepository<Training, NetId> {
     @Query(value = "ALTER SEQUENCE HIBERNATE_SEQUENCE restart with 1", nativeQuery = true)
     @Transactional
     void resetSequence();
+
+    List<Training> findAllByBoatIdIn(List<Long> suitableCompetitions);
 }

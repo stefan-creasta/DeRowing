@@ -18,8 +18,17 @@ public class UserJoinListener {
         this.userRestService = userRestService;
     }
 
+    /**
+     * Event Listener for UserJoinEvent.
+     *
+     * @param event the event that is triggered when a user joins.
+     */
     @EventListener
     public void onUserJoin(UserJoinEvent event) {
-        userRestService.userJoinRequest(event);
+        try {
+            userRestService.performUserRequest(event, "/join", null);
+        } catch (Exception e) {
+            System.out.println("User join event failed");
+        }
     }
 }

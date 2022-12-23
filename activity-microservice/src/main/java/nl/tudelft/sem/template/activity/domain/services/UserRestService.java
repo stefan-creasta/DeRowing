@@ -13,69 +13,56 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserRestService extends RestService {
+public class UserRestService implements RestService {
 
     private final transient Environment environment;
+    private final transient int port;
+    private final transient String url;
 
+    /**
+     * Constructor for UserRestService.
+     *
+     * @param environment the environment
+     */
     @Autowired
     public UserRestService(Environment environment) {
         this.environment = environment;
+        String userport = environment.getProperty("user.port");
+        this.url = environment.getProperty("user.url");
+        if (url == null || userport == null) {
+            System.out.println("No ports and/or url found in the application.properties file");
+        }
+        this.port = Integer.parseInt(userport);
     }
 
     /**
-     * Sends a HTTP request to the USER microservice to inform them of changes
-     * surrounding the acceptance/rejecting of a user.
+     * Method to perform a request to the user microservice.
      *
-     * @param model The request body we will be sending.
-     * @return is successful
+     * @param response the response in json
+     * @param target the target class
+     * @return the object cast to target class
      */
-    public boolean informUserOfRequestUpdate(UserAcceptanceEvent model) {
-        String url = environment.getProperty("user.url");
-        int port = Integer.parseInt(environment.getProperty("user.port"));
-        try {
-            performRequest(model, url, port, "/update", HttpMethod.POST);
-            return true;
-        } catch (UnsuccessfulRequestException e) {
-            System.out.println("User microservice seems unavailable");
-            return false;
-        }
+    public Object deserialize(Object response, Class<?> target) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(response, target);
     }
 
     /**
-     * Sends a HTTP request to the USER microservice to retrieve user data.
+     * Method to perform a request to the user microservice.
      *
-     * @return the user data
+     * @param model the model to send
+     * @param path the path to send the model to
+     * @param t the class to cast the response to
+     * @return the response cast to the class t
+     * @throws Exception if the request fails
      */
-    public UserDataRequestModel getUserData() {
+    public Object performUserRequest(Object model, String path, Class<?> t) throws Exception {
         String url = environment.getProperty("user.url");
         int port = Integer.parseInt(environment.getProperty("user.port"));
-        try {
-            Object genericResponse = performRequest(null, url, port, "/getdetails", HttpMethod.GET);
-            return (genericResponse != null)
-                    ? (UserDataRequestModel) deserialize(genericResponse, UserDataRequestModel.class)
-                    : null;
-        } catch (UnsuccessfulRequestException e) {
-            System.out.println("User microservice seems unavailable");
-            return null;
-        }
-    }
-
-    /**
-     * A REST call to the user microservice to inform them of a user joining a boat.
-     *
-     * @param model inform the user microservice that a user wants to join.
-     * @return is successful
-     */
-    public boolean userJoinRequest(UserJoinEvent model) {
-        String url = environment.getProperty("user.url");
-        int port = Integer.parseInt(environment.getProperty("user.port"));
-        try {
-            performRequest(model, url, port, "/join", HttpMethod.POST);
-            return true;
-        } catch (UnsuccessfulRequestException e) {
-            System.out.println("User microservice seems unavailable");
-            return false;
-        }
+        Object genericResponse = RestService.performRequest(model, url, port, path, HttpMethod.POST);
+        return (genericResponse != null)
+                ? deserialize(genericResponse.toString(), t)
+                : null;
     }
 }
 

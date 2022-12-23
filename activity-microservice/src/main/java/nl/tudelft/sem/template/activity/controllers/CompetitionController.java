@@ -70,7 +70,7 @@ public class CompetitionController {
             String status = competitionService.createCompetition(request, new NetId(authManager.getNetId()));
             return ResponseEntity.ok(status);
         } catch (Exception e) {
-            return ResponseEntity.ok("Internal error when creating the competition.");
+            return ResponseEntity.ok(e.getMessage());
         }
     }
 
@@ -149,7 +149,7 @@ public class CompetitionController {
      * @throws Exception Activity not found exception
      */
     @GetMapping("/find")
-    public ResponseEntity<List<Competition>> getCompetitions(@RequestBody Position position) throws Exception {
+    public ResponseEntity<List<Competition>> getCompetitions(@RequestBody Position position) {
         try {
             List<Competition> result = competitionService.getSuitableCompetition(position);
             return ResponseEntity.ok(result);

@@ -15,6 +15,7 @@ import nl.tudelft.sem.template.activity.domain.repositories.CompetitionRepositor
 import nl.tudelft.sem.template.activity.domain.repositories.TrainingRepository;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
@@ -48,6 +49,9 @@ class TrainingServiceTest {
     private UserRestService userRestService;
 
     @Mock
+    private RestServiceFacade restServiceFacade;
+
+    @Mock
     private CurrentTimeProvider currentTimeProvider;
 
     @Mock
@@ -62,16 +66,15 @@ class TrainingServiceTest {
         trainingCreateModel = new TrainingCreateModel("test", 123L, Type.C4);
         eventPublisher = mock(EventPublisher.class);
         trainingRepository = mock(TrainingRepository.class);
-        userRestService = mock(UserRestService.class);
-        boatRestService = mock(BoatRestService.class);
+        this.restServiceFacade = mock(RestServiceFacade.class);
         currentTimeProvider = mock(CurrentTimeProvider.class);
         authManager = mock(AuthManager.class);
         joinRequestModel = new JoinRequestModel();
         joinRequestModel.setActivityId(123L);
         joinRequestModel.setPosition(Position.COACH);
         acceptRequestModel = new AcceptRequestModel();
-        trainingService = new TrainingService(eventPublisher, userRestService,
-                trainingRepository, boatRestService, currentTimeProvider);
+        trainingService = new TrainingService(eventPublisher, restServiceFacade,
+                trainingRepository, currentTimeProvider);
         id = new NetId("123");
         training = new Training(id, trainingCreateModel.getTrainingName(), 123L, 123L,
                 Type.C4);
@@ -86,10 +89,9 @@ class TrainingServiceTest {
 
     @Test
     void createTraining() throws Exception {
-        //when(authManager.getNetId()).thenReturn("123");
-        when(boatRestService.getBoatId(Type.C4)).thenReturn(123L);
+        when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(123L));
         when(trainingRepository.save(training)).thenReturn(training);
-        Assertions.assertEquals("Training successfully created",
+        Assertions.assertEquals("Successfully created training",
                 trainingService.createTraining(trainingCreateModel, new NetId("123")));
     }
 
@@ -111,8 +113,7 @@ class TrainingServiceTest {
     void deleteTraining() throws Exception {
         BoatDeleteModel boatDeleteModel = new BoatDeleteModel(123L);
         when(trainingService.findTraining(123L)).thenReturn(training);
-        when(boatRestService.deleteBoat(boatDeleteModel)).thenReturn(true);
-        Assertions.assertEquals("Successfully deleted the training.",
+        Assertions.assertEquals("Successfully deleted training",
                 trainingService.deleteTraining(123L));
     }
 

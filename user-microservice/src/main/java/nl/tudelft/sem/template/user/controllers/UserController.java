@@ -67,7 +67,7 @@ public class UserController {
      *
      * @return the user's information
      */
-    @GetMapping("/getdetails")
+    @PostMapping("/getdetails")
     public ResponseEntity<UserDetailModel> getDetailsOfUser() {
         try {
             User target = userService.findUser(authManager.getNetId());
