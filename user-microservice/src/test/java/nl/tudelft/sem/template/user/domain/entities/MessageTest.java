@@ -9,9 +9,10 @@ import org.junit.jupiter.api.Test;
 
 public class MessageTest {
     Message message;
+
     @BeforeEach
     public void setup() {
-	message = new Message("rithik","vluong", 2L, "qwerqwer" , Position.COACH);
+	message = new Message("rithik", "vluong", 2L, "qwerqwer", Position.COACH);
     }
 
     @Test

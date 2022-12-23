@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
+import java.util.Objects;
 
 @NoArgsConstructor
 @Entity
@@ -94,6 +95,13 @@ public class User {
                 + (amateur ? "Amateur" : "Professional");
     }
 
+    /**
+     * Compare two Users.
+     *
+     * @param o the other user
+     * @return true if two users are equal and otherwise false
+     */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -101,8 +109,19 @@ public class User {
         if (!(o instanceof User)) {
             return false;
         }
-            User other = (User) o;
-            return netId.equals(other.netId) && gender == other.gender
-                && certificate == other.certificate && organization == other.organization && amateur == other.amateur;
+        User other = (User) o;
+        return netId.equals(other.netId) && gender.equals(other.gender)
+            && certificate.equals(other.certificate) && organization.equals(other.organization) && amateur == other.amateur;
+    }
+
+
+    /**
+     * Hash the object.
+     *
+     * @return the hashcode of the object
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(getNetId(), getGender(), getCertificate(), getOrganization(), isAmateur());
     }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class NetIdTest {
     NetId netId;
+
     @BeforeEach
     public void setup() {
 	netId = new NetId("vluong");

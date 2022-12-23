@@ -1,6 +1,11 @@
 package nl.tudelft.sem.template.user.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
+
 import nl.tudelft.sem.template.user.authentication.AuthManager;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
@@ -18,11 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -51,7 +52,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getDetailsOfUser() throws Exception{
+    void getDetailsOfUser() throws Exception {
         when(authManager.getNetId()).thenReturn("vluong");
         when(userService.findUser("vluong")).thenReturn(user);
         ResponseEntity responseEntity = userController.getDetailsOfUser();
@@ -61,7 +62,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getNotificationsTest() throws Exception{
+    void getNotificationsTest() throws Exception {
         Message message = new Message("hminh", "vluong", 2L, "qwer", Position.COACH);
         Message message1 = new Message("mtan", "mkhoa", 3L, "qwer", Position.COACH);
         when(authManager.getNetId()).thenReturn("vluong");

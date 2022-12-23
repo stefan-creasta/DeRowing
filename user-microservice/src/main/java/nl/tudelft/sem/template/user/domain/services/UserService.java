@@ -98,8 +98,7 @@ public class UserService {
     public List<Message> getNotifications(String netId) throws Exception {
         try {
             return messageRepository.findMessagesByNetId(netId);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception("Can not retrieve the user's messages");
         }
     }

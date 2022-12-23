@@ -1,5 +1,11 @@
 package nl.tudelft.sem.template.user.domain.services;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
+
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
@@ -13,12 +19,7 @@ import nl.tudelft.sem.template.user.domain.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
-
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
     private transient UserRepository userRepository;
@@ -28,6 +29,9 @@ public class UserServiceTest {
     NetId netId;
     User result;
 
+    /**
+     * Set up variables before testing.
+     */
     @BeforeEach
     public void setup() {
         userRepository = mock(UserRepository.class);
@@ -74,9 +78,9 @@ public class UserServiceTest {
     @Test
     public void findUserTest() throws Exception {
         when(userRepository.findByNetId(netId.getNetId())).thenReturn(result);
-        User temp_result = userService.findUser(netId.getNetId());
+        User tempResult = userService.findUser(netId.getNetId());
         verify(userRepository).findByNetId(netId.getNetId());
-        assertEquals(temp_result, result);
+        assertEquals(tempResult, result);
     }
 
     @Test
