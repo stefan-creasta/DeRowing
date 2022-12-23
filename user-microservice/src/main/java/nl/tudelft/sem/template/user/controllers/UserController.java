@@ -70,7 +70,7 @@ public class UserController {
     @PostMapping("/getdetails")
     public ResponseEntity<UserDetailModel> getDetailsOfUser() {
         try {
-            User target = userService.findUser(authManager.getNetId());
+            User target = userService.findUser(new NetId(authManager.getNetId()));
             Gender gender = target.getGender();
             String organization = target.getOrganization();
             boolean amateur = target.isAmateur();

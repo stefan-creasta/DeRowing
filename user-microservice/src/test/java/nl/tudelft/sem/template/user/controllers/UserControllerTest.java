@@ -54,9 +54,9 @@ class UserControllerTest {
     @Test
     void getDetailsOfUser() throws Exception {
         when(authManager.getNetId()).thenReturn("vluong");
-        when(userService.findUser("vluong")).thenReturn(user);
+        when(userService.findUser(new NetId("vluong"))).thenReturn(user);
         ResponseEntity responseEntity = userController.getDetailsOfUser();
-        verify(userService).findUser("vluong");
+        verify(userService).findUser(new NetId("vluong"));
         UserDetailModel userDetailModel = new UserDetailModel(Gender.MALE, "Delft", true, Certificate.PLUS4);
         assertEquals(userDetailModel, responseEntity.getBody());
     }

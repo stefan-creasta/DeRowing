@@ -77,17 +77,17 @@ public class UserServiceTest {
 
     @Test
     public void findUserTest() throws Exception {
-        when(userRepository.findByNetId(netId.getNetId())).thenReturn(result);
-        User tempResult = userService.findUser(netId.getNetId());
-        verify(userRepository).findByNetId(netId.getNetId());
+        when(userRepository.findByNetId(netId)).thenReturn(result);
+        User tempResult = userService.findUser(netId);
+        verify(userRepository).findByNetId(netId);
         assertEquals(tempResult, result);
     }
 
     @Test
     public void findUserExceptionTest() throws Exception {
-        when(userRepository.findByNetId(netId.getNetId())).thenThrow(IllegalArgumentException.class);
+        when(userRepository.findByNetId(netId)).thenThrow(IllegalArgumentException.class);
         assertThatThrownBy(() -> {
-            userService.findUser(netId.getNetId());
+            userService.findUser(netId);
         }).isInstanceOf(Exception.class);
     }
 
