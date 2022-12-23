@@ -54,8 +54,8 @@ public class UserService {
             return "Information of user is successfully saved in database";
         } catch (DataIntegrityViolationException e) {
             throw new NetIdAlreadyInUseException(user.getNetId());
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in createUser");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Something went wrong in createUser");
         }
     }
 
@@ -69,8 +69,8 @@ public class UserService {
     public User findUser(NetId netId) throws Exception {
         try {
             return userRepository.findByNetId(netId);
-        } catch (Exception e) {
-            throw new Exception("Something went wrong in findUser");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Something went wrong in findUser");
         }
     }
 
@@ -85,10 +85,9 @@ public class UserService {
      * @return a String indicating whether the message is saved or not
      * @throws Exception a NetId already in use exception
      */
-    public String saveMessage(NetId receiver, NetId sender,
-                              long activityId, String content, Position position) throws Exception {
+    public String saveMessage(Message message) throws Exception {
         try {
-            messageRepository.save(new Message(receiver.getNetId(), sender.getNetId(), activityId, content, position));
+            messageRepository.save(message);
             return "The message is successfully saved";
         } catch (Exception e) {
             throw new Exception("Something went wrong when saving this message");
@@ -107,8 +106,8 @@ public class UserService {
             List<Message> result = messageRepository.findMessagesByNetId(netId.getNetId());
             return result;
         }
-        catch (Exception e) {
-            throw new Exception("Can not retrieve the user's messages");
+        catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Can not retrieve the user's messages");
         }
     }
 }

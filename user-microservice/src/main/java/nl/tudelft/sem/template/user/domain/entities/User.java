@@ -93,4 +93,16 @@ public class User {
                 + organization + "\n Status: "
                 + (amateur ? "Amateur" : "Professional");
     }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
+            User other = (User) o;
+            return netId.equals(other.netId) && gender == other.gender
+                && certificate == other.certificate && organization == other.organization && amateur == other.amateur;
+    }
 }
