@@ -18,8 +18,8 @@ public class EventPublisher {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void publishAcceptance(boolean isAccepted, Position position, NetId eventRequester) {
-        UserAcceptanceEvent acceptanceEvent = new UserAcceptanceEvent(isAccepted, position, eventRequester);
+    public void publishAcceptance(boolean isAccepted, Position position, NetId eventRequester, long activityId) {
+        UserAcceptanceEvent acceptanceEvent = new UserAcceptanceEvent(isAccepted, position, eventRequester, activityId);
         applicationEventPublisher.publishEvent(acceptanceEvent);
     }
 

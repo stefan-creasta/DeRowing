@@ -11,11 +11,13 @@ import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatModel;
 import nl.tudelft.sem.template.activity.models.CreateBoatResponseModel;
-import nl.tudelft.sem.template.activity.models.FindSuitableCompetitionModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableActivityModel;
+import nl.tudelft.sem.template.activity.models.FindSuitableActivityResponseModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -142,9 +144,13 @@ public class TrainingService extends ActivityService {
      * @throws Exception An exception which is thrown when facing failures.
      */
     public String deleteTraining(long trainingId) throws Exception {
+        String netId = SecurityContextHolder.getContext().getAuthentication().getName();
         Training training = trainingRepository.findById(trainingId);
         if (training == null) {
             return "training not found";
+        }
+        if (!training.getOwner().toString().equals(netId)) {
+            return "You are not the owner of this competition";
         }
         long boatId = training.getBoatId();
         BoatDeleteModel boatDeleteModel = new BoatDeleteModel(boatId);
@@ -175,7 +181,11 @@ public class TrainingService extends ActivityService {
      */
     public String editTraining(TrainingEditModel request) throws Exception {
         try {
+            String netId = SecurityContextHolder.getContext().getAuthentication().getName();
             Training training = trainingRepository.findById(request.getId());
+            if (!training.getOwner().toString().equals(netId)) {
+                return "You are not the owner of this competition";
+            }
             training = update(training, request);
             trainingRepository.save(training);
             return "Successfully edited training";
@@ -202,8 +212,10 @@ public class TrainingService extends ActivityService {
                         > currentTimeProvider.getCurrentTime().toEpochMilli() + (30 * 60 * 1000))
                 .map(Activity::getBoatId)
                 .collect(Collectors.toList());
-        FindSuitableCompetitionModel model = new FindSuitableCompetitionModel(boatIds, position);
-        List<Long> suitableCompetitions = (List<Long>) restServiceFacade.performBoatModel(model, "/boat/check", List.class);
-        return trainingRepository.findAllByBoatIdIn(suitableCompetitions);
+        FindSuitableActivityModel model = new FindSuitableActivityModel(boatIds, position);
+        FindSuitableActivityResponseModel suitableCompetitions =
+                (FindSuitableActivityResponseModel) restServiceFacade.performBoatModel(model,
+                        "/boat/check", FindSuitableActivityResponseModel.class);
+        return trainingRepository.findAllByBoatIdIn(suitableCompetitions.getBoatId());
     }
 }

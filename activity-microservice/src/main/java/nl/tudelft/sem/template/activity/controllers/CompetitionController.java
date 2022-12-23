@@ -135,7 +135,7 @@ public class CompetitionController {
     @PostMapping("/edit")
     public ResponseEntity<String> editCompetition(@RequestBody CompetitionEditModel request) throws Exception {
         try {
-            String status = competitionService.editCompetition(request);
+            String status = competitionService.editCompetition(request, authManager.getNetId());
             return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when editing competition.");
@@ -156,8 +156,7 @@ public class CompetitionController {
             List<Competition> result = competitionService.getSuitableCompetition(position);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "There is no competition that you are suitable for", e);
+            throw new ResponseStatusException(HttpStatus.OK, "No suitable competition found.");
         }
     }
 }

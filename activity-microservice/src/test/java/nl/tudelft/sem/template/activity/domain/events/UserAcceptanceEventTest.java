@@ -15,6 +15,7 @@ class UserAcceptanceEventTest {
 
     private UserAcceptanceEvent userAcceptanceEvent;
 
+    private static long activityId = 1L;
     private boolean isAccepted;
 
     private Position position;
@@ -26,18 +27,18 @@ class UserAcceptanceEventTest {
         isAccepted = true;
         position = Position.COACH;
         eventRequester = new NetId("test");
-        userAcceptanceEvent = new UserAcceptanceEvent(isAccepted, position, eventRequester);
+        userAcceptanceEvent = new UserAcceptanceEvent(isAccepted, position, eventRequester, activityId);
     }
 
     @Test
     void isAccepted() {
-        UserAcceptanceEvent userAcceptanceEvent1 = new UserAcceptanceEvent(isAccepted, Position.COACH, eventRequester);
+        UserAcceptanceEvent userAcceptanceEvent1 = new UserAcceptanceEvent(isAccepted, Position.COACH, eventRequester, activityId);
         assertEquals(isAccepted, userAcceptanceEvent1.isAccepted());
     }
 
     @Test
     void getPosition() {
-        UserAcceptanceEvent userAcceptanceEvent1 = new UserAcceptanceEvent(isAccepted, Position.COACH, eventRequester);
+        UserAcceptanceEvent userAcceptanceEvent1 = new UserAcceptanceEvent(isAccepted, Position.COACH, eventRequester, activityId);
         assertEquals(position, userAcceptanceEvent1.getPosition());
     }
 
@@ -67,18 +68,18 @@ class UserAcceptanceEventTest {
 
     @Test
     void testEquals() {
-        UserAcceptanceEvent same = new UserAcceptanceEvent(isAccepted, position, eventRequester);
+        UserAcceptanceEvent same = new UserAcceptanceEvent(isAccepted, position, eventRequester, activityId);
         assertEquals(userAcceptanceEvent, same);
     }
 
     @Test
     void canEqual() {
-        assertTrue(userAcceptanceEvent.canEqual(new UserAcceptanceEvent(isAccepted, position, eventRequester)));
+        assertTrue(userAcceptanceEvent.canEqual(new UserAcceptanceEvent(isAccepted, position, eventRequester, activityId)));
     }
 
     @Test
     void testHashCode() {
-        UserAcceptanceEvent same = new UserAcceptanceEvent(isAccepted, position, eventRequester);
+        UserAcceptanceEvent same = new UserAcceptanceEvent(isAccepted, position, eventRequester, activityId);
         assertEquals(userAcceptanceEvent.hashCode(), same.hashCode());
     }
 

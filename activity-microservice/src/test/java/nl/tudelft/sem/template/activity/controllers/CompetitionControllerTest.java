@@ -104,7 +104,7 @@ class CompetitionControllerTest {
     @Test
     void editCompetition() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(competitionService.editCompetition(competitionEditModel)).thenReturn("success");
+        when(competitionService.editCompetition(competitionEditModel, authManager.getNetId())).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
                 competitionController.editCompetition(competitionEditModel));
     }

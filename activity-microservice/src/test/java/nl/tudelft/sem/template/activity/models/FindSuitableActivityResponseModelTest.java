@@ -5,22 +5,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-class FindSuitableCompetitionResponseModelTest {
+class FindSuitableActivityResponseModelTest {
 
-    private FindSuitableCompetitionResponseModel model;
+    private FindSuitableActivityResponseModel model;
 
     private List<Long> boatId;
 
     @BeforeEach
     void setUp() {
         boatId = new ArrayList<>();
-        model = new FindSuitableCompetitionResponseModel();
+        model = new FindSuitableActivityResponseModel();
         model.setBoatId(boatId);
     }
 
@@ -38,7 +37,7 @@ class FindSuitableCompetitionResponseModelTest {
 
     @Test
     void testEquals() {
-        FindSuitableCompetitionResponseModel model2 = new FindSuitableCompetitionResponseModel();
+        FindSuitableActivityResponseModel model2 = new FindSuitableActivityResponseModel();
         model2.setBoatId(boatId);
         assertEquals(model, model2);
     }
@@ -46,12 +45,12 @@ class FindSuitableCompetitionResponseModelTest {
     @Test
     void canEqual() {
         assertFalse(model.canEqual(null));
-        assertTrue(model.canEqual(new FindSuitableCompetitionResponseModel()));
+        assertTrue(model.canEqual(new FindSuitableActivityResponseModel()));
     }
 
     @Test
     void testHashCode() {
-        FindSuitableCompetitionResponseModel model2 = new FindSuitableCompetitionResponseModel();
+        FindSuitableActivityResponseModel model2 = new FindSuitableActivityResponseModel();
         model2.setBoatId(boatId);
         assertEquals(model.hashCode(), model2.hashCode());
     }

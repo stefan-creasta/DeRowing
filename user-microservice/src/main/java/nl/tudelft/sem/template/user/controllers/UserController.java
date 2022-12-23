@@ -150,7 +150,7 @@ public class UserController {
             Message message = new Message(
                 userAcceptanceUpdateModel.getEventRequester().getNetId(),
                 authManager.getNetId(),
-                0,
+                userAcceptanceUpdateModel.getActivityId(),
                 content,
                 userAcceptanceUpdateModel.getPosition()
             );

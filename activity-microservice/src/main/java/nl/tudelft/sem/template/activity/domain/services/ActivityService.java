@@ -45,7 +45,7 @@ public class ActivityService {
         if (!persistNewActivity(model, repository)) {
             return "Could not find activity";
         }
-        eventPublisher.publishAcceptance(model.isAccepted(), model.getPosition(), model.getRequestee());
+        eventPublisher.publishAcceptance(model.isAccepted(), model.getPosition(), model.getRequestee(), model.getActivityId());
         if (model.isAccepted()) {
             Activity activity = (Activity) repository.findById(model.getActivityId()).get();
             eventPublisher.publishBoatChange(activity.getBoatId(), model.getPosition(), model.getRequestee());
