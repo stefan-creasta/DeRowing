@@ -12,7 +12,6 @@ import nl.tudelft.sem.template.user.domain.repositories.MessageRepository;
 import nl.tudelft.sem.template.user.domain.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
@@ -69,23 +68,23 @@ public class UserServiceTest {
         assertThatThrownBy(() -> {
                 userService.createUser(user);
             }
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(Exception.class);
     }
 
     @Test
     public void findUserTest() throws Exception {
-        when(userRepository.findByNetId(netId)).thenReturn(result);
-        User temp_result = userService.findUser(netId);
-        verify(userRepository).findByNetId(netId);
+        when(userRepository.findByNetId(netId.getNetId())).thenReturn(result);
+        User temp_result = userService.findUser(netId.getNetId());
+        verify(userRepository).findByNetId(netId.getNetId());
         assertEquals(temp_result, result);
     }
 
     @Test
     public void findUserExceptionTest() throws Exception {
-        when(userRepository.findByNetId(netId)).thenThrow(IllegalArgumentException.class);
+        when(userRepository.findByNetId(netId.getNetId())).thenThrow(IllegalArgumentException.class);
         assertThatThrownBy(() -> {
-            userService.findUser(netId);
-        }).isInstanceOf(IllegalArgumentException.class);
+            userService.findUser(netId.getNetId());
+        }).isInstanceOf(Exception.class);
     }
 
     @Test
@@ -102,7 +101,7 @@ public class UserServiceTest {
         Message message = new Message("hminh", "vluong", 2L, "qwer", Position.COACH);
         Message message1 = new Message("mtan", "mkhoa", 3L, "qwer", Position.COACH);
         when(messageRepository.findMessagesByNetId(netId.getNetId())).thenReturn(List.of(message, message1));
-        List<Message> result = userService.getNotifications(netId);
+        List<Message> result = userService.getNotifications(netId.getNetId());
         verify(messageRepository).findMessagesByNetId(netId.getNetId());
         assertEquals(result, List.of(message, message1));
     }

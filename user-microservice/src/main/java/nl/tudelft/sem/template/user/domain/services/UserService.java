@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.user.domain.services;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
-import nl.tudelft.sem.template.user.domain.Position;
 import nl.tudelft.sem.template.user.domain.entities.Message;
 import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.exceptions.NetIdAlreadyInUseException;
@@ -38,8 +37,7 @@ public class UserService {
         String organization = request.getOrganization();
         boolean amateur = request.isAmateur();
 
-        User user = new User(netId, gender, certificate, organization, amateur);
-        return user;
+        return new User(netId, gender, certificate, organization, amateur);
     }
 
     /**
@@ -54,8 +52,8 @@ public class UserService {
             return "Information of user is successfully saved in database";
         } catch (DataIntegrityViolationException e) {
             throw new NetIdAlreadyInUseException(user.getNetId());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Something went wrong in createUser");
+        } catch (Exception e) {
+            throw new Exception("Something went wrong in createUser");
         }
     }
 
@@ -66,22 +64,18 @@ public class UserService {
      * @return the user to be found
      * @throws Exception the NetId not found exception
      */
-    public User findUser(NetId netId) throws Exception {
+    public User findUser(String netId) throws Exception {
         try {
             return userRepository.findByNetId(netId);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Something went wrong in findUser");
+        } catch (Exception e) {
+            throw new Exception("Something went wrong in findUser");
         }
     }
 
     /**
      * Saves a message in the message database.
      *
-     * @param receiver   NetId of the recipient
-     * @param sender     NetId of the sender
-     * @param activityId activity Id of the activity
-     * @param content    the message in String format
-     * @param position   the position that the user applied for
+     * @param message the incoming message
      * @return a String indicating whether the message is saved or not
      * @throws Exception a NetId already in use exception
      */
@@ -101,13 +95,12 @@ public class UserService {
      * @return the list of messages (inbox)
      * @throws Exception the NetId already in
      */
-    public List<Message> getNotifications(NetId netId) throws Exception {
+    public List<Message> getNotifications(String netId) throws Exception {
         try {
-            List<Message> result = messageRepository.findMessagesByNetId(netId.getNetId());
-            return result;
+            return messageRepository.findMessagesByNetId(netId);
         }
-        catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Can not retrieve the user's messages");
+        catch (Exception e) {
+            throw new Exception("Can not retrieve the user's messages");
         }
     }
 }

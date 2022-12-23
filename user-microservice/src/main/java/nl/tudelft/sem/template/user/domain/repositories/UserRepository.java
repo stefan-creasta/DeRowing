@@ -6,14 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, NetId> {
+public interface UserRepository extends JpaRepository<User, String> {
     /**
      * Find a user by using their NetId.
      *
      * @param netId the netId of the User
      * @return the user represented by the NetId
      */
-    User findByNetId(NetId netId);
+    User findByNetId(String netId);
 
     /**
      * Check the usage of the provided netId.

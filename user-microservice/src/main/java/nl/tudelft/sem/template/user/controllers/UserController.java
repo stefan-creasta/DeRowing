@@ -70,8 +70,7 @@ public class UserController {
     @GetMapping("/getdetails")
     public ResponseEntity<UserDetailModel> getDetailsOfUser() {
         try {
-            NetId netId = new NetId(authManager.getNetId());
-            User target = userService.findUser(netId);
+            User target = userService.findUser(authManager.getNetId());
             Gender gender = target.getGender();
             String organization = target.getOrganization();
             boolean amateur = target.isAmateur();
@@ -122,7 +121,7 @@ public class UserController {
     @GetMapping("/notifications")
     public ResponseEntity<List<Message>> getNotifications() {
         try {
-            List<Message> notifications = userService.getNotifications(new NetId(authManager.getNetId()));
+            List<Message> notifications = userService.getNotifications(authManager.getNetId());
             ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
             return bb.body(notifications);
         } catch (Exception e) {
