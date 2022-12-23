@@ -45,16 +45,6 @@ public class UserController {
     }
 
     /**
-     * Gets user by id.
-     *
-     * @return the user found in the database with the given id
-     */
-    @GetMapping("/hello")
-    public ResponseEntity<String> helloWorld() {
-        return ResponseEntity.ok("Hello " + authManager.getNetId());
-    }
-
-    /**
      * The method to create a User, updating it with all its fields.
      *
      * @param request a user create model, which contains all information about the user
@@ -64,7 +54,8 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<String> createUser(@RequestBody UserDetailModel request) {
         try {
-            userService.createUser(request, new NetId(authManager.getNetId()));
+
+            userService.createUser(userService.parseRequest(request, new NetId(authManager.getNetId())));
             return ResponseEntity.ok("Congratulations " + authManager.getNetId() + ", you have created your user");
         } catch (Exception e) {
             return ResponseEntity.ok("Something went wrong in creating the user");
@@ -79,8 +70,7 @@ public class UserController {
     @GetMapping("/getdetails")
     public ResponseEntity<UserDetailModel> getDetailsOfUser() {
         try {
-            NetId netId = new NetId(authManager.getNetId());
-            User target = userService.findUser(netId);
+            User target = userService.findUser(authManager.getNetId());
             Gender gender = target.getGender();
             String organization = target.getOrganization();
             boolean amateur = target.isAmateur();
@@ -106,14 +96,19 @@ public class UserController {
         try {
             String content = authManager.getNetId() + " wants to join this competition/training session. "
                     + "They want to join for position " + userJoinRequest.getPosition().toString();
-            userService.saveMessage(userJoinRequest.getOwner(),
-                    new NetId(authManager.getNetId()),
-                    userJoinRequest.getActivityId(),
-                    content,
-                    userJoinRequest.getPosition());
-            return ResponseEntity.ok("The message is successfully saved");
+            Message message = new Message(
+                userJoinRequest.getOwner().getNetId(),
+                authManager.getNetId(),
+                userJoinRequest.getActivityId(),
+                content,
+                userJoinRequest.getPosition()
+            );
+            userService.saveMessage(message);
+            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+            return bb.body("The message is successfully saved");
         } catch (Exception e) {
-            return ResponseEntity.ok("Something went wrong in sending application to activity owner");
+            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+            return bb.body("The message is successfully saved");
         }
     }
 
@@ -126,8 +121,9 @@ public class UserController {
     @GetMapping("/notifications")
     public ResponseEntity<List<Message>> getNotifications() {
         try {
-            List<Message> notifications = userService.getNotifications(new NetId(authManager.getNetId()));
-            return ResponseEntity.ok(notifications);
+            List<Message> notifications = userService.getNotifications(authManager.getNetId());
+            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+            return bb.body(notifications);
         } catch (Exception e) {
             return null;
         }
@@ -151,15 +147,19 @@ public class UserController {
             } else {
                 content += authManager.getNetId() + " did not accept your request. Consider joining another activity!";
             }
-
-            userService.saveMessage(userAcceptanceUpdateModel.getEventRequester(),
-                    new NetId(authManager.getNetId()),
-                    0,
-                    content,
-                    userAcceptanceUpdateModel.getPosition());
-            return ResponseEntity.ok("The message is successfully saved");
+            Message message = new Message(
+                userAcceptanceUpdateModel.getEventRequester().getNetId(),
+                authManager.getNetId(),
+                0,
+                content,
+                userAcceptanceUpdateModel.getPosition()
+            );
+            userService.saveMessage(message);
+            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+            return bb.body("The message is successfully saved");
         } catch (Exception e) {
-            return ResponseEntity.ok("Something went wrong in sending decision of activity owner to participant");
+            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
+            return bb.body("Something went wrong in sending decision of activity owner to participant");
         }
     }
 }
