@@ -39,6 +39,7 @@ gradle-app.setting
 # AWS User-specific
 .idea/**/aws.xml
 
+
 # Generated files
 .idea/**/contentModel.xml
 
@@ -80,6 +81,8 @@ cmake-build-*/
 # IntelliJ
 out/
 
+# code mr
+codemr/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
