@@ -17,26 +17,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class CompetitionServiceServerSide extends ActivityService {
 
-    private final transient EventPublisher eventPublisher;
     private final transient CompetitionRepository competitionRepository;
     private final transient RestServiceFacade restServiceFacade;
-    private final transient CurrentTimeProvider currentTimeProvider;
 
     /**
      * Constructor for CompetitionService bean.
      *
-     * @param eventPublisher        the event publisher
      * @param competitionRepository the competition repository
      * @param restServiceFacade     the rest service facade
-     * @param currentTimeProvider   the current time provider
      */
-    public CompetitionServiceServerSide(EventPublisher eventPublisher, CompetitionRepository competitionRepository,
-                                        RestServiceFacade restServiceFacade,
-                                        CurrentTimeProvider currentTimeProvider) {
-        this.eventPublisher = eventPublisher;
+    public CompetitionServiceServerSide(CompetitionRepository competitionRepository,
+                                        RestServiceFacade restServiceFacade) {
         this.competitionRepository = competitionRepository;
         this.restServiceFacade = restServiceFacade;
-        this.currentTimeProvider = currentTimeProvider;
     }
 
     /**

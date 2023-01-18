@@ -44,8 +44,8 @@ class CompetitionServiceTest {
         this.currentTimeProvider = Mockito.mock(CurrentTimeProvider.class);
         this.competitionServiceUserSide = new CompetitionServiceUserSide(eventPublisher, competitionRepository,
                 restServiceFacade, currentTimeProvider);
-        this.competitionServiceServerSide = new CompetitionServiceServerSide(eventPublisher, competitionRepository,
-                restServiceFacade, currentTimeProvider);
+        this.competitionServiceServerSide = new CompetitionServiceServerSide(competitionRepository,
+                restServiceFacade);
     }
 
     public Competition fabricateCompetition(long id, long boatId, Type type) {
