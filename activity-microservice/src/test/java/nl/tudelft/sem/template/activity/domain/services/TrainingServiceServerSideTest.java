@@ -73,7 +73,7 @@ class TrainingServiceServerSideTest {
         joinRequestModel.setActivityId(123L);
         joinRequestModel.setPosition(Position.COACH);
         acceptRequestModel = new AcceptRequestModel();
-        trainingServiceServerSide = new TrainingServiceServerSide(eventPublisher, restServiceFacade,
+        trainingServiceServerSide = new TrainingServiceServerSide(restServiceFacade,
                 trainingRepository);
         trainingServiceUserSide = new TrainingServiceUserSide(eventPublisher, restServiceFacade,
                 trainingRepository, currentTimeProvider);

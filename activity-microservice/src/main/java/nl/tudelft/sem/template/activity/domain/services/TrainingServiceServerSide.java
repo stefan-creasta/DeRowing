@@ -18,21 +18,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class TrainingServiceServerSide extends ActivityService {
-
-    private final transient EventPublisher eventPublisher;
     private final transient RestServiceFacade restServiceFacade;
     private final transient TrainingRepository trainingRepository;
 
     /**
      * Instantiates a new CompetitionService.
      *
-     * @param eventPublisher      the event publisher for user acceptance
      * @param restServiceFacade   the rest service facade
      * @param trainingRepository  the repository for trainings
      */
-    public TrainingServiceServerSide(EventPublisher eventPublisher, RestServiceFacade restServiceFacade,
+    public TrainingServiceServerSide(RestServiceFacade restServiceFacade,
                                      TrainingRepository trainingRepository) {
-        this.eventPublisher = eventPublisher;
         this.restServiceFacade = restServiceFacade;
         this.trainingRepository = trainingRepository;
     }
