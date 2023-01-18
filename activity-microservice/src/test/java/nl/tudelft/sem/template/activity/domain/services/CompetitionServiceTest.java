@@ -31,7 +31,8 @@ class CompetitionServiceTest {
     private transient EventPublisher eventPublisher;
     private transient CompetitionRepository competitionRepository;
     private transient RestServiceFacade restServiceFacade;
-    private transient CompetitionService sut;
+    private transient CompetitionServiceUserSide competitionServiceUserSide;
+    private transient CompetitionServiceServerSide competitionServiceServerSide;
     private transient CurrentTimeProvider currentTimeProvider;
 
     @BeforeEach
@@ -41,7 +42,10 @@ class CompetitionServiceTest {
         this.competitionRepository = Mockito.mock(CompetitionRepository.class);
         this.restServiceFacade = Mockito.mock(RestServiceFacade.class);
         this.currentTimeProvider = Mockito.mock(CurrentTimeProvider.class);
-        this.sut = new CompetitionService(eventPublisher, competitionRepository, restServiceFacade, currentTimeProvider);
+        this.competitionServiceUserSide = new CompetitionServiceUserSide(eventPublisher, competitionRepository,
+                restServiceFacade, currentTimeProvider);
+        this.competitionServiceServerSide = new CompetitionServiceServerSide(eventPublisher, competitionRepository,
+                restServiceFacade, currentTimeProvider);
     }
 
     public Competition fabricateCompetition(long id, long boatId, Type type) {
@@ -51,33 +55,35 @@ class CompetitionServiceTest {
 
     @Test
     public void createCompetitionIdeal() throws Exception {
-        CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT, true,
-                true, "TUDELFT", 1000, Type.C4);
+        CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT,
+                true, true, "TUDELFT", 1000, Type.C4);
 
         when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(1L));
-        String result = sut.createCompetition(model, new NetId("maarten"));
+        String result = competitionServiceServerSide.createCompetition(model, new NetId("maarten"));
         assertEquals("Successfully created competition", result);
 
     }
 
     @Test
     public void createCompetitionNoBoat() throws Exception {
-        CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT, true,
-                true, "TUDELFT", 1000, Type.C4);
+        CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT,
+                true, true, "TUDELFT", 1000, Type.C4);
 
         when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(null);
-        assertThrows(Exception.class, () -> sut.createCompetition(model, new NetId("maarten")));
+        assertThrows(Exception.class, () -> competitionServiceServerSide
+                .createCompetition(model, new NetId("maarten")));
 
     }
 
     @Test
     public void createCompetitionAlreadyExistsTest() throws Exception {
-        CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT, true,
-                true, "TUDELFT", 1000, Type.C4);
+        CompetitionCreateModel model = new CompetitionCreateModel("name", GenderConstraint.NO_CONSTRAINT,
+                true, true, "TUDELFT", 1000, Type.C4);
 
         when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(1L));
         when(competitionRepository.save(Mockito.any(Competition.class))).thenThrow(DataIntegrityViolationException.class);
-        assertThrows(DataIntegrityViolationException.class, () -> sut.createCompetition(model, new NetId("maarten")));
+        assertThrows(DataIntegrityViolationException.class, () ->
+                competitionServiceServerSide.createCompetition(model, new NetId("maarten")));
     }
 
     @Test
@@ -87,17 +93,17 @@ class CompetitionServiceTest {
         JoinRequestModel request = new JoinRequestModel();
         request.setActivityId(1L);
         request.setPosition(Position.STARBOARD);
-        sut.joinCompetition(request);
+        competitionServiceUserSide.joinCompetition(request);
 
         // Competition doesn't exist
-        String result = sut.joinCompetition(request);
+        String result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("this competition ID does not exist", result);
 
         // Competition exists, but no Userdata
         Competition competition = fabricateCompetition(1L, 1L, Type.C4);
 
         when(competitionRepository.findById(1L)).thenReturn(competition);
-        result = sut.joinCompetition(request);
+        result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("We could not get your user information from the user service", result);
 
         // Complies with all constraints
@@ -109,31 +115,31 @@ class CompetitionServiceTest {
 
         when(restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class)).thenReturn(userData);
 
-        result = sut.joinCompetition(request);
+        result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("Done! Your request has been processed", result);
 
         // Does not meet amateur constraint
         competition.setAllowAmateurs(false);
-        result = sut.joinCompetition(request);
+        result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("you do not meet the constraints of this competition", result);
 
         // Does not meet the organization constraint
         competition.setAllowAmateurs(true);
         competition.setSingleOrganization(true);
-        result = sut.joinCompetition(request);
+        result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("you do not meet the constraints of this competition", result);
 
         // Does not meet the Gender constraint
         competition.setSingleOrganization(false);
         competition.setGenderConstraint(GenderConstraint.ONLY_FEMALE);
-        result = sut.joinCompetition(request);
+        result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("you do not meet the constraints of this competition", result);
 
         // Does not meet the certificate constraint
         competition.setGenderConstraint(GenderConstraint.NO_CONSTRAINT);
         competition.setType(Type.PLUS4);
         request.setPosition(Position.COX);
-        result = sut.joinCompetition(request);
+        result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("you do not have the required certificate to be cox", result);
 
 
