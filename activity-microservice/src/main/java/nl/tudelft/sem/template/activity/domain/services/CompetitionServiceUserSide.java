@@ -109,13 +109,13 @@ public class CompetitionServiceUserSide extends ActivityService {
      * @return an information string
      */
     public String checkNullOrCheckIsOneDay(Competition competition) {
-        String result = competition == null ? "This competition ID does not exist" : "";
+        String result = competition == null ? "this competition ID does not exist" : "";
         if (!result.equals("")) {
             return result;
         }
         long constant = 86400000;
         return ((competition.getStartTime() - currentTimeProvider.getCurrentTime().toEpochMilli()) < constant)
-                ? "Sorry you can't join this training since it will start in one day." : "";
+                ? "Sorry you can't join this competition since it will start in one day." : "";
     }
 
     /**
