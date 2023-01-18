@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.user.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.mock;
@@ -10,12 +9,8 @@ import nl.tudelft.sem.template.user.authentication.AuthManager;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
 import nl.tudelft.sem.template.user.domain.NetId;
-import nl.tudelft.sem.template.user.domain.Position;
-import nl.tudelft.sem.template.user.domain.entities.Message;
 import nl.tudelft.sem.template.user.domain.entities.User;
-import nl.tudelft.sem.template.user.domain.models.UserAcceptanceUpdateModel;
 import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
-import nl.tudelft.sem.template.user.domain.models.UserJoinRequestModel;
 import nl.tudelft.sem.template.user.domain.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.util.List;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)

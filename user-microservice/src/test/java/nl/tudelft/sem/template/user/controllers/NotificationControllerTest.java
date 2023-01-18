@@ -1,5 +1,10 @@
 package nl.tudelft.sem.template.user.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+
 import nl.tudelft.sem.template.user.authentication.AuthManager;
 import nl.tudelft.sem.template.user.domain.Certificate;
 import nl.tudelft.sem.template.user.domain.Gender;
@@ -16,9 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -29,6 +31,9 @@ public class NotificationControllerTest {
     private UserService userService;
     private User user;
 
+    /**
+     * Setting up the test conditions.
+     */
     @BeforeEach
     public void setUp() {
         authManager = mock(AuthManager.class);
