@@ -136,7 +136,7 @@ public class UserControllerIntegrationTesting {
     @Test
     public void sendApplicationOfRequesterToOwnerTest() throws Exception {
 	UserJoinRequestModel body = new UserJoinRequestModel(new NetId("hminh"), Position.COACH, 2L);
-	ResultActions res = performPost(body, "/join");
+	ResultActions res = performPost(body, "/notifications/join");
 	String response = res.andReturn().getResponse().getContentAsString();
 	assertEquals("The message is successfully saved", response);
 	Message message = new Message("hminh", "ExampleUser", 2L,
@@ -153,7 +153,7 @@ public class UserControllerIntegrationTesting {
 	Message expected = new Message("hminh", "ExampleUser", 0L,
 	    "ExampleUser accepted your request. You have been selected for position COACH",
 	    Position.COACH);
-	ResultActions res = performPost(body, "/update");
+	ResultActions res = performPost(body, "/notifications/update");
 	String content = res.andReturn().getResponse().getContentAsString();
 	assertEquals("The message is successfully saved", content);
 	Message result = messageRepository.findById(1L).get();
@@ -166,10 +166,10 @@ public class UserControllerIntegrationTesting {
 	    Position.COACH, new NetId("ExampleUser"));
 	UserAcceptanceUpdateModel body2 = new UserAcceptanceUpdateModel(false,
 	    Position.SCULLING, new NetId("ExampleUser"));
-	performPost(body1, "/update");
-	performPost(body2, "/update");
+	performPost(body1, "/notifications/update");
+	performPost(body2, "/notifications/update");
 
-	ResultActions res = performGet("/notifications");
+	ResultActions res = performGet("/notifications/inbox");
 	String json = res.andReturn().getResponse().getContentAsString();
 	ObjectMapper mapper = new ObjectMapper();
 	List<Message> messages = mapper.readValue(json,

@@ -7,7 +7,8 @@ import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.NetId;
 import nl.tudelft.sem.template.activity.domain.Type;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
-import nl.tudelft.sem.template.activity.domain.services.TrainingService;
+import nl.tudelft.sem.template.activity.domain.services.TrainingServiceServerSide;
+import nl.tudelft.sem.template.activity.domain.services.TrainingServiceUserSide;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
@@ -26,13 +27,20 @@ class TrainingControllerTest {
     private AuthManager authManager;
 
     @Mock
-    private TrainingService trainingService;
+    private TrainingServiceServerSide trainingServiceServerSide;
+
+    @Mock
+    private TrainingServiceUserSide trainingServiceUserSide;
 
     private Training training;
 
     private TrainingCreateModel trainingCreateModel;
 
-    private TrainingController trainingController;
+    private TrainingControllerCreate trainingControllerCreate;
+
+    private TrainingControllerEdit trainingControllerEdit;
+
+    private TrainingControllerUser trainingControllerUser;
 
     private AcceptRequestModel acceptRequestModel;
 
@@ -45,55 +53,58 @@ class TrainingControllerTest {
     @BeforeEach
     public void setup() {
         authManager = mock(AuthManager.class);
-        trainingService = mock(TrainingService.class);
+        trainingServiceServerSide = mock(TrainingServiceServerSide.class);
+        trainingServiceUserSide = mock(TrainingServiceUserSide.class);
         training = new Training(new NetId("123"), "name", 123L, 123L, Type.C4);
         acceptRequestModel = new AcceptRequestModel();
         joinRequestModel = new JoinRequestModel();
         trainingEditModel = new TrainingEditModel();
         activityCancelModel = new ActivityCancelModel(123L);
-        trainingController = new TrainingController(authManager, trainingService);
+        trainingControllerCreate = new TrainingControllerCreate(authManager, trainingServiceServerSide);
+        trainingControllerEdit = new TrainingControllerEdit(authManager, trainingServiceUserSide);
+        trainingControllerUser = new TrainingControllerUser(trainingServiceUserSide);
         trainingCreateModel = new TrainingCreateModel("test", 123L, Type.C4);
     }
 
     @Test
     void createTrainingTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(trainingService.createTraining(trainingCreateModel, new NetId(authManager.getNetId())))
+        when(trainingServiceServerSide.createTraining(trainingCreateModel, new NetId(authManager.getNetId())))
                 .thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
-                trainingController.createTraining(trainingCreateModel));
+                trainingControllerCreate.createTraining(trainingCreateModel));
     }
 
     @Test
     void informUserTest() {
         when(authManager.getNetId()).thenReturn("123");
-        when(trainingService.informUser(acceptRequestModel)).thenReturn("success");
+        when(trainingServiceUserSide.informUser(acceptRequestModel)).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
-                trainingController.informUser(acceptRequestModel));
+                trainingControllerUser.informUser(acceptRequestModel));
     }
 
     @Test
     void joinTrainingTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(trainingService.joinTraining(joinRequestModel)).thenReturn("success");
+        when(trainingServiceUserSide.joinTraining(joinRequestModel)).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
-                trainingController.joinTraining(joinRequestModel));
+                trainingControllerEdit.joinTraining(joinRequestModel));
     }
 
     @Test
     void editTrainingTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(trainingService.editTraining(trainingEditModel, authManager.getNetId())).thenReturn("success");
+        when(trainingServiceServerSide.editTraining(trainingEditModel, authManager.getNetId())).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
-                trainingController.editTraining(trainingEditModel));
+                trainingControllerCreate.editTraining(trainingEditModel));
     }
 
     @Test
     void cancelTrainingTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
-        when(trainingService.deleteTraining(123L, authManager.getNetId())).thenReturn("success");
+        when(trainingServiceServerSide.deleteTraining(123L, authManager.getNetId())).thenReturn("success");
         //when(activityCancelModel.getId()).thenReturn(123L);
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
-                trainingController.cancelTraining(activityCancelModel));
+                trainingControllerCreate.cancelTraining(activityCancelModel));
     }
 }

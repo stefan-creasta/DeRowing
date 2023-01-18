@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.user.domain.NetId;
 import nl.tudelft.sem.template.user.domain.entities.Message;
 import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.exceptions.NetIdAlreadyInUseException;
+import nl.tudelft.sem.template.user.domain.models.UserAcceptanceUpdateModel;
 import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
 import nl.tudelft.sem.template.user.domain.repositories.MessageRepository;
 import nl.tudelft.sem.template.user.domain.repositories.UserRepository;
@@ -99,5 +100,23 @@ public class UserService {
         } catch (Exception e) {
             throw new Exception("Can not retrieve the user's messages");
         }
+    }
+
+
+    /**
+     * Method to update the acceptance of a user.
+     *
+     * @param model the model to update the user with
+     * @param netId the netId of the user to update
+     * @throws Exception the NetId not found exception
+     */
+    public void saveAcceptMessage(UserAcceptanceUpdateModel model, String netId) throws Exception {
+        String body = model.isAccepted()
+                ? " accepted your request. You have been selected for position " + model.getPosition().toString()
+                : " did not accept your request. Consider joining another activity!";
+        Message message = new Message(model.getEventRequester().getNetId(), netId,
+                model.getActivityId(), netId + body, model.getPosition()
+        );
+        messageRepository.save(message);
     }
 }
