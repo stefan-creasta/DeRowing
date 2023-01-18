@@ -85,33 +85,20 @@ public class NotificationController {
      * Saves the decision made by the activity owner to the message database.
      *
      * @param userAcceptanceUpdateModel the request body of the decision made
-     * @return a String that informs that the message is successfully saved
-     * @throws Exception already used NetId exception
+     * @return a String that informs that the message is successfully saved in the message database
      */
+
+
     @PostMapping("/update")
     public ResponseEntity<String> sendDecisionOfOwnerToRequester(@RequestBody UserAcceptanceUpdateModel
                                                                          userAcceptanceUpdateModel) {
         try {
-            String content = "";
-            if (userAcceptanceUpdateModel.isAccepted()) {
-                content += authManager.getNetId() + " accepted your request. You have been selected for position "
-                        + userAcceptanceUpdateModel.getPosition().toString();
-            } else {
-                content += authManager.getNetId() + " did not accept your request. Consider joining another activity!";
-            }
-            Message message = new Message(
-                    userAcceptanceUpdateModel.getEventRequester().getNetId(),
-                    authManager.getNetId(),
-                    userAcceptanceUpdateModel.getActivityId(),
-                    content,
-                    userAcceptanceUpdateModel.getPosition()
-            );
-            userService.saveMessage(message);
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body("The message is successfully saved");
+            userService.saveAcceptMessage(userAcceptanceUpdateModel, authManager.getNetId());
+            return ResponseEntity.status(HttpStatus.OK).body("The message is successfully saved");
         } catch (Exception e) {
-            ResponseEntity.BodyBuilder bb = ResponseEntity.status(HttpStatus.OK);
-            return bb.body("Something went wrong in sending decision of activity owner to participant");
+            return ResponseEntity.status(HttpStatus.OK).body("Something went wrong");
         }
     }
+
 }
+
