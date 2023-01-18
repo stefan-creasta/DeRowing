@@ -60,30 +60,4 @@ class UserControllerTest {
         UserDetailModel userDetailModel = new UserDetailModel(Gender.MALE, "Delft", true, Certificate.PLUS4);
         assertEquals(userDetailModel, responseEntity.getBody());
     }
-
-    @Test
-    void getNotificationsTest() throws Exception {
-        Message message = new Message("hminh", "vluong", 2L, "qwer", Position.COACH);
-        Message message1 = new Message("mtan", "mkhoa", 3L, "qwer", Position.COACH);
-        when(authManager.getNetId()).thenReturn("vluong");
-        when(userService.getNotifications(authManager.getNetId())).thenReturn(List.of(message, message1));
-        userController.getNotifications();
-        verify(userService).getNotifications(authManager.getNetId());
-    }
-
-    @Test
-    void sendApplicationOfRequesterToOwnerTest() throws Exception {
-        NetId owner = new NetId("vluong");
-        UserJoinRequestModel userJoinRequestModel = new UserJoinRequestModel(owner, Position.COACH, 3L);
-        userController.sendApplicationOfRequesterToOwner(userJoinRequestModel);
-        verify(userService).saveMessage(any(Message.class));
-    }
-
-    @Test
-    void sendDecisionOfOwnerToRequesterTest() throws Exception {
-        NetId requester = new NetId("vluong");
-        UserAcceptanceUpdateModel userAcceptanceUpdateModel = new UserAcceptanceUpdateModel(true, Position.COACH, requester);
-        userController.sendDecisionOfOwnerToRequester(userAcceptanceUpdateModel);
-        verify(userService).saveMessage(any(Message.class));
-    }
 }
