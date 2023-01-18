@@ -47,6 +47,108 @@ public class TrainingServiceUserSide extends ActivityService {
     }
 
     /**
+     * Checking whether training is null or not.
+     *
+     * @param training the input of parameter
+     * @return an information string
+     */
+    public String checkNull(Training training) {
+        if (training == null) {
+            return "this competition ID does not exist";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * check whether the training will start in one day or not.
+     *
+     * @param startTime input start time of the training
+     * @return an information string
+     */
+    public String checkIsOneDay(long startTime) {
+        long constant = 1800000;
+        if (startTime - currentTimeProvider.getCurrentTime().toEpochMilli() < constant) {
+            return "Sorry you can't join this training since it will start in one day.";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * check whether the user data is null or not.
+     *
+     * @param userData user data
+     * @return an information string
+     */
+    public String checkUserDataNull(UserDataRequestModel userData) {
+        if (userData == null) {
+            return "We could not get your user information from the user service";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * check whether a requester has a specific license for that training session.
+     *
+     * @param request request
+     * @param training training session
+     * @param userData user data
+     * @return an information string
+     */
+    public String checkIfHaveRequiredCertificate(JoinRequestModel request,
+                                                 Training training, UserDataRequestModel userData) {
+        if (request.getPosition() == Position.COX
+            && training.getType().getValue() > userData.getCertificate().getValue()) {
+            return "you do not have the required certificate to be cox";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * check conditions.
+     *
+     * @param training training session
+     * @return an information string
+     */
+    public String checkNullOrCheckIsOneDay(Training training) {
+        String result = checkNull(training);
+        if (!result.equals("")) {
+            return result;
+        }
+        result = checkIsOneDay(training.getStartTime());
+        if (!result.equals("")) {
+            return result;
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * check conditions.
+     *
+     * @param request request
+     * @param training training
+     * @param userData user data
+     * @return an information string
+     */
+    public String checkUserDataNullOrHavingRequiredCertificate(JoinRequestModel request,
+                                                               Training training, UserDataRequestModel userData) {
+        String result = checkUserDataNull(userData);
+        if (!result.equals("")) {
+            return result;
+        }
+        result = checkIfHaveRequiredCertificate(request, training, userData);
+        if (!result.equals("")) {
+            return result;
+        } else {
+            return "";
+        }
+    }
+
+    /**
      * A method to request to join an activity.
      *
      * @param request the join request
@@ -54,22 +156,15 @@ public class TrainingServiceUserSide extends ActivityService {
      */
     public String joinTraining(JoinRequestModel request) throws Exception {
         Training training = trainingRepository.findById(request.getActivityId());
-        if (training == null) {
-            return "this competition ID does not exist";
-        }
-        long startTime = training.getStartTime();
-        boolean isInOneDay = (startTime - currentTimeProvider.getCurrentTime().toEpochMilli()) < 1800000;
-        if (isInOneDay) {
-            return "Sorry you can't join this training since it will start in one day.";
+        String result = checkNullOrCheckIsOneDay(training);
+        if (!result.equals("")) {
+            return result;
         }
         UserDataRequestModel userData = (UserDataRequestModel)
-                restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
-        if (userData == null) {
-            return "We could not get your user information from the user service";
-        }
-        if (request.getPosition() == Position.COX
-                && training.getType().getValue() > userData.getCertificate().getValue()) {
-            return "you do not have the required certificate to be cox";
+            restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
+        String result1 = checkUserDataNullOrHavingRequiredCertificate(request, training, userData);
+        if (!result1.equals("")) {
+            return result1;
         }
         eventPublisher.publishJoining(training.getOwner(), request.getPosition(), request.getActivityId());
         return "Done! Your request has been processed";
