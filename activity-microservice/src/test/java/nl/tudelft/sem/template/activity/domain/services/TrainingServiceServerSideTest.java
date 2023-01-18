@@ -75,6 +75,8 @@ class TrainingServiceServerSideTest {
         acceptRequestModel = new AcceptRequestModel();
         trainingServiceServerSide = new TrainingServiceServerSide(eventPublisher, restServiceFacade,
                 trainingRepository);
+        trainingServiceUserSide = new TrainingServiceUserSide(eventPublisher, restServiceFacade,
+                trainingRepository, currentTimeProvider);
         id = new NetId("123");
         training = new Training(id, trainingCreateModel.getTrainingName(), 123L, 123L,
                 Type.C4);
