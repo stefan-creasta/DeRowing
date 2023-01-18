@@ -144,7 +144,7 @@ public class TrainingIntegrationTest {
         // Case where boatMicroservice is online
         when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(1L));
 
-        ResultActions res = performPost(body, "/training/create");
+        ResultActions res = performPost(body, "/training-create/create");
         String response = res.andReturn().getResponse().getContentAsString();
 
         assertEquals("Successfully created training", response);
@@ -155,7 +155,7 @@ public class TrainingIntegrationTest {
         // Case where boat microservice is offline
         when(mockRestServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(-1L));
 
-        res = performPost(body, "/training/create");
+        res = performPost(body, "/training-create/create");
         response = res.andReturn().getResponse().getContentAsString();
 
         assertEquals("Could not contact boat service", response);
@@ -174,7 +174,7 @@ public class TrainingIntegrationTest {
         body.setRequestee(new NetId("Maarten"));
         body.setPosition(Position.COX);
 
-        ResultActions res = performPost(body, "/training/inform");
+        ResultActions res = performPost(body, "/training-user/inform");
         String response = res.andReturn().getResponse().getContentAsString();
 
         assertEquals("The user is informed of your decision", response);
@@ -195,13 +195,13 @@ public class TrainingIntegrationTest {
         body.setPosition(Position.COX);
 
         // Starts too early
-        ResultActions res = performPost(body, "/training/join");
+        ResultActions res = performPost(body, "/training-edit/join");
         String response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Sorry you can't join this training since it will start in one day.", response);
 
         // Activity doesnt exist
         body.setActivityId(0L);
-        res = performPost(body, "/training/join");
+        res = performPost(body, "/training-edit/join");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("this competition ID does not exist", response);
 
@@ -209,7 +209,7 @@ public class TrainingIntegrationTest {
         body.setActivityId(1L);
         t.setStartTime(currentTimeProvider.getCurrentTime().toEpochMilli() + 2 * (24 * 60 * 60 * 1000));
         trainingRepository.save(t);
-        res = performPost(body, "/training/join");
+        res = performPost(body, "/training-edit/join");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("We could not get your user information from the user service", response);
 
@@ -217,7 +217,7 @@ public class TrainingIntegrationTest {
         when(mockRestServiceFacade.performUserModel(any(), any(), any())).thenAnswer(x ->
                 new UserDataRequestModel(Gender.MALE, "TUDELFT", false, Certificate.C4));
 
-        res = performPost(body, "/training/join");
+        res = performPost(body, "/training-edit/join");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Done! Your request has been processed", response);
         verify(mockApplicationEventPublisher, times(1)).publishEvent(any(UserJoinEvent.class));
@@ -225,7 +225,7 @@ public class TrainingIntegrationTest {
         // Wrong certificate
         t.setType(Type.PLUS8);
         trainingRepository.save(t);
-        res = performPost(body, "/training/join");
+        res = performPost(body, "/training-edit/join");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("you do not have the required certificate to be cox", response);
 
@@ -249,7 +249,7 @@ public class TrainingIntegrationTest {
         assertEquals("name", t.getActivityName());
 
         // Successful request
-        ResultActions res = performPost(body, "/training/edit");
+        ResultActions res = performPost(body, "/training-edit/edit");
         String response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Successfully edited training", response);
 
@@ -266,7 +266,7 @@ public class TrainingIntegrationTest {
         body.setStartTime(currentTimeProvider.getCurrentTime().toEpochMilli() + 2 * (24 * 60 * 60 * 1000));
 
         // Successful request
-        ResultActions res = performPost(body, "/training/edit");
+        ResultActions res = performPost(body, "/training-edit/edit");
         String response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Internal error when editing training.", response);
 
@@ -282,7 +282,7 @@ public class TrainingIntegrationTest {
         // Wrong id
         ActivityCancelModel body = new ActivityCancelModel(2L);
 
-        ResultActions res = performPost(body, "/training/cancel");
+        ResultActions res = performPost(body, "/training-create/cancel");
         String response = res.andReturn().getResponse().getContentAsString();
         assertEquals("training not found", response);
 
@@ -294,7 +294,7 @@ public class TrainingIntegrationTest {
         t = fabricateTraining("barrack", 1L);
         trainingRepository.save(t);
 
-        res = performPost(body, "/training/cancel");
+        res = performPost(body, "/training-create/cancel");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Successfully deleted training", response);
 
@@ -304,7 +304,7 @@ public class TrainingIntegrationTest {
         trainingRepository.deleteAll();
         trainingRepository.resetSequence();
         trainingRepository.save(t);
-        res = performPost(body, "/training/cancel");
+        res = performPost(body, "/training-create/cancel");
         response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Internal error when canceling training.", response);
 

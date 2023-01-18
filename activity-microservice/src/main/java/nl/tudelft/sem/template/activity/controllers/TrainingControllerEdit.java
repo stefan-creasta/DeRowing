@@ -1,16 +1,10 @@
 package nl.tudelft.sem.template.activity.controllers;
 
-import nl.tudelft.sem.template.activity.authentication.AuthManager;
-import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.Position;
-import nl.tudelft.sem.template.activity.domain.entities.Competition;
+import nl.tudelft.sem.template.activity.authentication.AuthInterface;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.services.TrainingService;
-import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
-import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.PositionEntryModel;
-import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
 import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
-@RequestMapping("/training")
+@RequestMapping("/training-edit")
 @RestController
-public class TrainingController {
+public class TrainingControllerEdit {
 
-    private final transient AuthManager authManager;
+    private final transient AuthInterface authManager;
 
     private final transient TrainingService trainingService;
 
@@ -37,42 +31,9 @@ public class TrainingController {
      * @param trainingService  the service provider of all activities
      */
     @Autowired
-    public TrainingController(AuthManager authManager, TrainingService trainingService) {
+    public TrainingControllerEdit(AuthInterface authManager, TrainingService trainingService) {
         this.authManager = authManager;
         this.trainingService = trainingService;
-    }
-
-    /**
-     * the method to create a training.
-     *
-     * @param request   a training create model, which contains all information about the competition
-     * @return a training
-     * @throws Exception an already used NetId exception
-     */
-    @PostMapping("/create")
-    public ResponseEntity<String> createTraining(@RequestBody TrainingCreateModel request) throws Exception {
-        try {
-            String response = trainingService.createTraining(request, new NetId(authManager.getNetId()));
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.ok("Internal error when creating training.");
-        }
-    }
-
-    /**
-     * A REST-mapping designed to accept / reject users from activities.
-     *
-     * @param model The request body
-     * @return A string informing success
-     */
-    @PostMapping("/inform")
-    public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
-        try {
-            String status = trainingService.informUser(model);
-            return ResponseEntity.ok(status);
-        } catch (Exception e) {
-            return ResponseEntity.ok("Internal error when informing user.");
-        }
     }
 
     /**
@@ -105,23 +66,6 @@ public class TrainingController {
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when editing training.");
         }
-    }
-
-    /**
-     * The method to delete a specified training.
-     *
-     * @param activityCancelModel the id of the training to be deleted.
-     * @return a message containing the information about the canceling.
-     */
-    @PostMapping("/cancel")
-    public ResponseEntity<String> cancelTraining(@RequestBody ActivityCancelModel activityCancelModel) {
-        try {
-            String response = trainingService.deleteTraining(activityCancelModel.getId(), authManager.getNetId());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.ok("Internal error when canceling training.");
-        }
-
     }
 
     /**
