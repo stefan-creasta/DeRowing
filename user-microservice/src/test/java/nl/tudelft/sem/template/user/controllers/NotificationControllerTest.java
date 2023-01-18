@@ -66,6 +66,6 @@ public class NotificationControllerTest {
         NetId requester = new NetId("vluong");
         UserAcceptanceUpdateModel userAcceptanceUpdateModel = new UserAcceptanceUpdateModel(true, Position.COACH, requester);
         notificationController.sendDecisionOfOwnerToRequester(userAcceptanceUpdateModel);
-        verify(userService).saveMessage(any(Message.class));
+        verify(userService).saveAcceptMessage(any(UserAcceptanceUpdateModel.class), any(String.class));
     }
 }
