@@ -249,7 +249,7 @@ public class TrainingIntegrationTest {
         assertEquals("name", t.getActivityName());
 
         // Successful request
-        ResultActions res = performPost(body, "/training-edit/edit");
+        ResultActions res = performPost(body, "/training-create/edit");
         String response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Successfully edited training", response);
 
@@ -266,7 +266,7 @@ public class TrainingIntegrationTest {
         body.setStartTime(currentTimeProvider.getCurrentTime().toEpochMilli() + 2 * (24 * 60 * 60 * 1000));
 
         // Successful request
-        ResultActions res = performPost(body, "/training-edit/edit");
+        ResultActions res = performPost(body, "/training-create/edit");
         String response = res.andReturn().getResponse().getContentAsString();
         assertEquals("Internal error when editing training.", response);
 

@@ -26,7 +26,7 @@ public class UserJoinListener {
     @EventListener
     public void onUserJoin(UserJoinEvent event) {
         try {
-            userRestService.performUserRequest(event, "/join", null);
+            userRestService.performUserRequest(event, "notifications/join", null);
         } catch (Exception e) {
             System.out.println("User join event failed");
         }

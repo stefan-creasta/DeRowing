@@ -2,10 +2,9 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthInterface;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
-import nl.tudelft.sem.template.activity.domain.services.TrainingService;
+import nl.tudelft.sem.template.activity.domain.services.TrainingServiceUserSide;
 import nl.tudelft.sem.template.activity.models.JoinRequestModel;
 import nl.tudelft.sem.template.activity.models.PositionEntryModel;
-import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ public class TrainingControllerEdit {
 
     private final transient AuthInterface authManager;
 
-    private final transient TrainingService trainingService;
+    private final transient TrainingServiceUserSide trainingService;
 
     /**
      * The controller of trainings.
@@ -31,7 +30,7 @@ public class TrainingControllerEdit {
      * @param trainingService  the service provider of all activities
      */
     @Autowired
-    public TrainingControllerEdit(AuthInterface authManager, TrainingService trainingService) {
+    public TrainingControllerEdit(AuthInterface authManager, TrainingServiceUserSide trainingService) {
         this.authManager = authManager;
         this.trainingService = trainingService;
     }
@@ -49,22 +48,6 @@ public class TrainingControllerEdit {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.ok("Internal error when joining training.");
-        }
-    }
-
-    /**
-     * A method to edit the existing training.
-     *
-     * @param request The information that the training should have
-     * @return a message containing the information about the editing
-     */
-    @PostMapping("/edit")
-    public ResponseEntity<String> editTraining(@RequestBody TrainingEditModel request) {
-        try {
-            String response = trainingService.editTraining(request, authManager.getNetId());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.ok("Internal error when editing training.");
         }
     }
 

@@ -1,6 +1,6 @@
 package nl.tudelft.sem.template.activity.controllers;
 
-import nl.tudelft.sem.template.activity.domain.services.TrainingService;
+import nl.tudelft.sem.template.activity.domain.services.TrainingServiceUserSide;
 import nl.tudelft.sem.template.activity.models.AcceptRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TrainingControllerUser {
 
-    private final transient TrainingService trainingService;
+    private final transient TrainingServiceUserSide trainingService;
 
     /**
      * The controller of trainings.
@@ -21,7 +21,7 @@ public class TrainingControllerUser {
      * @param trainingService  the service provider of all activities
      */
     @Autowired
-    public TrainingControllerUser(TrainingService trainingService) {
+    public TrainingControllerUser(TrainingServiceUserSide trainingService) {
         this.trainingService = trainingService;
     }
 

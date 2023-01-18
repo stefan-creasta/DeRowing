@@ -53,34 +53,4 @@ public class UserTest {
     void testIsAmateur() {
         assertEquals(false, sut.isAmateur());
     }
-
-    @Test
-    void testSetNetId() {
-        sut.setNetId(new NetId("hminh"));
-        assertEquals(new NetId("hminh"), sut.getNetId());
-    }
-
-    @Test
-    void testSetGender() {
-        sut.setGender(Gender.FEMALE);
-        assertEquals(Gender.FEMALE, sut.getGender());
-    }
-
-    @Test
-    void testSetCertificate() {
-        sut.setCertificate(Certificate.PLUS4);
-        assertEquals(Certificate.PLUS4, sut.getCertificate());
-    }
-
-    @Test
-    void testSetOrganization() {
-        sut.setOrganization("Delft");
-        assertEquals("Delft", sut.getOrganization());
-    }
-
-    @Test
-    void testSetAmateur() {
-        sut.setAmateur(true);
-        assertEquals(true, sut.isAmateur());
-    }
 }

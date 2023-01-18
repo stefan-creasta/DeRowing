@@ -25,7 +25,7 @@ public class UserAcceptanceListener {
     @EventListener
     public void onUserAcceptance(UserAcceptanceEvent event) {
         try {
-            restServiceFacade.performUserModel(event, "/update", null);
+            restServiceFacade.performUserModel(event, "notifications/update", null);
         } catch (Exception e) {
             System.out.println("Error while updating user model");
         }

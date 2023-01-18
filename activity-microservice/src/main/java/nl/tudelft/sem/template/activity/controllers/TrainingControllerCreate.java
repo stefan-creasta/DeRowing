@@ -2,9 +2,10 @@ package nl.tudelft.sem.template.activity.controllers;
 
 import nl.tudelft.sem.template.activity.authentication.AuthInterface;
 import nl.tudelft.sem.template.activity.domain.NetId;
-import nl.tudelft.sem.template.activity.domain.services.TrainingService;
+import nl.tudelft.sem.template.activity.domain.services.TrainingServiceServerSide;
 import nl.tudelft.sem.template.activity.models.ActivityCancelModel;
 import nl.tudelft.sem.template.activity.models.TrainingCreateModel;
+import nl.tudelft.sem.template.activity.models.TrainingEditModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class TrainingControllerCreate {
 
     private final transient AuthInterface authManager;
 
-    private final transient TrainingService trainingService;
+    private final transient TrainingServiceServerSide trainingService;
 
     /**
      * The controller of trainings.
@@ -28,9 +29,25 @@ public class TrainingControllerCreate {
      * @param trainingService  the service provider of all activities
      */
     @Autowired
-    public TrainingControllerCreate(AuthInterface authManager, TrainingService trainingService) {
+    public TrainingControllerCreate(AuthInterface authManager, TrainingServiceServerSide trainingService) {
         this.authManager = authManager;
         this.trainingService = trainingService;
+    }
+
+    /**
+     * A method to edit the existing training.
+     *
+     * @param request The information that the training should have
+     * @return a message containing the information about the editing
+     */
+    @PostMapping("/edit")
+    public ResponseEntity<String> editTraining(@RequestBody TrainingEditModel request) {
+        try {
+            String response = trainingService.editTraining(request, authManager.getNetId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Internal error when editing training.");
+        }
     }
 
     /**

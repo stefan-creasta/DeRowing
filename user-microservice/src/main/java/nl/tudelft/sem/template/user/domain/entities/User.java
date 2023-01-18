@@ -63,26 +63,6 @@ public class User {
         return amateur;
     }
 
-    public void setNetId(NetId netId) {
-        this.netId = netId;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public void setCertificate(Certificate certificate) {
-        this.certificate = certificate;
-    }
-
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
-
-    public void setAmateur(boolean amateur) {
-        this.amateur = amateur;
-    }
-
     /**
      * A method providing string format information.
      *
