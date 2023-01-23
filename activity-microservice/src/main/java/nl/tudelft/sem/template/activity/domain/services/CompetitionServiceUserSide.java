@@ -50,7 +50,7 @@ public class CompetitionServiceUserSide extends ActivityService {
      * @param model The request body
      * @return if success
      */
-    public String informUser(AcceptRequestModel model) {
+    public String informUser(AcceptRequestModel model) throws Exception {
         return informUser(model, competitionRepository, eventPublisher);
     }
 

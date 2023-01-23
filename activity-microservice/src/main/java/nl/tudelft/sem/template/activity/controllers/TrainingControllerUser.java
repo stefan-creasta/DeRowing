@@ -33,11 +33,7 @@ public class TrainingControllerUser {
      */
     @PostMapping("/inform")
     public ResponseEntity<String> informUser(@RequestBody AcceptRequestModel model) {
-        try {
-            String status = trainingService.informUser(model);
-            return ResponseEntity.ok(status);
-        } catch (Exception e) {
-            return ResponseEntity.ok("Internal error when informing user.");
-        }
+        String status = trainingService.informUser(model);
+        return ResponseEntity.ok(status);
     }
 }

@@ -76,7 +76,7 @@ class TrainingControllerTest {
     }
 
     @Test
-    void informUserTest() {
+    void informUserTest() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
         when(trainingServiceUserSide.informUser(acceptRequestModel)).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
