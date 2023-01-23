@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @NoArgsConstructor
-public class BoatService extends RestService {
+public class BoatService {
     private BoatRepository boatRepository;
 
     private Director director;
