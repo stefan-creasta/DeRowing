@@ -1,5 +1,9 @@
 package nl.tudelft.sem.template.activity.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.entities.Training;
 import nl.tudelft.sem.template.activity.domain.services.TrainingServiceServerSide;
@@ -13,13 +17,8 @@ import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TrainingControllerEditTest {
 
@@ -54,8 +53,11 @@ class TrainingControllerEditTest {
     @Test
     void getTrainingsTestException() throws Exception {
         Exception e = new Exception();
-        when(trainingServiceUserSide.getSuitableCompetition(positionEntryModel.getPosition())).thenThrow(e);
-        Assertions.assertThrows(ResponseStatusException.class, () -> {trainingControllerEdit.getTrainings(positionEntryModel);});
+        when(trainingServiceUserSide.getSuitableCompetition(positionEntryModel
+                .getPosition())).thenThrow(e);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            trainingControllerEdit
+                .getTrainings(positionEntryModel); });
     }
 
     @Test
