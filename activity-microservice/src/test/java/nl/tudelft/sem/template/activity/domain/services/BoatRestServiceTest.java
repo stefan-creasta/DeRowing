@@ -5,6 +5,9 @@ import nl.tudelft.sem.template.activity.authentication.AuthInterface;
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
 import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
 import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -146,5 +149,27 @@ public class BoatRestServiceTest {
         } catch (UnsuccessfulRequestException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    @Test
+    void urlNullCheckTest() {
+        when(environment.getProperty("boat.url")).thenReturn(null);
+        when(environment.getProperty("boat.port")).thenReturn("100");
+        Assertions.assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
+    }
+
+    @Test
+    void portNullCheckTest() {
+        when(environment.getProperty("boat.url")).thenReturn("home");
+        when(environment.getProperty("boat.port")).thenReturn(null);
+        Assertions.assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
+    }
+
+    @Test
+    void deserializeNullTest() throws UnsuccessfulRequestException {
+        when(environment.getProperty("boat.port")).thenReturn("100");
+        when(environment.getProperty("boat.url")).thenReturn("home");
+        boatRestService = new BoatRestService(environment);
+        Assertions.assertEquals(null, boatRestService.deserialize(null, null));
     }
 }
