@@ -1,19 +1,5 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.tudelft.sem.template.activity.authentication.AuthInterface;
-import nl.tudelft.sem.template.activity.authentication.AuthManager;
-import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
-import nl.tudelft.sem.template.activity.models.BoatDeleteModel;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -23,6 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.tudelft.sem.template.activity.authentication.AuthManager;
+import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 
 public class BoatRestServiceTest {
     private transient Environment environment;
@@ -46,7 +41,7 @@ public class BoatRestServiceTest {
         try {
             boatRestService = new BoatRestService(environment);
             assertNull(boatRestService.getPortString());
-        } catch(UnsuccessfulRequestException e) {
+        } catch (UnsuccessfulRequestException e) {
             System.out.println(e.getMessage());
         }
 
@@ -58,18 +53,18 @@ public class BoatRestServiceTest {
         try {
             boatRestService = new BoatRestService(environment);
             assertNull(boatRestService.getUrl());
-        } catch(UnsuccessfulRequestException e) {
+        } catch (UnsuccessfulRequestException e) {
             System.out.println(e.getMessage());
         }
     }
-    
+
     @Test
     void getPortStringTest() {
         try {
             when(environment.getProperty("boat.port")).thenReturn("100");
             boatRestService = new BoatRestService(environment);
             assertEquals(environment.getProperty("boat.port"), boatRestService.getPortString());
-        } catch(UnsuccessfulRequestException e) {
+        } catch (UnsuccessfulRequestException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -82,7 +77,7 @@ public class BoatRestServiceTest {
             assertNotEquals("", boatRestService.getPortString());
             assertFalse(boatRestService.getPortString().isEmpty());
             assertEquals(environment.getProperty("boat.port"), boatRestService.getPortString());
-        } catch(UnsuccessfulRequestException e) {
+        } catch (UnsuccessfulRequestException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -95,7 +90,7 @@ public class BoatRestServiceTest {
             assertNotEquals("", boatRestService.getUrl());
             assertFalse(boatRestService.getPortString().isEmpty());
             assertEquals(environment.getProperty("boat.url"), boatRestService.getUrl());
-        } catch(UnsuccessfulRequestException e) {
+        } catch (UnsuccessfulRequestException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -106,7 +101,7 @@ public class BoatRestServiceTest {
             when(environment.getProperty("boat.url")).thenReturn("home");
             boatRestService = new BoatRestService(environment);
             assertEquals(environment.getProperty("boat.url"), boatRestService.getUrl());
-        } catch(UnsuccessfulRequestException e) {
+        } catch (UnsuccessfulRequestException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -127,9 +122,11 @@ public class BoatRestServiceTest {
     @Test
     void deserializeMapperTest() {
         try {
-            Object genericResponse = RestService.performRequest(model, "home", 100, "home", HttpMethod.POST);
+            Object genericResponse =
+                    RestService.performRequest(model, "home", 100, "home", HttpMethod.POST);
             boatRestService = new BoatRestService(environment);
-            when(boatRestService.performBoatRequest(any(), any(), String.class)).thenReturn(boatRestService.deserialize(any(), String.class));
+            when(boatRestService.performBoatRequest(any(), any(), String.class))
+                    .thenReturn(boatRestService.deserialize(any(), String.class));
             String response = new ObjectMapper().convertValue(genericResponse, String.class);
             assertEquals(response, boatRestService.deserialize(genericResponse, String.class));
         } catch (Exception e) {
@@ -151,14 +148,18 @@ public class BoatRestServiceTest {
     void urlNullCheckTest() {
         when(environment.getProperty("boat.url")).thenReturn(null);
         when(environment.getProperty("boat.port")).thenReturn("100");
-        assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
+        assertThrows(UnsuccessfulRequestException.class, () -> {
+            new BoatRestService(environment);
+        });
     }
 
     @Test
     void portNullCheckTest() {
         when(environment.getProperty("boat.url")).thenReturn("home");
         when(environment.getProperty("boat.port")).thenReturn(null);
-        assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
+        assertThrows(UnsuccessfulRequestException.class, () -> {
+            new BoatRestService(environment);
+        });
     }
 
     @Test
