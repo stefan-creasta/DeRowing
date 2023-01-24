@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.user.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.mock;
@@ -12,10 +13,12 @@ import nl.tudelft.sem.template.user.domain.NetId;
 import nl.tudelft.sem.template.user.domain.entities.User;
 import nl.tudelft.sem.template.user.domain.models.UserDetailModel;
 import nl.tudelft.sem.template.user.domain.services.UserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -54,4 +57,14 @@ class UserControllerTest {
         UserDetailModel userDetailModel = new UserDetailModel(Gender.MALE, "Delft", true, Certificate.PLUS4);
         assertEquals(userDetailModel, responseEntity.getBody());
     }
+
+    @Test
+    void createUserTestMutation() throws Exception {
+        UserDetailModel userDetailModel = new UserDetailModel(Gender.FEMALE, "Delft", true, Certificate.PLUS4);
+        when(userService.createUser(any())).thenThrow(Exception.class);
+        Assertions.assertEquals(new ResponseEntity<>("Something went wrong in creating the user", HttpStatus.valueOf(200)),
+                userController.createUser(userDetailModel));
+    }
+
+
 }
