@@ -84,7 +84,7 @@ class CompetitionControllerTest {
     }
 
     @Test
-    void informUser() {
+    void informUser() throws Exception {
         when(authManager.getNetId()).thenReturn("123");
         when(competitionServiceUserSide.informUser(acceptRequestModel)).thenReturn("success");
         Assertions.assertEquals(new ResponseEntity<>("success", HttpStatus.valueOf(200)),
