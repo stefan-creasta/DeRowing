@@ -53,7 +53,7 @@ class TrainingControllerEditTest {
     @Test
     void getTrainingsTestException() throws Exception {
         Exception e = new Exception();
-        when(trainingServiceUserSide.getSuitableCompetition(positionEntryModel
+        when(trainingServiceUserSide.getSuitableTrainings(positionEntryModel
                 .getPosition())).thenThrow(e);
         Assertions.assertThrows(ResponseStatusException.class, () -> {
             trainingControllerEdit
@@ -63,7 +63,7 @@ class TrainingControllerEditTest {
     @Test
     void getTrainingsTestNormal() throws Exception {
         List<Training> sol = new ArrayList<>();
-        when(trainingServiceUserSide.getSuitableCompetition(positionEntryModel.getPosition())).thenReturn(sol);
+        when(trainingServiceUserSide.getSuitableTrainings(positionEntryModel.getPosition())).thenReturn(sol);
         Assertions.assertEquals(new ResponseEntity<>(sol, HttpStatus.valueOf(200)),
                 trainingControllerEdit.getTrainings(positionEntryModel));
     }
