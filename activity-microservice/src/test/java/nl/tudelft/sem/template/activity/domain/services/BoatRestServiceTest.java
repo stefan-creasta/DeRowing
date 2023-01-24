@@ -19,16 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BoatRestServiceTest {
     private transient Environment environment;
-    private transient BoatDeleteModel boatDeleteModel;
     private transient BoatRestService boatRestService;
-    private transient RestServiceFacade restServiceFacade;
-    private transient RestService restService;
     private transient AuthManager authManager;
 
     private transient Object model;
@@ -36,8 +34,6 @@ public class BoatRestServiceTest {
     @BeforeEach
     void setup() {
         environment = Mockito.mock(Environment.class);
-        boatDeleteModel = Mockito.mock(BoatDeleteModel.class);
-        restServiceFacade = Mockito.mock(RestServiceFacade.class);
         authManager = mock(AuthManager.class);
         when(authManager.getNetId()).thenReturn("123");
 
@@ -66,7 +62,7 @@ public class BoatRestServiceTest {
             System.out.println(e.getMessage());
         }
     }
-
+    
     @Test
     void getPortStringTest() {
         try {
@@ -155,14 +151,14 @@ public class BoatRestServiceTest {
     void urlNullCheckTest() {
         when(environment.getProperty("boat.url")).thenReturn(null);
         when(environment.getProperty("boat.port")).thenReturn("100");
-        Assertions.assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
+        assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
     }
 
     @Test
     void portNullCheckTest() {
         when(environment.getProperty("boat.url")).thenReturn("home");
         when(environment.getProperty("boat.port")).thenReturn(null);
-        Assertions.assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
+        assertThrows(UnsuccessfulRequestException.class, () -> { new BoatRestService(environment); });
     }
 
     @Test
@@ -170,6 +166,6 @@ public class BoatRestServiceTest {
         when(environment.getProperty("boat.port")).thenReturn("100");
         when(environment.getProperty("boat.url")).thenReturn("home");
         boatRestService = new BoatRestService(environment);
-        Assertions.assertEquals(null, boatRestService.deserialize(null, null));
+        assertNull(boatRestService.deserialize(null, null));
     }
 }
