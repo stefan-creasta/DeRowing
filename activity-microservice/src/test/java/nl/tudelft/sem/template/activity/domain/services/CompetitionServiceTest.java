@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.activity.domain.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import nl.tudelft.sem.template.activity.domain.Certificate;
@@ -134,6 +135,7 @@ class CompetitionServiceTest {
         competition.setGenderConstraint(GenderConstraint.ONLY_FEMALE);
         result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("you do not meet the constraints of this competition", result);
+        verify(eventPublisher).publishJoining(competition.getOwner(), request.getPosition(), request.getActivityId());
 
         // Does not meet the certificate constraint
         competition.setGenderConstraint(GenderConstraint.NO_CONSTRAINT);
@@ -141,7 +143,5 @@ class CompetitionServiceTest {
         request.setPosition(Position.COX);
         result = competitionServiceUserSide.joinCompetition(request);
         assertEquals("you do not have the required certificate to be cox", result);
-
-
     }
 }

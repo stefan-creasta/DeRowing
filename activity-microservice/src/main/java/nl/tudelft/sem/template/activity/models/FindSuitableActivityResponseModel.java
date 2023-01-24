@@ -7,4 +7,8 @@ import java.util.List;
 @Data
 public class FindSuitableActivityResponseModel {
     List<Long> boatId;
+
+    public FindSuitableActivityResponseModel(List<Long> boatId) {
+        this.boatId = boatId;
+    }
 }
