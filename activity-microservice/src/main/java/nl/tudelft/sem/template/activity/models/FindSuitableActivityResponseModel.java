@@ -8,6 +8,8 @@ import java.util.List;
 public class FindSuitableActivityResponseModel {
     List<Long> boatId;
 
+    public FindSuitableActivityResponseModel() {}
+
     public FindSuitableActivityResponseModel(List<Long> boatId) {
         this.boatId = boatId;
     }
