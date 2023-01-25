@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import nl.tudelft.sem.template.activity.authentication.AuthManager;
@@ -85,7 +88,7 @@ class TrainingServiceServerSideTest {
 
     @Test
     void parseRequest() {
-        Assertions.assertEquals(training, trainingServiceServerSide
+        assertEquals(training, trainingServiceServerSide
                 .parseRequest(trainingCreateModel, id, 123L));
     }
 
@@ -93,7 +96,7 @@ class TrainingServiceServerSideTest {
     void createTraining() throws Exception {
         when(restServiceFacade.performBoatModel(any(), any(), any())).thenReturn(new CreateBoatResponseModel(123L));
         when(trainingRepository.save(training)).thenReturn(training);
-        Assertions.assertEquals("Successfully created training",
+        assertEquals("Successfully created training",
                 trainingServiceServerSide.createTraining(trainingCreateModel, new NetId("123")));
     }
 
@@ -101,14 +104,14 @@ class TrainingServiceServerSideTest {
     void joinTraining() throws Exception {
         when(trainingRepository.findById(123L)).thenReturn(training);
         when(currentTimeProvider.getCurrentTime()).thenReturn(Instant.ofEpochSecond(123L));
-        Assertions.assertEquals("Sorry you can't join this training "
+        assertEquals("Sorry you can't join this training "
                 + "since it will start in one day.", trainingServiceUserSide.joinTraining(joinRequestModel));
     }
 
     @Test
     void testFindTraining() throws Exception {
         when(trainingRepository.findById(123L)).thenReturn(training);
-        Assertions.assertEquals(training, trainingServiceUserSide.findTraining(123L));
+        assertEquals(training, trainingServiceUserSide.findTraining(123L));
     }
 
     @Test
@@ -116,7 +119,7 @@ class TrainingServiceServerSideTest {
         when(authManager.getNetId()).thenReturn("123");
         BoatDeleteModel boatDeleteModel = new BoatDeleteModel(123L);
         when(trainingServiceUserSide.findTraining(123L)).thenReturn(training);
-        Assertions.assertEquals("Successfully deleted training",
+        assertEquals("Successfully deleted training",
                 trainingServiceServerSide.deleteTraining(123L, authManager.getNetId()));
     }
 
@@ -127,7 +130,7 @@ class TrainingServiceServerSideTest {
         TrainingEditModel trainingEditModel = new TrainingEditModel();
         trainingEditModel.setTrainingName("newName");
         training = trainingServiceServerSide.update(training, trainingEditModel);
-        Assertions.assertEquals(temp, training);
+        assertEquals(temp, training);
     }
 
     @Test
@@ -140,5 +143,38 @@ class TrainingServiceServerSideTest {
         Assertions.assertThrows(Exception.class, () -> {
             trainingServiceServerSide.editTraining(trainingEditModel, authManager.getNetId());
         });
+    }
+
+    @Test
+    void editTrainingNotOwnerTest() throws Exception {
+        // Create input
+        TrainingEditModel model = new TrainingEditModel();
+        model.setId(1);
+        // We return a training with a different netid as owner
+        Training training = new Training();
+        training.setOwner(new NetId("notmaarten"));
+        when(trainingRepository.findById(1)).thenReturn(training);
+
+        String response = trainingServiceServerSide.editTraining(model, "maarten");
+        assertEquals("You are not the owner of this competition", response);
+        verify(trainingRepository, times(1)).findById(1);
+    }
+
+    @Test
+    void deleteTrainingNotOwnerTest() throws Exception {
+        // Create input
+        TrainingEditModel model = new TrainingEditModel();
+        model.setId(1);
+        // We return a training with a different netid as owner
+        Training training = new Training();
+        training.setOwner(new NetId("notmaarten"));
+        when(trainingRepository.findById(1)).thenReturn(training);
+
+
+        String response = trainingServiceServerSide.deleteTraining(1, "maarten");
+
+        assertEquals("You are not the owner of this competition", response);
+        verify(trainingRepository, times(1)).findById(1);
+
     }
 }
