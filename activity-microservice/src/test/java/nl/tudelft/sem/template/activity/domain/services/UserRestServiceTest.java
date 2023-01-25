@@ -73,7 +73,7 @@ public class UserRestServiceTest {
     }
 
     @Test
-    void deserializeTargetNullTest() throws UnsuccessfulRequestException{
+    void deserializeTargetNullTest() throws UnsuccessfulRequestException {
         when(environment.getProperty("user.port")).thenReturn("100");
         when(environment.getProperty("user.url")).thenReturn("home");
         userRestService = new UserRestService(environment);
