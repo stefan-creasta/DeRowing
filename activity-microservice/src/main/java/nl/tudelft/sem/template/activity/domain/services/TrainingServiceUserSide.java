@@ -192,7 +192,7 @@ public class TrainingServiceUserSide extends ActivityService {
      * @return the list of matching trainings
      * @throws Exception the exception
      */
-    public List<Training> getSuitableCompetition(Position position) throws Exception {
+    public List<Training> getSuitableTrainings(Position position) throws Exception {
         UserDataRequestModel userData = (UserDataRequestModel)
                 restServiceFacade.performUserModel(null, "/getdetails", UserDataRequestModel.class);
         if (userData == null) {

@@ -1,12 +1,7 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.tudelft.sem.template.activity.domain.events.UserAcceptanceEvent;
-import nl.tudelft.sem.template.activity.domain.events.UserJoinEvent;
 import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
-import nl.tudelft.sem.template.activity.models.InformJoinRequestModel;
-import nl.tudelft.sem.template.activity.models.UserDataRequestModel;
-import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -16,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class UserRestService implements RestService {
 
     private final transient Environment environment;
+    private final transient String portString;
     private final transient int port;
     private final transient String url;
 
@@ -25,14 +21,22 @@ public class UserRestService implements RestService {
      * @param environment the environment
      */
     @Autowired
-    public UserRestService(Environment environment) {
+    public UserRestService(Environment environment) throws UnsuccessfulRequestException {
         this.environment = environment;
-        String userport = environment.getProperty("user.port");
+        this.portString = environment.getProperty("user.port");
         this.url = environment.getProperty("user.url");
-        if (url == null || userport == null) {
-            System.out.println("No ports and/or url found in the application.properties file");
+        if (url == null || portString == null) {
+            throw new UnsuccessfulRequestException();
         }
-        this.port = Integer.parseInt(userport);
+        this.port = Integer.parseInt(portString);
+    }
+
+    public String getPortString() {
+        return this.portString;
+    }
+
+    public String getUrl() {
+        return this.url;
     }
 
     /**
@@ -43,6 +47,9 @@ public class UserRestService implements RestService {
      * @return the object cast to target class
      */
     public Object deserialize(Object response, Class<?> target) {
+        if (target == null) {
+            return null;
+        }
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(response, target);
     }
@@ -57,8 +64,6 @@ public class UserRestService implements RestService {
      * @throws Exception if the request fails
      */
     public Object performUserRequest(Object model, String path, Class<?> t) throws Exception {
-        String url = environment.getProperty("user.url");
-        int port = Integer.parseInt(environment.getProperty("user.port"));
         Object genericResponse = RestService.performRequest(model, url, port, path, HttpMethod.POST);
         return (genericResponse != null)
                 ? deserialize(genericResponse, t)

@@ -60,7 +60,7 @@ public class TrainingControllerEdit {
     @PostMapping("/find")
     public ResponseEntity<List<Training>> getTrainings(@RequestBody PositionEntryModel model) {
         try {
-            List<Training> result = trainingService.getSuitableCompetition(model.getPosition());
+            List<Training> result = trainingService.getSuitableTrainings(model.getPosition());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
