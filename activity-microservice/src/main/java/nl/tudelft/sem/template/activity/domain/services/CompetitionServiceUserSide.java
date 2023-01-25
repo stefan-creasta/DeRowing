@@ -205,20 +205,35 @@ public class CompetitionServiceUserSide extends ActivityService {
         if (userData == null) {
             throw new Exception("We could not get your user information from the user service");
         }
-        List<Long> boatIds = competitionRepository.findAll().stream()
-                .filter(competition -> competition.getStartTime()
-                        > currentTimeProvider.getCurrentTime().toEpochMilli() + 86400000)
-                .filter(competition -> checkGender(userData.getGender(), competition.getGenderConstraint()))
-                .filter(competition -> checkAmateur(competition, userData))
-                .filter(competition -> checkOriganization(competition, userData))
-                .map(Activity::getBoatId)
-                .collect(Collectors.toList());
+        List<Long> boatIds = suitableBoatIds(competitionRepository, userData);
 
         FindSuitableActivityModel model = new FindSuitableActivityModel(boatIds, position.getPosition());
+
         FindSuitableActivityResponseModel suitableCompetitions =
                 (FindSuitableActivityResponseModel) restServiceFacade.performBoatModel(model,
                         "/boat/check", FindSuitableActivityResponseModel.class);
+
         return competitionRepository.findAllByBoatIdIn(suitableCompetitions.getBoatId());
+    }
+
+    /**
+     * Refactoring the logical part from getSuitableCompetitions method -> easier for testing.
+     *
+     * @param competitionRepository competition repository
+     * @param userData user data
+     * @return a list of boat ids
+     */
+    public List<Long> suitableBoatIds(CompetitionRepository competitionRepository, UserDataRequestModel userData) {
+        List<Competition> competitions = competitionRepository.findAll();
+        List<Long> ids = competitions.stream()
+            .filter(competition -> competition.getStartTime()
+                > currentTimeProvider.getCurrentTime().toEpochMilli() + 86400000)
+            .filter(competition -> checkGender(userData.getGender(), competition.getGenderConstraint()))
+            .filter(competition -> checkAmateur(competition, userData))
+            .filter(competition -> checkOriganization(competition, userData))
+            .map(Activity::getBoatId)
+            .collect(Collectors.toList());
+        return ids;
     }
 
     /**
