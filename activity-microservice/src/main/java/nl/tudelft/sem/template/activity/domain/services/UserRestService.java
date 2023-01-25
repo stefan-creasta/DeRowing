@@ -47,7 +47,9 @@ public class UserRestService implements RestService {
      * @return the object cast to target class
      */
     public Object deserialize(Object response, Class<?> target) {
-        if (target == null) return null;
+        if (target == null) {
+            return null;
+        }
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(response, target);
     }
