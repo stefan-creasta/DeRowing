@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.activity.domain.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -74,7 +73,6 @@ public class BoatRestServiceTest {
         try {
             when(environment.getProperty("boat.port")).thenReturn("100");
             boatRestService = new BoatRestService(environment);
-            assertNotEquals("", boatRestService.getPortString());
             assertFalse(boatRestService.getPortString().isEmpty());
             assertEquals(environment.getProperty("boat.port"), boatRestService.getPortString());
         } catch (UnsuccessfulRequestException e) {
@@ -87,7 +85,6 @@ public class BoatRestServiceTest {
         try {
             when(environment.getProperty("boat.url")).thenReturn("home");
             boatRestService = new BoatRestService(environment);
-            assertNotEquals("", boatRestService.getUrl());
             assertFalse(boatRestService.getPortString().isEmpty());
             assertEquals(environment.getProperty("boat.url"), boatRestService.getUrl());
         } catch (UnsuccessfulRequestException e) {
