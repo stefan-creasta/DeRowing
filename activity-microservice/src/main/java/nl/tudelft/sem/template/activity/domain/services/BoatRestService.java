@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.activity.domain.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.tudelft.sem.template.activity.domain.exceptions.UnsuccessfulRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class BoatRestService implements RestService {
     private final transient Environment environment;
     private final transient int port;
+    private final transient String portString;
     private final transient String url;
 
     /**
@@ -18,14 +20,24 @@ public class BoatRestService implements RestService {
      * @param environment the environment
      */
     @Autowired
-    public BoatRestService(Environment environment) {
+    public BoatRestService(Environment environment) throws UnsuccessfulRequestException {
         this.environment = environment;
-        String boatport = environment.getProperty("boat.port");
+        portString = environment.getProperty("boat.port");
         this.url = environment.getProperty("boat.url");
-        if (url == null || boatport == null) {
-            System.out.println("No ports and/or url found in the application.properties file");
+
+        if (url == null || portString == null) {
+            throw new UnsuccessfulRequestException();
+            // System.out.println("No ports and/or url found in the application.properties file");
         }
-        this.port = Integer.parseInt(boatport);
+        this.port = Integer.parseInt(portString);
+    }
+
+    public String getPortString() {
+        return this.portString;
+    }
+
+    public String getUrl() {
+        return this.url;
     }
 
     /**
