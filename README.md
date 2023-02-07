@@ -5,18 +5,6 @@ For this project, the client has asked to deliver a rowing managing system with 
 - The application must use the microservice architecture.
 - The application should not have a front end.
 
-
-## Group members
-
-| Profile Picture | Name | Email |
-|---|---|---|
-| ![](https://secure.gravatar.com/avatar/0408829ba64f29bb1f00e5934d5b6968?s=800&d=identicon&size=50) | Yongcheng Huang | Y.Huang-51@student.tudelft.nl |
-| ![](https://secure.gravatar.com/avatar/31830b2713ea008ceeb0262a7333e4c9?s=800&d=identicon&size=50) | Maarten van der Weide | M.V.vanderWeide@student.tudelft.nl |
-| <img src="https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/3749/avatar.png?width=50&size=5" style="zoom:25%;" /> | Vlad Iftimescu | V.G.Iftimescu@student.tudelft.nl |
-| ![](https://secure.gravatar.com/avatar/d7f782ec04f7eeea0f5b3d0fc2344554?s=800&d=identicon&size=50) | Stefan Creastă | Creasta@student.tudelft.nl |
-| ![](https://secure.gravatar.com/avatar/15dfa52ead3382296d8a544a549ba201?s=800&d=identicon&size=50) | Viet Luong | H.V.Luong-1@student.tudelft.nl |
-| ![](https://secure.gravatar.com/avatar/325ee4730af88cf34054be3ab5aec337?s=192&d=identicon&size=50) | Rithik Appachi Senthilkumar | R.AppachiSenthilkumar@student.tudelft.n |
-
 ## How to run it
 
 ### Requirements
