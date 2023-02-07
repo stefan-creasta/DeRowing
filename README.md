@@ -140,9 +140,3 @@ An example chain of request can then look like this:
     - This is for getting all notifications of a user.
   - /update
     - This is for saving into the mesage database the decision of the owner to the participant. 
-
-## How to contribute to it
-If you want to contribute, you can open an issue relating to a feature, refactor or bug, and it can be worked on. You can clone the repository and work on a branch you created, then open a merge request. We point you to the required template documents (issue/merge request) and the code of conduct located in the docs folder.  
-When contributing do make sure that you adheare to the checkstyle as defined in config/checkstyle.xml
-
-## Copyright / License (opt.)
